@@ -1,9 +1,9 @@
-This is Beta version 3.0. Fork-Sql-Qt-4.8.1--SQLite-3--relations--calc-fields 2022г.
+This is Beta version 3.0. Fork Sql Qt 4.8.1 SQLite3 relations, calculated fields (2022г.)
 
-We are created PblSqlRelationalTableModel class inherited by QSqlTableModeland.
+We are created PblSqlRelationalTableModel class inherited by QSqlTableModel.
 
-sql_pbl directory is building as part of Qt Soources 4.8.1 (with sql.pro). This is important.
-This is add new funtionality of Data Model - convinient extrenal relations, calculated field by other table and ...
+sql_pbl directory is building as part of Qt Soources 4.8.1 (with sql.pro). This is important because of inherited by private Qt classes.
+We are add new funtionality of Data Model - convinient extrenal relations, calculated field by other table and ...
 
 PblSqlRelationalTableModel overrides QSqlTableModel class functions:
 setTable;
@@ -36,5 +36,5 @@ PblSqlRelationalTableModel and PblTableView classes support all Qt edit strategi
 
 ![image](https://user-images.githubusercontent.com/13850002/205646576-f0c004a9-db6f-407a-b394-34aab209ea72.png)
 
-
+PblSqlRelationalTableModel + PblTableView are convinient temlate for create database table structure. 
 
