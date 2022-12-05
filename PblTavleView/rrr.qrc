@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>img/btn-db/delete-100x100.png</file>
+        <file>img/btn-db/edit-100x100.png</file>
+        <file>img/btn-db/insert-100x100.png</file>
+        <file>img/btn-db/copy-100x100.png</file>
+        <file>img/btn-db/find-100x100.png</file>
+		<file>img/btn-db/select-by-value-1-100x100.png</file>
+		<file>img/btn-db/select-by-value-2-100x100.png</file>
+		<file>img/btn-db/clear-field-100x100.png</file>
+    </qresource>
+</RCC>
