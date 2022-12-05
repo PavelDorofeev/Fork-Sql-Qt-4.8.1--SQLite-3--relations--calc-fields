@@ -1,0 +1,61 @@
+15:41:01 Warning: QSqlDatabase::driverName()  "QSQLITE" 
+15:41:01 Warning: QSqlDatabase::databaseName()  "D:/DEVELOPMENT/MyGitHub/Fork-Sql-Qt-4.8.1--SQLite-3---relations--calc-fields/bin/test.db" 
+15:41:01 Warning: QSqlDatabase::isOpen()  true 
+15:41:01 Warning: QMetaObject::connectSlotsByName: No matching signal for on_btn_Close_clicked()
+15:41:01 Warning: QMetaObject::connectSlotsByName: No matching signal for on_btn_Grip_clicked()
+15:41:01 106 Debug: 
+
+QSQLiteResult::reset : "PRAGMA table_info ("purchases")" 
+ 
+15:41:01 106 Debug: 
+
+QSQLiteResult::reset : "PRAGMA table_info ("purchases")" 
+ 
+15:41:01 106 Debug: 
+
+QSQLiteResult::reset : "PRAGMA table_info ("purchases")" 
+ 
+15:41:01 106 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT purchases.id,
+relTblAl_1.productName AS productName_1_productName,
+purchases.price,
+purchases.qty,
+purchases.sum,
+purchases.foo,
+ relTblAl_1.id AS goods_1_id 
+FROM purchases 
+LEFT JOIN goods relTblAl_1 ON purchases.productName=relTblAl_1.id" 
+ 
+15:41:01 107 Debug: 
+
+QSQLiteResult::reset : "
+
+SELECT purchases.id,
+relTblAl_1.productName AS productName_1_productName,
+purchases.price,
+purchases.qty,
+purchases.sum,
+purchases.foo,
+ relTblAl_1.id AS goods_1_id 
+FROM purchases 
+LEFT JOIN goods relTblAl_1 ON purchases.productName=relTblAl_1.id" 
+ 
+15:41:01 118 Debug: ctor QTableView (QWidget *) 
+15:41:01 127 Debug: 
+
+QSQLiteResult::reset : "PRAGMA table_info ("purchases")" 
+ 
+15:41:01 127 Debug: primaryIndex  QSqlRecord( 1 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "0" 
+15:41:01 128 Debug:  mdl->columnCount()  7 6 
+15:41:01 128 Debug: col  1 "productName" 
+15:41:01 128 Debug: col  2 "price" 
+15:41:01 128 Debug: col  3 "qty" 
+15:41:01 128 Debug: col  4 "sum" 
+15:41:01 128 Debug: col  5 "foo" 
+15:41:01 128 Debug: BtnToolBox::slot_setEditable  true 
+15:43:21 296 Debug: dtor PblSqlRelationalTableModel  "purchases" 
