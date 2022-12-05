@@ -1,4 +1,6 @@
-This is Beta version 3.0. Fork Sql Qt 4.8.1 SQLite3 relations, calculated fields (2022г.)
+This is Beta version 3.0. 
+Fork Sql Qt 4.8.1 SQLite3 relations, calculated fields (2022г.)
+Free and opensource project.
 
 We are created PblSqlRelationalTableModel class inherited by QSqlTableModel.
 
