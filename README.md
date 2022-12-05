@@ -30,6 +30,10 @@ Also PblTableView class can select rows by certain field value.
 
 PblSqlRelationalTableModel and PblTableView classes support all Qt edit strategies. You can test it with our windows application (PblTableView.exe).
 
+![image](https://user-images.githubusercontent.com/13850002/205646872-74742583-bde1-483e-9575-3bbc4d9578da.png)
+
+![image](https://user-images.githubusercontent.com/13850002/205646946-abed5808-3518-4eca-a8d3-04a5678da9c4.png)
+
 ![image](https://user-images.githubusercontent.com/13850002/205646576-f0c004a9-db6f-407a-b394-34aab209ea72.png)
 
 
