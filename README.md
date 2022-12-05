@@ -22,6 +22,11 @@ Next we added PblSqlRelation and PblSqlRecord classes for support new functional
 Base idea: class PblSqlRelationalTableModel adds to resulting table new extended fields that are not existing in the database. 
 This is id field of relations, calculated fields by data of other table.
 
-Next we created PblTableView class inherited by QTableView
+Next we created PblTableView class inherited by QTableView.
+PblTableView adds tool buttons for easy operations as insert, edit, remove rows.
+PblTableView class  is used funtionality of PblSqlRelationalTableModel.
+PblTableView can search some text by all columns , including relation fields.
+Also PblTableView class can select rows by certain field value.
+
 
 
