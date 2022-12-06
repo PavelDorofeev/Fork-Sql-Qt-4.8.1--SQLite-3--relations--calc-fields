@@ -8,6 +8,8 @@
 #include <QTextCodec>
 #include <QDesktopServices>
 #include <QDir>
+#include "some_tests.h"
+#include <QObject>
 
 #include "logging_system/logging_system.h"
 
@@ -128,10 +130,13 @@ int main(int argc, char *argv[])
 
     app.setStyleSheet(st);
 
-    Dialog w;
+    Dialog *w = new Dialog();
+
+    QObject::connect(w, SIGNAL(sig_openLoggingOnToOnNotepad()),
+              logSystem, SLOT(slot_openLoggingOnToOnNotepad()));
 
 
-    w.show();
+    w->show();
     
     return app.exec();
 }

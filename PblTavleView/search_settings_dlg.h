@@ -4,7 +4,7 @@
 #include <QDialog>
 
 namespace Ui {
-class find_Dlg;
+class Search_Settings_Dlg;
 }
 
 class PblSqlRelationalTableModel;
@@ -74,7 +74,7 @@ private slots:
 
 
 private:
-    Ui::find_Dlg *ui;
+    Ui::Search_Settings_Dlg *ui;
     QString tableName;
     PblTableView * view;
     PblSqlRelationalTableModel *mdl;

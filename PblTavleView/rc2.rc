@@ -1,0 +1,46 @@
+#include <winuser.h>
+#include <winnt.h>
+
+#define stringify(v1) #v1
+#define quote(v1)  stringify(v1)
+
+LANGUAGE 25,1
+
+STRINGTABLE LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+BEGIN
+        1 "Application for testing fork of QSqlTableModel Qt 4.8.1.\0"
+END
+IDI_ICON1       ICON    DISCARDABLE     "img/mkt.ico"
+IDR_APP_ICON    ICON                    "img/mkt.ico"
+
+1 VERSIONINFO
+        FILEVERSION    3,0,0,1
+        PRODUCTVERSION 1,2,4,1
+        FILEOS         0x00000000
+        FILETYPE       0x00000001
+BEGIN
+        BLOCK "StringFileInfo"
+        BEGIN
+          BLOCK "040904e4"
+          BEGIN
+          VALUE "Comments",           "Test application for fork QSqlTableModel Qt 4.8.1."
+          VALUE "CompanyName",        "BIT Ltd Company"
+          VALUE "FileDescription",    "Test application"
+          VALUE "FileVersion",        quote(PROGRAM_VERSION)
+          VALUE "InternalName",       "PblTableView.exe test application"
+          VALUE "LegalCopyright",     "BIT Ltd Company VTN 7826152874"
+          VALUE "OriginalFilename",   "PblTableView.exe"
+          VALUE "ProductName",        "test features application of the PblSqlRelationalTableModel"
+          VALUE "ProductVersion",     "1.2.4.1"
+          VALUE "PrivateBuild",       "3.0"
+          VALUE "SpecialBuild",       ""
+          VALUE "Builder",            "Dorofeev Pavel"
+          END
+        END
+        BLOCK "VarFileInfo"
+        BEGIN
+            VALUE "Translation",        0x0419, 0x04E3
+        END
+END
+
+//          VALUE "LegalTrademarks",    "ннн ""ахр"""

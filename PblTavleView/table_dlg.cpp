@@ -40,7 +40,7 @@ Table_Dlg::Table_Dlg(const QString & tableName,
     /*_CONNECT_(view->act_choseCurrentRecord, SIGNAL(triggered()),
               this, SLOT(slot_selectCurrentRecord()));*/
 
-    _CONNECT_(view, SIGNAL(sig_line_is_chosen(QModelIndex)),
+    _CONNECT_(view, SIGNAL(sig_rowSelected(QModelIndex)),
               this, SLOT(slot_accepted(QModelIndex)));
 
     adjustSize();

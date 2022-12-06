@@ -48,6 +48,13 @@
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="QPushButton" name="btn_logView">
+         <property name="text">
+          <string>view log</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>

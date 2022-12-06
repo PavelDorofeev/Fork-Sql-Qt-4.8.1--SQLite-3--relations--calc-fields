@@ -160,3 +160,8 @@ void Dialog::on_btn_checks_clicked()
     dlg.exec();
 
 }
+
+void Dialog::on_btn_logView_clicked()
+{
+    emit sig_openLoggingOnToOnNotepad();
+}

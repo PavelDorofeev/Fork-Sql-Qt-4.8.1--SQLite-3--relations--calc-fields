@@ -27,6 +27,9 @@ public:
 
     Tlb_Btns *tlbx;
     
+signals:
+    bool sig_openLoggingOnToOnNotepad();
+
 private slots:
 
     void on_btn_Close_clicked();
@@ -38,6 +41,8 @@ private slots:
     void on_btn_goods_clicked();
 
     void on_btn_checks_clicked();
+
+    void on_btn_logView_clicked();
 
 private:
     Ui::Dialog *ui;

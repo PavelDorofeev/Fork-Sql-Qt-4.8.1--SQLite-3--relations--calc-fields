@@ -5,11 +5,11 @@
 #include "some_tests.h"
 #include "PblSqlRelationalTableModel.h"
 #include <QSqlError>
-#include "btntoolbox.h"
+#include "btn_toolbox.h"
 #include <QSqlDatabase>
 #include <QSqlIndex>
 #include "table_dlg.h"
-
+#include <QHeaderView>
 
 PblTableView::PblTableView(PblSqlRelationalTableModel * mdl_,
                            QVBoxLayout * lo,
@@ -54,15 +54,13 @@ PblTableView::PblTableView(PblSqlRelationalTableModel * mdl_,
 
 
 
-    tlbx = new BtnToolBox(this , mdl);
+    tlbx = new Btn_ToolBox(this , mdl);
 
     lo->addWidget(tlbx);
     lo->addWidget(this);
 
     QSqlRecord baseRec = mdl->baseRecord();
     QSqlRecord rec = mdl->record();
-
-    qDebug() << " mdl->columnCount() " << mdl->columnCount() << baseRec.count();
 
     // -----------------------------------------------------------------
 
@@ -135,7 +133,8 @@ PblTableView::PblTableView(PblSqlRelationalTableModel * mdl_,
     _CONNECT_( this , SIGNAL(doubleClicked(QModelIndex)),
                this , SLOT(slot_doubleClicked(QModelIndex)));
 
-    tlbx->setEditable(editable);
+    setEditable(editable);
+    slot_setVisibleExColumns(false);
 
     resizeRowsToContents();
     resizeColumnsToContents();
@@ -144,26 +143,12 @@ PblTableView::PblTableView(PblSqlRelationalTableModel * mdl_,
 
 QSize PblTableView::sizeHint() const
 {
-    //setVerticalScrollMode(false);
-    //qDebug() << " viewport()->size() " << viewport()->size();
-    //qDebug() << "   size() " << size();
-    //qDebug() << "   horizontalPolicy() " << sizePolicy().horizontalPolicy();
-    //qDebug() << "   verticalPolicy() " << sizePolicy().verticalPolicy();
-
-
-    //return size();
-
-    //QSize sz = QTableView::sizeHint()+QSize(200,100);
-
-    //qDebug() << "sizeHint " << QTableView::sizeHint() << " sz " << sz ;
-
     return QSize(700,500);
 }
 
 void PblTableView::fillContextMenu()
 {
     contextMenu->clear();
-
 
     // ---------------------------------------------------------------
 
@@ -236,6 +221,13 @@ void PblTableView::fillContextMenu()
 
 
 }
+
+void PblTableView::slot_setVisibleExColumns(bool visible)
+{
+    for(int col = mdl->baseRecord().count(); col < mdl->record().count(); col++)
+        setColumnHidden(col , ! visible);
+}
+
 void PblTableView::slot_CustomMenuRequested(const QPoint &pos)
 {
     //qDebug() << "my_QTableView::slot_CustomMenuRequested";
@@ -589,14 +581,19 @@ bool PblTableView::slot_removeRowBtnClick()
 }
 //-------------------------------------------------
 
+void PblTableView::setEditable(bool on)
+{
+    tlbx->setEditable(on);
+}
 
 void PblTableView::slot_doubleClicked(QModelIndex index)
 {
 
     qDebug() << "slot_doubleClicked" << mdl->tableName();
+
     if( ! editable) // chosing
     {
-        emit sig_line_is_chosen(index);
+        emit sig_rowSelected(index);
         return;
     }
 
@@ -656,7 +653,7 @@ bool PblTableView::slot_searchInTable(QString & txt)
         return false;
     }
 
-    QString fieldName = mdl->record().fieldName(find_settings.searchedField);
+    QString fieldName = mdl->baseRecord().fieldName(find_settings.searchedField);
 
     if(fieldName.isEmpty() || mdl->tableName().isEmpty())
     {
@@ -681,14 +678,10 @@ bool PblTableView::slot_searchInTable(QString & txt)
     {
         // Слева
 
-        if( find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_TEXT
-                && ! find_settings.caseSensitive)
-        {
-            filter.append(" lower("+mdl->tableName()+"."+fieldName+")");
-        }
-        else if(find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT)
+        if(find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT)
         {
             int col = find_settings.searchedField;
+
             QString str = mdl->getRelationInfoForColumn(find_settings.searchedField).exTextFieldName;
 
             filter.append(QString::fromLatin1(" relTblAl_%1.%2 ").
@@ -700,6 +693,14 @@ bool PblTableView::slot_searchInTable(QString & txt)
             filter.append(mdl->tableName()+"."+fieldName);
         }
 
+        if( ! find_settings.caseSensitive )
+        {
+            if(find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT
+                    ||find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_TEXT)
+            {
+                filter.prepend(" lower(").append(") ");
+            }
+        }
 
         //  справа
 
@@ -732,8 +733,7 @@ bool PblTableView::slot_searchInTable(QString & txt)
 
     mdl->setFilter(filter);
 
-    return mdl->select();
-}
+    return mdl->select();}
 
 void PblTableView::setActionVisible(ACTIONS act, bool visible)
 {

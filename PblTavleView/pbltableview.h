@@ -1,7 +1,6 @@
 #ifndef PBLTABLEVIEW_H
 #define PBLTABLEVIEW_H
 
-#include "D:\QtSDK1.2.1\QtSources\4.8.1\src\gui\itemviews\pbltableviewex.h"
 #include <QTableView>
 #include <QHBoxLayout>
 #include <QToolButton>
@@ -11,7 +10,7 @@
 #include "search_settings_dlg.h"
 
 class PblSqlRelationalTableModel;
-class BtnToolBox;
+class Btn_ToolBox;
 
 class PblTableView : public QTableView
 {
@@ -48,7 +47,7 @@ public:
 
     QHBoxLayout *topLO;
 
-    BtnToolBox *tlbx;
+    Btn_ToolBox *tlbx;
 
     QSize sizeHint() const;
 
@@ -64,6 +63,7 @@ public:
 
     QMenu * contextMenu;
 
+    void setEditable(bool);
     int priCol;
 
     virtual bool insertRow(int row);
@@ -88,7 +88,7 @@ protected:
 
 
 signals:
-    void sig_line_is_chosen(QModelIndex);
+    void sig_rowSelected(QModelIndex);
 
 public slots:
     void slot_CustomMenuRequested(const QPoint &pos);
@@ -99,6 +99,9 @@ public slots:
     bool slot_copyRowBtnClick();
     bool slot_removeRowBtnClick();
     bool slot_searchInTable(QString & filter);
+
+
+    void slot_setVisibleExColumns(bool);
 
 private slots:
     void slot_doubleClicked(QModelIndex );
