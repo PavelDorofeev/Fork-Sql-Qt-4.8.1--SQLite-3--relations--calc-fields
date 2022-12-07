@@ -8,5 +8,6 @@
 		<file>img/btn-db/select-by-value-1-100x100.png</file>
 		<file>img/btn-db/select-by-value-2-100x100.png</file>
 		<file>img/btn-db/clear-field-100x100.png</file>
+		<file>img/mkt_50x50.png</file>
     </qresource>
 </RCC>

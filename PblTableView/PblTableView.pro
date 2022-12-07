@@ -6,7 +6,7 @@
 
 QT       += core gui sql
 
-TARGET = PblTavleView
+TARGET = PblTableView
 TEMPLATE = app
 
 CONFIG +=  console windows
@@ -22,30 +22,37 @@ DEPENDPATH += ../../my_lib
 INCLUDEPATH += ../
 
 
-include(../../my_lib/logging_system/logging_system.pri)
+include(../logging_system/logging_system.pri)
 
 
 SOURCES += main.cpp\
         dialog.cpp \
     pbltableview.cpp \
-    btntoolbox.cpp \
     some_tests.cpp \
     table_dlg.cpp \
-    search_settings_dlg.h.cpp \
-    pbltableview_purchases.cpp
+    pbltableview_purchases.cpp \
+    search_settings_dlg.cpp \
+    btn_toolbox.cpp
 
 HEADERS  += dialog.h \
     pbltableview.h \
-    btntoolbox.h \
     some_tests.h \
     table_dlg.h \
     search_settings_dlg.h \
-    pbltableview_purchases.h
+    pbltableview_purchases.h \
+    btn_toolbox.h
 
 FORMS    += dialog.ui \
-    find_dlg.ui \
-    btntoolbox.ui \
-    table_dlg.ui
+    table_dlg.ui \
+    search_settings_dlg.ui \
+    btn_toolbox.ui
 
 RESOURCES += \
-    rrr.qrc
+    resource2.qrc
+
+OTHER_FILES += \
+    rc2.rc
+
+win32 {
+  RC_FILE     += rc2.rc
+}
