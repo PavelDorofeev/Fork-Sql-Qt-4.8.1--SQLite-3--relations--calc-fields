@@ -38,5 +38,8 @@ PblSqlRelationalTableModel and PblTableView classes support all Qt edit strategi
 
 ![image](https://user-images.githubusercontent.com/13850002/205646576-f0c004a9-db6f-407a-b394-34aab209ea72.png)
 
+![2022-12-08_19-44-00](https://user-images.githubusercontent.com/13850002/206512485-8a64e237-a8d8-4f55-8650-1a4c5968e0e7.png)
+
+
 PblSqlRelationalTableModel + PblTableView are convinient template for create database table structure. 
 
