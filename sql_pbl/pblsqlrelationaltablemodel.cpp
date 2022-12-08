@@ -26,6 +26,7 @@
 ****************************************************************************/
 
 #include "pblsqlrelationaltablemodel.h"
+#include "D:\DEVELOPMENT\QT4\_MY__\my_lib\common\my_sql.h"
 
 #include "qhash.h"
 #include "qstringlist.h"
@@ -113,7 +114,7 @@ PblSqlRecord PblSqlRelationalTableModel::record(int row) const
 
     //PblSqlRecord pblRec(QSqlTableModel::record(row));
     PblSqlRecord pblRec = QSqlTableModel::record(row);
-    qDebug("pblRec %p ", pblRec) ;
+    //qDebug("pblRec %p ", pblRec) ;
 
     // тоже вариант
     // PblSqlRecord pblRec = reinterpret_cast<PblSqlRecord&>(QSqlQueryModel::record(row));
@@ -124,7 +125,7 @@ PblSqlRecord PblSqlRelationalTableModel::record(int row) const
         return pblRec;
     }
 
-    qDebug(" pblRec %p pblRec.exRelFieldsMap.count()=%i " , pblRec, pblRec.exRelFieldsMap.count());
+    //qDebug(" pblRec %p pblRec.exRelFieldsMap.count()=%i " , pblRec, pblRec.exRelFieldsMap.count());
 
 
     //createRelColumnMap(pblRec); // create map of columns relations
@@ -141,7 +142,7 @@ PblSqlRecord PblSqlRelationalTableModel::record(int row) const
     }
     pblRec.origСolCount = d->baseRec.count();
 
-    qDebug(" pblRec %p pblRec.exRelFieldsMap.count()=%i " , pblRec, pblRec.exRelFieldsMap.count());
+    //qDebug(" pblRec %p pblRec.exRelFieldsMap.count()=%i " , pblRec, pblRec.exRelFieldsMap.count());
 
     return pblRec;
 }
@@ -166,12 +167,18 @@ PblSqlRecord PblSqlRelationalTableModel::record()
 
 QVariant PblSqlRelationalTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    //qDebug() << "PblSqlRelationalTableModel::headerData";
-    //qDebug() << "   section : " << section << " orientation:" <<orientation << " role: " << role;
+    QVariant vv =QSqlTableModel::headerData(section , orientation , role);
 
-    return QSqlTableModel::headerData(section , orientation , role);
+    /*if( ! vv.isNull())
+        qDebug() << "PblSqlRelationalTableModel::headerData:\n\t   section : " << section << " orientation:" <<orientation << " role: " << mySql::roleToStr(role) << " " <<vv;*/
+
+
+
+    return vv;
 
 }
+
+
 QVariant PblSqlRelationalTableModel::data(const QModelIndex &idx, int role) const
 {
     Q_D(const PblSqlRelationalTableModel);
@@ -180,6 +187,16 @@ QVariant PblSqlRelationalTableModel::data(const QModelIndex &idx, int role) cons
 
     int col = idx.column();
     int max = d->baseRec.count();
+
+    if( role != Qt::DisplayRole
+            && role != Qt::UserRole )//  && filterDone.col >=0)
+    {
+        QVariant vv = QSqlTableModel::data(idx, role);//::Color;
+
+        //qDebug() << "data() value = " << vv << " role :" <<mySql::roleToStr(role) << " row : " << row << " col : " << col ;
+
+        return  vv;//QBrush(QColor(Qt::red));
+    }
 
     if(col >= max )
     {
@@ -380,6 +397,7 @@ bool PblSqlRelationalTableModel::setData(const QModelIndex &idx,
     if( ! idx.isValid())
         return false;
 
+
     if(role != Qt::EditRole)
         return QSqlTableModel::setData(idx, value, role);
 
@@ -455,7 +473,7 @@ bool PblSqlRelationalTableModel::setRelation(int origCol,
 }
 
 bool PblSqlRelationalTableModel::setCalcField(CALC_COLUMN & calc)
-                                            /* const QString &tableFrom,
+/* const QString &tableFrom,
                                               const QString foreignKeyField,
                                               const QString &fieldFrom,
                                               const QString &funcName,
@@ -572,8 +590,6 @@ void PblSqlRelationalTableModel::setTable(const QString &table)
 {
     Q_D(PblSqlRelationalTableModel);
 
-    // memorize the table before applying the relations
-
     d->baseRec = d->db.record(table);
 
     d->relations.clear();
@@ -654,7 +670,7 @@ bool PblSqlRelationalTableModel::updateRowInTable(int row, const QSqlRecord &val
 {
     Q_D(PblSqlRelationalTableModel);
 
-    qDebug() << "\n\nPblSqlRelationalTableModel::updateRowInTable values " << values<< "\n";
+    //qDebug() << "\n\nPblSqlRelationalTableModel::updateRowInTable values " << values<< "\n";
 
     // ----------------------------------------------------------------------
     // тут relations оригинальные поля представлены как текстовые
@@ -667,7 +683,7 @@ bool PblSqlRelationalTableModel::updateRowInTable(int row, const QSqlRecord &val
     d->translateFieldNames(row, rec, editStrategy());
     // возврат к оригинальным наименованиям полей
 
-    qDebug() << "\n\nPblSqlRelationalTableModel::updateRowInTable rec " << rec<< "\n";
+    //qDebug() << "\n\nPblSqlRelationalTableModel::updateRowInTable rec " << rec<< "\n";
 
     return QSqlTableModel::updateRowInTable(row, rec);
 }
@@ -678,13 +694,13 @@ bool PblSqlRelationalTableModel::insertRowIntoTable(const QSqlRecord &values)
 
     Q_D(PblSqlRelationalTableModel);
 
-    qDebug() << "PblSqlRelationalTableModel::insertRowIntoTable values " << values;
+    //qDebug() << "PblSqlRelationalTableModel::insertRowIntoTable values " << values;
 
     QSqlRecord rec = values;
 
     d->translateFieldNames(0, rec, editStrategy()); // возврат к оригинальным наименованиям полей
 
-    qDebug() << "PblSqlRelationalTableModel::insertRowIntoTable rec " << rec;
+    //qDebug() << "PblSqlRelationalTableModel::insertRowIntoTable rec " << rec;
 
     return QSqlTableModel::insertRowIntoTable(rec);
 
@@ -1013,7 +1029,7 @@ QString PblSqlRelationalTableModel::selectStatement() const
 
     // --------------------- WHERE ------------------------
 
-    if (!filter().isEmpty() )
+    if ( ! filter().isEmpty() )
     {
 
         query.append(QLatin1String(" \nWHERE ("));

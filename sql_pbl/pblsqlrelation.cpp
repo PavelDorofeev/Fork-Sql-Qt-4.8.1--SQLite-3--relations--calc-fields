@@ -28,13 +28,16 @@
 #include "pblsqlrelation.h"
 
 
-PblSqlRelation::PblSqlRelation(const QString &sTableFrom_,
-               const QString &sIndexFieldFrom_,
-               const QString &sDisplayFieldFrom_,
-               JoinMode join_mode)
+PblSqlRelation::PblSqlRelation(
+        const int col_,
+        const QString &sTableFrom_,
+        const QString &sIndexFieldFrom_,
+        const QString &sDisplayFieldFrom_,
+        JoinMode join_mode)
     : sTableFrom(sTableFrom_),
       sIndexFieldFrom(sIndexFieldFrom_),
-      sDisplayFieldFrom(sDisplayFieldFrom_)
+      sDisplayFieldFrom(sDisplayFieldFrom_),
+      col(col_)
 {
     joinMode = join_mode;
 }

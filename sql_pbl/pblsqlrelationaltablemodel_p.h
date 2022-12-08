@@ -56,7 +56,7 @@ public:
 
     mutable QList<PblColumn> ex_columns;
 
-    QSqlRecord baseRec; // the record without relations
+    QSqlRecord baseRec; // the original record without extended fields (relations id, calc functions,..)
 
     void translateFieldNames(int row, QSqlRecord &values, QSqlTableModel::EditStrategy editStrategy) const;
 

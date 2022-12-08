@@ -39,19 +39,28 @@ public:
 public:
     PblSqlRelation() {}
 
-    PblSqlRelation(const QString &sTableFrom,
+    explicit PblSqlRelation(const int col,
+                   const QString &sTableFrom,
                    const QString &sIndexFieldFrom,
                    const QString &sDisplayFieldFrom,
                    JoinMode join_mode = PblSqlRelation::LeftJoin);
 
+    int col;
+
     inline QString tableFrom() const
-    { return sTableFrom; }
+    {
+        return sTableFrom;
+    }
 
     inline QString indexFieldFrom() const
-    { return sIndexFieldFrom; }
+    {
+        return sIndexFieldFrom;
+    }
 
     inline QString displayFieldFrom() const
-    { return sDisplayFieldFrom; }
+    {
+        return sDisplayFieldFrom;
+    }
 
     inline bool isValid() const
     {
@@ -61,5 +70,6 @@ public:
 private:
     JoinMode joinMode;
     QString sTableFrom, sIndexFieldFrom, sDisplayFieldFrom;
+
 };
 #endif // PBLSQLRELATION_H

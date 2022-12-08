@@ -60,7 +60,7 @@ public:
         COLUMN_TYPE_RELATION_ID = 2,
         COLUMN_TYPE_CALCULATION = 3
     };
-    
+
     PblColumn()
     {
         //qDebug() << "ctor ExColumns";
@@ -79,7 +79,9 @@ public:
     //PblRelatedTableModel *model;
     int origCol;
     int exCol;
+
     COLUMN_TYPE type;
+
     QString exTableName;
     QString exIndexFieldName;
     QString exTextFieldName; //
@@ -88,6 +90,8 @@ public:
     
     char cFormat;
     int precision;
+
+
 
     bool isValid();
     
@@ -134,7 +138,13 @@ class Q_SQL_EXPORT PblSqlRelationalTableModel: public QSqlTableModel
     Q_OBJECT
     
     Q_DECLARE_PRIVATE(PblSqlRelationalTableModel)
-    //Q_DECLARE_PRIVATE(QSqlTableModel)
+
+    enum FILTER_TYPE
+    {
+        FILTER_TYPE_UNKNOWN=-1,
+        FILTER_TYPE_SEARCH_TEXT_BY_COLUMN = 1,
+        FILTER_TYPE_SEARCH_BY_FIELD_VALUE,
+    };
     
 public:
     
@@ -143,7 +153,26 @@ public:
     
     virtual ~PblSqlRelationalTableModel();
     
+
+
+    struct Filter{
+
+        int col;
+        FILTER_TYPE type;
+        bool enabled;
+
+        Filter():
+            col(-1),
+            type(FILTER_TYPE_UNKNOWN),
+            enabled(false)
+        {
+
+        }
+    };
+
     
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+
     virtual QString selectStatement() const;
     
     virtual QVariant data(const QModelIndex &item, int role = Qt::DisplayRole) const; // !! add virtual
@@ -171,8 +200,7 @@ public:
     
     void setTable(const QString &tableName);
 
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    
+
     bool setDoubleFormat(int col,
                          const char &format,
                          const int &precision);
@@ -205,6 +233,8 @@ public:
     bool is_insertIndex(); // режим вставки новой строки
 
     PblColumn::COLUMN_TYPE columnType(int col);
+
+    Filter filterDone;
     
 public Q_SLOTS:
     //void revertRow(int row);
