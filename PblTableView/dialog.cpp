@@ -8,6 +8,7 @@
 #include "some_tests.h"
 #include "table_dlg.h"
 #include "pbltableview_purchases.h"
+#include "pblheaderview.h"
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -21,12 +22,12 @@ Dialog::Dialog(QWidget *parent) :
 
     mdl->setTable("purchases");
 
-    if( ! mdl->setRelation( 1 , PblSqlRelation("goods" , "id" , "productName")))
+
+    if( ! mdl->setRelation( 1 , PblSqlRelation(1, "goods" , "id" , "productName")))
         QMessageBox::critical(this , tr("error"), tr("setRelation"));
 
 
     bool bbb= mdl->select();
-
 
     view = new PblTableView_Purchases(mdl, ui->tableViewLO, this , true);
 
@@ -52,14 +53,6 @@ void Dialog::on_btn_Close_clicked()
     close();
 }
 
-void Dialog::on_btn_Grip_clicked()
-{
-    //setSizeGripEnabled(false);
-    adjustSize();
-    update();
-    //setSizeGripEnabled(true);
-    // update();
-}
 
 void Dialog::on_btn_save_clicked()
 {
@@ -133,7 +126,7 @@ void Dialog::openTable(const QString & tableName)
 
 void Dialog::on_btn_goods_clicked()
 {
-    QList<CALC_COLUMN> lst;
+    QList<CALC_COLUMN> lstCalc;
 
     CALC_COLUMN calc;
 
@@ -144,9 +137,9 @@ void Dialog::on_btn_goods_clicked()
     calc.calcFuncName_As = tr("продано");
 
 
-    lst << calc;
+    lstCalc << calc;
 
-    Table_Dlg dlg("goods" , this, true, lst);
+    Table_Dlg dlg("goods" , this, true, lstCalc);
 
     dlg.exec();
 }
@@ -155,8 +148,14 @@ void Dialog::on_btn_checks_clicked()
 {
 
 
-    Table_Dlg dlg("checks" , this, false);
+    QList<CALC_COLUMN> calcLst;
+    QList<PblSqlRelation> relLst;
 
+    relLst << PblSqlRelation(1, "goods" , "id" , "productName");
+
+    Table_Dlg dlg("checks" , this, false, calcLst ,relLst);
+
+    dlg.mdl->select();
     dlg.exec();
 
 }
@@ -165,3 +164,4 @@ void Dialog::on_btn_logView_clicked()
 {
     emit sig_openLoggingOnToOnNotepad();
 }
+

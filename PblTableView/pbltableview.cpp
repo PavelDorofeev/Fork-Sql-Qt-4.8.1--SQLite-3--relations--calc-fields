@@ -28,7 +28,7 @@ PblTableView::PblTableView(PblSqlRelationalTableModel * mdl_,
 
     primaryIndex = mdl->database().primaryIndex(mdl->tableName());
 
-    qDebug() << "primaryIndex " <<primaryIndex;
+    //qDebug() << "primaryIndex " <<primaryIndex;
 
     for(int nn=0;  nn <primaryIndex.count(); nn++)
     {
@@ -75,7 +75,7 @@ PblTableView::PblTableView(PblSqlRelationalTableModel * mdl_,
 
         if(mdl->getRelIdColumn(col) >=0)
         {
-            mdl->setHeaderData(col, Qt::Horizontal, baseRec.fieldName(col));
+            mdl->setHeaderData(col, Qt::Horizontal, baseRec.fieldName(col),Qt::EditRole);
 
             if(searchedRelationTxtDefaultColumn == -1)
                 searchedRelationTxtDefaultColumn= col;
@@ -93,7 +93,7 @@ PblTableView::PblTableView(PblSqlRelationalTableModel * mdl_,
         {
             searchedDblDefaultColumn = col;
         }
-        qDebug() << "col " <<col << baseRec.fieldName(col);
+        //qDebug() << "col " <<col << baseRec.fieldName(col);
 
     }
 
@@ -118,6 +118,8 @@ PblTableView::PblTableView(PblSqlRelationalTableModel * mdl_,
     }
 
 
+    qDebug() << "PblTableView headerData : " << mdl->headerData(0 , Qt::Horizontal, Qt::BackgroundRole);
+
 
     find_settings.caseSensitive = false;
     find_settings.exactly = false;
@@ -127,14 +129,15 @@ PblTableView::PblTableView(PblSqlRelationalTableModel * mdl_,
 
     verticalHeader()->setVisible(false);
 
-    /*_CONNECT_( this , SIGNAL(pressed(QModelIndex)),
-               this , SLOT(slot_pressed(QModelIndex)));*/
 
     _CONNECT_( this , SIGNAL(doubleClicked(QModelIndex)),
                this , SLOT(slot_doubleClicked(QModelIndex)));
 
+
+    setSortingEnabled(true);
+
     setEditable(editable);
-    slot_setVisibleExColumns(false);
+    slot_setVisibleExRelIdColumns(false);
 
     resizeRowsToContents();
     resizeColumnsToContents();
@@ -194,6 +197,16 @@ void PblTableView::fillContextMenu()
 
     // ---------------------------------------------------------------
 
+    act_textsearch = new QAction(QIcon(":icon/img/btn-db/text-find-100x100.png"), trUtf8("удалить строку"), this);
+    act_textsearch->setShortcut(Qt::Key_F3);
+
+    _CONNECT_(act_textsearch, SIGNAL(triggered()), this, SLOT(slot_removeRowBtnClick()));
+
+    //contextMenu->addAction(act_textsearch);
+    addAction(act_textsearch);
+
+    // ---------------------------------------------------------------
+
     act_choiseCurrentRecord = new QAction(trUtf8("выбрать строку"), this);
     act_choiseCurrentRecord->setShortcut(Qt::Key_Enter);
 
@@ -213,24 +226,38 @@ void PblTableView::fillContextMenu()
     // ---------------------------------------------------------------
 
     act_selectByFieldValue = new QAction(QIcon(":icon/img/btn-db/select-by-value-2-100x100.png"), trUtf8("отбор по значению"), this);
-    act_selectByFieldValue->setShortcut(Qt::Key_F12);
+    act_selectByFieldValue->setShortcut(Qt::Key_F8);
 
     _CONNECT_(act_selectByFieldValue, SIGNAL(triggered()), this, SLOT(slot_clickSelectByFieldValue()));
 
     contextMenu->addAction(act_selectByFieldValue);
+    addAction(act_selectByFieldValue);
 
 
 }
 
-void PblTableView::slot_setVisibleExColumns(bool visible)
+void PblTableView::slot_setVisibleExRelIdColumns(bool visible)
 {
-    for(int col = mdl->baseRecord().count(); col < mdl->record().count(); col++)
-        setColumnHidden(col , ! visible);
+    //for(int col = mdl->baseRecord().count(); col < mdl->record().count(); col++)
+    for(int col = 0; col < mdl->baseRecord().count(); col++)
+    {
+        int relIdCol = mdl->getRelIdColumn(col);
+
+        if( relIdCol >=0)
+        {
+            PblColumn::COLUMN_TYPE type = mdl->getRelationInfoForColumn(col).type;
+
+            if(type  == PblColumn::COLUMN_TYPE_RELATION_ID)
+
+                setColumnHidden(relIdCol , ! visible);
+        }
+
+    }
 }
 
 void PblTableView::slot_CustomMenuRequested(const QPoint &pos)
 {
-    //qDebug() << "my_QTableView::slot_CustomMenuRequested";
+    //qDebug() << "PblTableView::slot_CustomMenuRequested";
 
     setContextMenuItemsVisibleAfterFieldSelected();
 
@@ -340,13 +367,13 @@ void PblTableView::setContextMenuItemsVisibleAfterFieldSelected()
 
 bool PblTableView::slot_clearFieldClick()
 {
-    qDebug() << "my_QTableView::slotClearField";
+    qDebug() << "PblTableView::slotClearField";
 
     QModelIndex currIdx = currentIndex();
 
     if( ! currIdx.isValid())
     {
-        qDebug() << "my_QTableView::slot_clearField   currentIndex !isValid  " << currIdx;
+        qDebug() << "PblTableView::slot_clearField   currentIndex !isValid  " << currIdx;
         return false;
     }
 
@@ -369,11 +396,11 @@ bool PblTableView::clearField(const QModelIndex &currIdx)
 
     qDebug() << "clearField " << mdl->record(row);
 
-    qDebug() << QString("my_QTableView::slot_clearField   index [%1x%2]").arg(currIdx.row()).arg(currIdx.column());
+    qDebug() << QString("PblTableView::slot_clearField   index [%1x%2]").arg(currIdx.row()).arg(currIdx.column());
 
     if(! currIdx.isValid())
     {
-        qWarning()<<"!!!! error  my_QTableView::slot_clearField ! index.isValid()";
+        qWarning()<<"!!!! error  PblTableView::slot_clearField ! index.isValid()";
         return false;
     }
 
@@ -381,7 +408,7 @@ bool PblTableView::clearField(const QModelIndex &currIdx)
 
     if(! idx.isValid())
     {
-        qCritical()<<"!!!! error  my_QTableView::slot_clearField ! idx.isValid()";
+        qCritical()<<"!!!! error  PblTableView::slot_clearField ! idx.isValid()";
         return false;
     }
 
@@ -431,7 +458,7 @@ bool PblTableView::insertRow(int row) // функцию можно переоп�
             if( def != QVariant() )
                 if( ! mdl->setData( mdl->index(row , col), def, Qt::EditRole ))
                 {
-                    qCritical() << "my_QTableView::my_insertRow  setData : " << def ;
+                    qCritical() << "PblTableView::my_insertRow  setData : " << def ;
                 }
                 else
                     qDebug() << "   my_insertRow  setData : true for col " << col ;
@@ -647,11 +674,15 @@ void PblTableView::slot_doubleClicked(QModelIndex index)
 
 bool PblTableView::slot_searchInTable(QString & txt)
 {
+
     if( find_settings.searchedField == -1) //еще не понятно по какому полю искать
     {
-        //on_btn_find_clicked();
+        QMessageBox::warning(this , "error" , "please select a field than searched in it");
+
         return false;
     }
+
+    int col = find_settings.searchedField;
 
     QString fieldName = mdl->baseRecord().fieldName(find_settings.searchedField);
 
@@ -680,8 +711,6 @@ bool PblTableView::slot_searchInTable(QString & txt)
 
         if(find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT)
         {
-            int col = find_settings.searchedField;
-
             QString str = mdl->getRelationInfoForColumn(find_settings.searchedField).exTextFieldName;
 
             filter.append(QString::fromLatin1(" relTblAl_%1.%2 ").
@@ -733,7 +762,26 @@ bool PblTableView::slot_searchInTable(QString & txt)
 
     mdl->setFilter(filter);
 
-    return mdl->select();}
+    bool bbb = mdl->select();
+
+    if(! filter.isEmpty() )
+    {
+        if( ! mdl->setHeaderData(col , Qt::Horizontal, tlbx->icon_textSearchedInTable, Qt::DecorationRole))
+            QMessageBox::critical(this , "error" , "setHeaderData return false 6575637657");
+
+        if(bbb)
+            tlbx->setBtn_searchInTable(true , true);
+    }
+    else
+    {
+        mdl->setHeaderData(col , Qt::Horizontal, QVariant(), Qt::DecorationRole);
+        if(bbb)
+            tlbx->setBtn_searchInTable(true , false);
+
+    }
+
+    return bbb;
+}
 
 void PblTableView::setActionVisible(ACTIONS act, bool visible)
 {
@@ -757,28 +805,27 @@ void PblTableView::setActionVisible(ACTIONS act, bool visible)
 
 
 }
-void PblTableView::slot_pressed(QModelIndex index)
+
+void PblTableView::slot_clickSelectByFieldValue()
 {
-    qDebug() << "PblTableView::slot_pressed " << index;
+    if( ! currentIndex().isValid())
+    {
+        mdl->setFilter("");
+        mdl->select();
 
-    if( ! index.isValid())
-        return;
+        repaint_selectionByValueBtns(false, currentIndex().column());
+    }
 
-    if(editable)
-        return;
-
-    //emit sig_accept(index);
+    slot_selectByFieldValue(currentIndex());
 
 }
 
-bool PblTableView::slot_clickSelectByFieldValue()
+bool PblTableView::slot_selectByFieldValue(QModelIndex idx)
 {
-    qDebug() << "PblTableView::slot_clickSelectByFieldValue " << currentIndex();
+    qDebug() << "PblTableView::slot_selectByFieldValue idx " << idx;
 
-    if( ! currentIndex().isValid())
+    if(! idx.isValid())
         return false;
-
-    QModelIndex idx = currentIndex();
 
     int col = idx.column();
     int row = idx.row();
@@ -793,7 +840,7 @@ bool PblTableView::slot_clickSelectByFieldValue()
         return false;
     }
 
-    if(mdl->getRelIdColumn(col) >=0) // relation
+    if(mdl->getRelIdColumn(col) >=0 ) // relation
     {
         QModelIndex exIdx = mdl->index(row , mdl->getRelIdColumn(col));
         val = mdl->data(exIdx);
@@ -820,10 +867,43 @@ bool PblTableView::slot_clickSelectByFieldValue()
 
     bool bb = mdl->select();
 
-    if( bb)
-        tlbx->setSelectionByValue(bb);
+    if(bb)
+    {
+        if(filter=="")
+            repaint_selectionByValueBtns(false , col);
+        else
+            repaint_selectionByValueBtns(true , col);
+
+    }
 
     return bb;
+}
+
+void PblTableView::repaint_selectionByValueBtns(bool on, int col)
+{
+    if(on)
+    {
+        if ( ! mdl->setHeaderData(col , Qt::Horizontal, tlbx->icon_selectedByField , Qt::DecorationRole))
+        {
+            QMessageBox::warning(this, "error" , tr(" setHeaderData Qt::DecorationRole ")+mdl->lastError().text());
+            return;
+        }
+        tlbx->setBtn_selectionByValue(true, true);
+
+    }
+    else
+    {
+        for(int col=0; col < mdl->columnCount(); col++)
+        {
+            if(! mdl->headerData(col , Qt::Horizontal, Qt::DecorationRole).isNull())
+            {
+                mdl->setHeaderData(col , Qt::Horizontal, QVariant(), Qt::DecorationRole);
+            }
+        }
+
+        tlbx->setBtn_selectionByValue(true, false);
+
+    }
 
 }
 

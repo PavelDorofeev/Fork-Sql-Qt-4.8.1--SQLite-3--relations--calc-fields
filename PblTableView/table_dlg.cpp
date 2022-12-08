@@ -8,7 +8,8 @@
 Table_Dlg::Table_Dlg(const QString & tableName,
                      QWidget *parent,
                      bool editable,
-                     QList<CALC_COLUMN> &calcLst) :
+                     QList<CALC_COLUMN> &calcLst,
+                     QList<PblSqlRelation> &relLst) :
     QDialog(parent),
     ui(new Ui::Table_Dlg),
     chosenRec(QSqlRecord()),
@@ -23,10 +24,16 @@ Table_Dlg::Table_Dlg(const QString & tableName,
 
     mdl->setTable(tableName);
 
+
     foreach( CALC_COLUMN calc , calcLst)
         mdl->setCalcField(calc);
 
-    setWindowTitle(tableName);
+
+    foreach( PblSqlRelation rel , relLst)
+        mdl->setRelation(rel.col, rel);
+
+
+    setWindowTitle("table : "+tableName);
 
     if( ! mdl->select())
     {
@@ -35,10 +42,6 @@ Table_Dlg::Table_Dlg(const QString & tableName,
     }
 
     view = new PblTableView ( mdl , ui->for_table_lo , this , editable);
-    //view->setEditable(editable);
-
-    /*_CONNECT_(view->act_choseCurrentRecord, SIGNAL(triggered()),
-              this, SLOT(slot_selectCurrentRecord()));*/
 
     _CONNECT_(view, SIGNAL(sig_rowSelected(QModelIndex)),
               this, SLOT(slot_accepted(QModelIndex)));
@@ -75,7 +78,7 @@ void Table_Dlg::slot_accepted(QModelIndex index)
 
     QSqlIndex pk = mdl->primaryKey();
 
-    qDebug() << " pk " << pk;
+    //qDebug() << " pk " << pk;
 
     if(pk.count() != 1)
     {
@@ -85,10 +88,10 @@ void Table_Dlg::slot_accepted(QModelIndex index)
         return;
     }
 
-    qDebug() << "    pk.name() " << pk.name() << pk.cursorName() << pk.fieldName(0);
-    qDebug("    pk.value(0) %i" , pk.value(pk.fieldName(0)) );
+    //qDebug() << "    pk.name() " << pk.name() << pk.cursorName() << pk.fieldName(0);
+    //qDebug("    pk.value(0) %i" , pk.value(pk.fieldName(0)) );
 
-    qDebug() << " chosenRec " <<chosenRec;
+    //qDebug() << " chosenRec " <<chosenRec;
 
     chosenId = chosenRec.value(pk.fieldName(0)).toInt();
 

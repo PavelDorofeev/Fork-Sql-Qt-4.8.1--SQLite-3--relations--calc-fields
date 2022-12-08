@@ -32,7 +32,9 @@ SOURCES += main.cpp\
     table_dlg.cpp \
     pbltableview_purchases.cpp \
     search_settings_dlg.cpp \
-    btn_toolbox.cpp
+    btn_toolbox.cpp \
+    pblheaderview.cpp \
+    ../common/my_sql.cpp
 
 HEADERS  += dialog.h \
     pbltableview.h \
@@ -40,7 +42,9 @@ HEADERS  += dialog.h \
     table_dlg.h \
     search_settings_dlg.h \
     pbltableview_purchases.h \
-    btn_toolbox.h
+    btn_toolbox.h \
+    pblheaderview.h \
+    ../common/my_sql.h
 
 FORMS    += dialog.ui \
     table_dlg.ui \

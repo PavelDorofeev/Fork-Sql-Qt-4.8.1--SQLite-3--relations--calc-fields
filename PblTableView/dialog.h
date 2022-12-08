@@ -34,8 +34,6 @@ private slots:
 
     void on_btn_Close_clicked();
 
-    void on_btn_Grip_clicked();
-
     void on_btn_save_clicked();
 
     void on_btn_goods_clicked();
@@ -43,6 +41,7 @@ private slots:
     void on_btn_checks_clicked();
 
     void on_btn_logView_clicked();
+
 
 private:
     Ui::Dialog *ui;

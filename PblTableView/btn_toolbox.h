@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "search_settings_dlg.h"
 #include <QAbstractItemModel>
+#include <QIcon>
+
 
 
 namespace Ui {
@@ -30,11 +32,17 @@ public:
 
     void setEditable(bool on);
 
+    QIcon icon_selectedByField;
+    QIcon icon_textSearchedInTable;
+
+    void setBtn_searchInTable(bool visible , bool enabled);
+    void setBtn_selectionByValue(bool visible , bool enabled);
+
+
 signals:
 
 public slots:
     void slot_setEditable(bool on);
-    void setSelectionByValue(bool on);
 
 private slots:
 
@@ -46,16 +54,14 @@ private slots:
 
     void on_btn_submitAll_clicked();
 
+    void on_btn_selectByValue_clicked(bool checked);
 
-    void on_btn_selectByValue_clicked();
-
+    void on_btn_searchInTable_clicked(bool checked);
 
 private:
     Ui::Btn_ToolBox *ui;
 
     PblSqlRelationalTableModel * mdl;
-
-
 
 };
 

@@ -21,12 +21,15 @@ public:
     explicit Table_Dlg(const QString & tableName,
                        QWidget *parent = 0,
                        bool editable=false,
-                       QList<CALC_COLUMN> &calcLst = QList<CALC_COLUMN>());
+                       QList<CALC_COLUMN> &calcLst = QList<CALC_COLUMN>(),
+                       QList<PblSqlRelation> &relLst = QList<PblSqlRelation>());
     ~Table_Dlg();
     
     QSqlRecord chosenRec;
     int chosenRow;
     int chosenId;
+
+    PblSqlRelationalTableModel * mdl;
 
 public slots:
     //void slot_selectCurrentRecord();
@@ -36,7 +39,6 @@ private slots:
 
 private:
     Ui::Table_Dlg *ui;
-    PblSqlRelationalTableModel * mdl;
     PblTableView * view;
 };
 

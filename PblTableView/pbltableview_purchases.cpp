@@ -15,13 +15,12 @@ PblTableView_Purchases::PblTableView_Purchases(PblSqlRelationalTableModel * mdl,
 
 void PblTableView_Purchases::commitData(QWidget *editor)
 {
-
     QModelIndex index = currentIndex();
 
     if (!index.isValid())
         return;
 
-    qDebug() << "PblTableView::commitData editBuffer: " << mdl->getEditBuffer();
+    qDebug() << "PblTableView_Purchases::commitData editBuffer: " << mdl->getEditBuffer();
 
     // -------------------------------------------------------
 
@@ -32,11 +31,6 @@ void PblTableView_Purchases::commitData(QWidget *editor)
     int col = index.column();
 
     int row = index.row();
-
-    qDebug() << "slot_dataChanged record " << mdl->record(row);
-    qDebug() << "slot_dataChanged editBuffer " << mdl->getEditBuffer();
-
-
     if(col == mdl->fieldIndex("price")
             || col == mdl->fieldIndex("qty"))
     {
@@ -54,6 +48,5 @@ void PblTableView_Purchases::commitData(QWidget *editor)
 }
 void PblTableView_Purchases::slot_dataChanged(QModelIndex idx1,QModelIndex idx2)
 {
-    qDebug() << "slot_dataChanged";
-
+    //qDebug() << "slot_dataChanged";
 }

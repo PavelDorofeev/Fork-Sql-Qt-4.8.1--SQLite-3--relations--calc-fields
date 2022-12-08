@@ -60,6 +60,7 @@ public:
     QAction * act_selectByFieldValue;
     QAction * act_ClearField;
     QAction * act_choiseCurrentRecord;
+    QAction * act_textsearch;
 
     QMenu * contextMenu;
 
@@ -84,6 +85,8 @@ public:
     bool editable;
     PblSqlRelationalTableModel * mdl;
 
+    void repaint_selectionByValueBtns(bool on, int col=-1);
+
 protected:
 
 
@@ -98,16 +101,16 @@ public slots:
     bool slot_editRowBtnClick();
     bool slot_copyRowBtnClick();
     bool slot_removeRowBtnClick();
+
     bool slot_searchInTable(QString & filter);
 
+    void slot_setVisibleExRelIdColumns(bool);
 
-    void slot_setVisibleExColumns(bool);
+    bool slot_selectByFieldValue(QModelIndex idx);
 
 private slots:
     void slot_doubleClicked(QModelIndex );
-    void slot_pressed(QModelIndex );
-    bool slot_clickSelectByFieldValue();
-
+    void slot_clickSelectByFieldValue();
 private:
     SETTINGS formMode;
     QSqlIndex primaryIndex;

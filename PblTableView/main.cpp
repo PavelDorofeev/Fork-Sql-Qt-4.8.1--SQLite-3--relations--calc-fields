@@ -109,23 +109,23 @@ int main(int argc, char *argv[])
 
     QString st = "QTableView{\n"\
             "border: 2px solid #3873d9;\n"\
-            "padding: 35px;\n"\
+            "/*padding: 35px;*/\n"\
             "/*background-color: yellow;*/\n"\
-            "selection-background-color: green;\n"\
+            "/*selection-background-color: green;*/\n"\
             "}\n"\
             "QTableView::item{\n"\
-            "padding: 7px;\n"\
+            "/*padding: 7px;*/\n"\
             "}\n"\
             "QHeaderView{\n"\
-            "margin: 0px;/* влияет отображение строк снизу*/\n"\
-            "padding: 0px;/* влияет отображение строк снизу*/\n"\
+            "/*margin-right: 25px; влияет отображение строк снизу*/\n"\
+            "/*padding: 0px; влияет отображение строк снизу*/\n"\
             "}\n"\
             "QHeaderView::section{\n"\
-            "color: blue;\n"\
-            "background-color: #DDD;\n"\
-            "text-align:left;"\
-            "padding: 7px;\n"\
-            "border: this solid #EEE;\n"\
+            "/*color: blue;*/\n"\
+            "/*background-color: #DDD;*/\n"\
+            "/*text-align:left;*/"\
+            "/*margin-left: 15px;*/\n"\
+            "/*border: this solid #EEE;*/\n"\
             "}\n";
 
     app.setStyleSheet(st);
