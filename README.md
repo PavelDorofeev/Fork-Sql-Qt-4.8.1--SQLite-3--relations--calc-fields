@@ -21,12 +21,12 @@ setRelation;
 
 Next we added PblSqlRelation and PblSqlRecord classes for support new functionality of PblSqlRelationalTableModel class.
 
-Base idea: class PblSqlRelationalTableModel adds to resulting table new extended fields that are not existing in the database. 
-This is id field of relations, calculated fields by data of other table.
+Base idea: class PblSqlRelationalTableModel adds to resulting table new extended fields that are not existing by default in the select sql query from a database. 
+This is id field of relations, calculated fields (any data from other tables).
 
 Next we created PblTableView class inherited by QTableView.
 PblTableView adds tool buttons for easy operations as insert, edit, remove rows.
-PblTableView class  is used funtionality of PblSqlRelationalTableModel.
+PblTableView class is used funtionality of PblSqlRelationalTableModel.
 PblTableView can search some text by all columns , including relation fields.
 Also PblTableView class can select rows by certain field value.
 
@@ -38,5 +38,11 @@ PblSqlRelationalTableModel and PblTableView classes support all Qt edit strategi
 
 ![image](https://user-images.githubusercontent.com/13850002/205646576-f0c004a9-db6f-407a-b394-34aab209ea72.png)
 
-PblSqlRelationalTableModel + PblTableView are convinient template for create database table structure. 
+![2022-12-08_19-44-00](https://user-images.githubusercontent.com/13850002/206512485-8a64e237-a8d8-4f55-8650-1a4c5968e0e7.png)
+
+
+PblSqlRelationalTableModel + PblTableView are convinient template for create database table structure.
+
+For russian we have site https://kkmspb.ru/development/Qt/database-sql/Fork-Sql/
+
 
