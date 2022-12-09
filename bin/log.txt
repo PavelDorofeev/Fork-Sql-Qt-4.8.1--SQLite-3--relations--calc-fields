@@ -1,0 +1,75 @@
+19:22:52 Warning: QSqlDatabase::driverName()  "QSQLITE" 
+19:22:52 Warning: QSqlDatabase::databaseName()  "D:/DEVELOPMENT/MyGitHub/Fork-Sql-Qt-4.8.1--SQLite-3---relations--calc-fields/bin/test.db" 
+19:22:52 Warning: QSqlDatabase::isOpen()  true 
+19:22:52 890 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT purchases.id,
+relTblAl_1.productName AS productName_1_productName,
+purchases.price,
+purchases.qty,
+purchases.sum,
+purchases.foo,
+ relTblAl_1.id AS goods_1_id 
+FROM purchases 
+LEFT JOIN goods relTblAl_1 ON purchases.productName=relTblAl_1.id" 
+ 
+19:22:52 895 Debug: ctor QTableView (QWidget *) 
+19:22:52 903 Debug: isEnabled() false  isDown false  isChecked false 
+19:22:52 903 Debug: btn_searchInTable isEnabled() false  isDown false  isChecked false 
+19:22:52 903 Debug:  btn_selectByValue  isEnabled() false  isDown false  isChecked false 
+19:22:52 904 Debug: PblTableView headerData :  QVariant(, ) 
+19:22:52 904 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT purchases.id,
+relTblAl_1.productName AS productName_1_productName,
+purchases.price,
+purchases.qty,
+purchases.sum,
+purchases.foo,
+ relTblAl_1.id AS goods_1_id 
+FROM purchases 
+LEFT JOIN goods relTblAl_1 ON purchases.productName=relTblAl_1.id ORDER BY purchases."id" DESC" 
+ 
+19:22:52 904 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT purchases.id,
+relTblAl_1.productName AS productName_1_productName,
+purchases.price,
+purchases.qty,
+purchases.sum,
+purchases.foo,
+ relTblAl_1.id AS goods_1_id 
+FROM purchases 
+LEFT JOIN goods relTblAl_1 ON purchases.productName=relTblAl_1.id ORDER BY purchases."id" DESC" 
+ 
+19:22:52 905 Debug: Btn_ToolBox::slot_setEditable  true 
+19:22:55 771 Debug: mdl->columnCount()  7 
+19:22:55 771 Debug: setData lst  QVariant(QString, "test product 234") QVariant(qlonglong, 161) 
+19:22:55 847 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT purchases.id,
+relTblAl_1.productName AS productName_1_productName,
+purchases.price,
+purchases.qty,
+purchases.sum,
+purchases.foo,
+ relTblAl_1.id AS goods_1_id 
+FROM purchases 
+LEFT JOIN goods relTblAl_1 ON purchases.productName=relTblAl_1.id ORDER BY purchases."id" DESC" 
+ 
+19:22:58 
+---------------- Critical: --------------------
+Critical:  ! submitAll
+---------------- Critical: --------------------
