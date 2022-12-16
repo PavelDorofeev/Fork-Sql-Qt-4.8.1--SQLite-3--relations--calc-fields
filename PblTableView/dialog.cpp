@@ -28,7 +28,7 @@ Dialog::Dialog(QString langId, QSqlDatabase &db_, QWidget *parent) :
     ui->cmb_Language->setCurrentIndex(cmbLangIdx);
 
     QString title = windowTitle();
-    title += " 4.0.1.1";
+    title += " 4.0.2.1";
 
     setWindowTitle(title) ;
 

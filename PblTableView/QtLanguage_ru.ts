@@ -193,44 +193,44 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Сохранить данные</translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="59"/>
+        <location filename="dialog.cpp" line="60"/>
         <source>setRelation returns false</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="90"/>
+        <location filename="dialog.cpp" line="94"/>
         <source>you should fill the table &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="107"/>
+        <location filename="dialog.cpp" line="111"/>
         <source>inserting row in table &apos;%1&apos; returns false %2</source>
         <oldsource>inserting row in table %1 returns false </oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="121"/>
-        <location filename="dialog.cpp" line="143"/>
+        <location filename="dialog.cpp" line="125"/>
+        <location filename="dialog.cpp" line="147"/>
         <source>setData return false, table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="133"/>
+        <location filename="dialog.cpp" line="137"/>
         <source>productName field is not with relation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="150"/>
+        <location filename="dialog.cpp" line="154"/>
         <source>submit returns false, table </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="156"/>
+        <location filename="dialog.cpp" line="160"/>
         <source>removeRows returns false, table &apos;%1&apos; </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="181"/>
+        <location filename="dialog.cpp" line="185"/>
         <source>sold</source>
         <translation type="unfinished">продано</translation>
     </message>
@@ -367,20 +367,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="main.cpp" line="57"/>
-        <source>addDatabase returns false:
- error: %1</source>
-        <translation type="unfinished"></translation>
+        <location filename="main.cpp" line="67"/>
+        <source>Невозможно открыть файл с базой данных</source>
+        <translation></translation>
     </message>
     <message>
-        <location filename="main.cpp" line="69"/>
-        <source>database file is not opened:
- %1,
- error: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="main.cpp" line="171"/>
+        <location filename="main.cpp" line="169"/>
         <source>сбой при добавления строки в таблицу : </source>
         <translation type="unfinished"></translation>
     </message>
@@ -392,21 +384,21 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="my_sql.cpp" line="5"/>
         <source>warning</source>
-        <translation type="unfinished">замечание</translation>
+        <translation>замечание</translation>
     </message>
     <message>
         <location filename="my_sql.cpp" line="7"/>
         <source>submitAll returns false,
  table :  &apos;%1&apos;,
  error: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>функция submitAll вернула false, таблица &apos;%1&apos;, ошибка &apos;%2&apos;</translation>
     </message>
     <message>
         <location filename="my_sql.cpp" line="9"/>
         <source>submit returns false,
  table :  &apos;%1&apos;,
  error: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>функция submit вернула false, таблица &apos;%1&apos;, ошибка &apos;%2&apos;</translation>
     </message>
 </context>
 <context>

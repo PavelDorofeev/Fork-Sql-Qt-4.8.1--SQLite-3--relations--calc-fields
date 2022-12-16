@@ -632,10 +632,11 @@ QString PblSqlRelationalTableModel::selectStatement() const
 
             sAddFields.append(QString::fromLatin1(",\n %1.%2 AS %3_%4_%5").
                               arg(relTableAlias).
-                              arg(exCol.idField1).
+                              arg(exCol.idField2).
                               arg(exCol.table).
-                              arg( exCol.origCol ).
-                              arg(exCol.idField1));
+                              arg(exCol.idField2).
+                              arg(exCol.origCol)
+                              );
 
 
         }
