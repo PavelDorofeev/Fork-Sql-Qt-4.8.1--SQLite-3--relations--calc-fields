@@ -50,7 +50,7 @@ You can test it with our windows application (PblTableView.exe).
 
 Our wrapper support three languages en, ru, zh. You can add wanted languages.
 
-![image](https://user-images.githubusercontent.com/13850002/208103235-e752247a-e531-4d47-a54f-6eecfe9dba16.png)
+![image](https://user-images.githubusercontent.com/13850002/208140021-5a0527c1-2024-4acd-ac59-29ec62b8a369.png)
 
 ![image](https://user-images.githubusercontent.com/13850002/208103476-d2d0c17a-2cbb-48bf-bfeb-b6c1bea4bc32.png)
 
