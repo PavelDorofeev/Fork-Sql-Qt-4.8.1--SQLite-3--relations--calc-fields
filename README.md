@@ -1,11 +1,15 @@
-This is Beta version 3.0. 
-Fork Sql Qt 4.8.1 SQLite3 relations, calculated fields (2022г.)
-Free and opensource project.
+This is Beta version 4.0. 
+Fork QSqlTableModel and QTableView based on Qt 4.8.1
+
+There is test application, that is working with SQLite3.
+
+Main idea is realize wrapper above QSqlTableModel and QTableView, that have convenient relations fields, calculated fields and more ...!
+
+This is free and opensource project (GPL license).
 
 We are created PblSqlRelationalTableModel class inherited by QSqlTableModel.
 
-sql_pbl directory is building as part of Qt Soources 4.8.1 (with sql.pro). This is important because of inherited by private Qt classes.
-We are add new funtionality of Data Model - convinient extrenal relations, calculated field by other table and ...
+sql_pbl directory contains classes of data model.
 
 PblSqlRelationalTableModel overrides QSqlTableModel class functions:
 setTable;
@@ -18,19 +22,33 @@ orderByClause;
 
 We add functions like in the QSqlRelationalTableModel class for compatibility:
 setRelation;
+translateFieldNames;
+relationField;
 
-Next we added PblSqlRelation and PblSqlRecord classes for support new functionality of PblSqlRelationalTableModel class.
+In future we dont concern about how to get id relation value because of this forever present into extended hidden field.
 
 Base idea: class PblSqlRelationalTableModel adds to resulting table new extended fields that are not existing by default in the select sql query from a database. 
 This is id field of relations, calculated fields (any data from other tables).
 
-Next we created PblTableView class inherited by QTableView.
+PblSqlRelationalTableModel let us setting field alignments, precisions (for double value). 
+
+We added our own PblColumn class for convenient.
+
+Next we created PblTableView class inherited by QTableView (view model).
+
 PblTableView adds tool buttons for easy operations as insert, edit, remove rows.
+
 PblTableView class is used funtionality of PblSqlRelationalTableModel.
+
 PblTableView can search some text by all columns , including relation fields.
+
 Also PblTableView class can select rows by certain field value.
 
-PblSqlRelationalTableModel and PblTableView classes support all Qt edit strategies. You can test it with our windows application (PblTableView.exe).
+PblSqlRelationalTableModel and PblTableView classes support all three Qt edit strategies. 
+
+You can test it with our windows application (PblTableView.exe).
+
+Our wrapper support three languages en, ru, zh. You can add wanted languages.
 
 ![image](https://user-images.githubusercontent.com/13850002/205646872-74742583-bde1-483e-9575-3bbc4d9578da.png)
 
@@ -40,9 +58,7 @@ PblSqlRelationalTableModel and PblTableView classes support all Qt edit strategi
 
 ![2022-12-08_19-44-00](https://user-images.githubusercontent.com/13850002/206512485-8a64e237-a8d8-4f55-8650-1a4c5968e0e7.png)
 
-
-PblSqlRelationalTableModel + PblTableView are convinient template for create database table structure.
+PblSqlRelationalTableModel + PblTableView are convinient template (wrapper) for quick creating database table structure.
 
 For russian we have site https://kkmspb.ru/development/Qt/database-sql/Fork-Sql/
-
 
