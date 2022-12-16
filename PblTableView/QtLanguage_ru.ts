@@ -31,6 +31,7 @@ p, li { white-space: pre-wrap; }
         <location filename="btn_toolbox.ui" line="147"/>
         <location filename="btn_toolbox.ui" line="159"/>
         <location filename="btn_toolbox.ui" line="173"/>
+        <location filename="btn_toolbox.ui" line="200"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -91,42 +92,42 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">набираем символы и потом нажать [ENTER]</translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="194"/>
+        <location filename="btn_toolbox.ui" line="221"/>
         <source>select edit strategy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="198"/>
+        <location filename="btn_toolbox.ui" line="225"/>
         <source>OnFieldChange</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="203"/>
+        <location filename="btn_toolbox.ui" line="230"/>
         <source>OnRowChange</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="208"/>
+        <location filename="btn_toolbox.ui" line="235"/>
         <source>OnManulaSubmit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="216"/>
+        <location filename="btn_toolbox.ui" line="243"/>
         <source>submitAll</source>
         <translation type="unfinished">записать изменнения</translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="223"/>
+        <location filename="btn_toolbox.ui" line="250"/>
         <source>edit</source>
         <translation type="unfinished">редактирование</translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="230"/>
+        <location filename="btn_toolbox.ui" line="257"/>
         <source>show rel id columns</source>
         <translation type="unfinished">показать rel id колонки</translation>
     </message>
     <message>
-        <location filename="btn_toolbox.cpp" line="93"/>
+        <location filename="btn_toolbox.cpp" line="92"/>
         <source>submitAll wrong : </source>
         <translation type="unfinished">submitAll зав
 ешился неуспешно</translation>
@@ -140,12 +141,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="dialog.ui" line="37"/>
-        <source>ru_RU</source>
+        <source>ru</source>
+        <oldsource>ru_RU</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="dialog.ui" line="28"/>
-        <source>en_UK</source>
+        <source>en</source>
+        <oldsource>en_UK</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -155,7 +158,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="dialog.ui" line="46"/>
-        <source>ch</source>
+        <source>zh</source>
+        <oldsource>ch</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -174,51 +178,98 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">просмотр лога</translation>
     </message>
     <message>
-        <location filename="dialog.ui" line="123"/>
+        <location filename="dialog.ui" line="114"/>
+        <source>document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog.ui" line="165"/>
         <source>Close</source>
         <translation type="unfinished">Закрыть программу</translation>
     </message>
     <message>
-        <location filename="dialog.ui" line="146"/>
+        <location filename="dialog.ui" line="145"/>
         <source>SAVE</source>
         <translation type="unfinished">Сохранить данные</translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="38"/>
-        <source>error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="dialog.cpp" line="38"/>
+        <location filename="dialog.cpp" line="59"/>
         <source>setRelation returns false</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="81"/>
+        <location filename="dialog.cpp" line="90"/>
+        <source>you should fill the table &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog.cpp" line="107"/>
         <source>inserting row in table &apos;%1&apos; returns false %2</source>
         <oldsource>inserting row in table %1 returns false </oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="95"/>
-        <location filename="dialog.cpp" line="117"/>
+        <location filename="dialog.cpp" line="121"/>
+        <location filename="dialog.cpp" line="143"/>
         <source>setData return false, table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="107"/>
+        <location filename="dialog.cpp" line="133"/>
         <source>productName field is not with relation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="124"/>
-        <source>submit return false, table </source>
+        <location filename="dialog.cpp" line="150"/>
+        <source>submit returns false, table </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog.cpp" line="143"/>
+        <location filename="dialog.cpp" line="156"/>
+        <source>removeRows returns false, table &apos;%1&apos; </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog.cpp" line="181"/>
         <source>sold</source>
         <translation type="unfinished">продано</translation>
+    </message>
+</context>
+<context>
+    <name>PblSqlRelationalTableModel</name>
+    <message>
+        <location filename="../sql_pbl/pblsqlrelationaltablemodel.cpp" line="106"/>
+        <source>Before sets new edit strategy we call submitAll and it returns false</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sql_pbl/pblsqlrelationaltablemodel.cpp" line="294"/>
+        <source>PblSqlRelationalTableModel::setRelation This is a second trying setRelation for column number : %1 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sql_pbl/pblsqlrelationaltablemodel.cpp" line="414"/>
+        <source>database is not opened!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sql_pbl/pblsqlrelationaltablemodel.cpp" line="422"/>
+        <source>table &apos;%1&apos;! is not valid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sql_pbl/pblsqlrelationaltablemodel.cpp" line="803"/>
+        <source>PblSqlRelationalTableModel::selectStatement() field list is empty</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PblSqlRelationalTableModel_Purchases</name>
+    <message>
+        <location filename="pblsqlrelationaltablemodel_purchases.cpp" line="35"/>
+        <source>setData for sum field is wrong.
+%1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -253,84 +304,108 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">отбор по значению</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="158"/>
+        <location filename="pbltableview.cpp" line="233"/>
         <source>create row</source>
         <translation type="unfinished">создать строку</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="170"/>
+        <location filename="pbltableview.cpp" line="245"/>
         <source>copy row</source>
         <translation type="unfinished">копировать строку</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="180"/>
+        <location filename="pbltableview.cpp" line="255"/>
         <source>edit row</source>
         <translation type="unfinished">редактировать строку</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="190"/>
+        <location filename="pbltableview.cpp" line="265"/>
         <source>remove row</source>
         <translation type="unfinished">удалить строку</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="200"/>
+        <location filename="pbltableview.cpp" line="275"/>
         <source>search</source>
         <translation type="unfinished">поиск</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="210"/>
+        <location filename="pbltableview.cpp" line="285"/>
         <source>choise row</source>
         <translation type="unfinished">выбрать строку</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="220"/>
+        <location filename="pbltableview.cpp" line="295"/>
         <source>clear field</source>
         <translation type="unfinished">очистить поле</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="228"/>
+        <location filename="pbltableview.cpp" line="304"/>
         <source>select by field value</source>
         <translation type="unfinished">отбор по значению поля</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="567"/>
-        <source>warning</source>
-        <translation type="unfinished">замечание</translation>
-    </message>
-    <message>
-        <location filename="pbltableview.cpp" line="567"/>
-        <source>такого не должно быть
- копирование строки
-submit при OnRowChange должен быть true</source>
+        <location filename="pbltableview.cpp" line="529"/>
+        <source>You are already inserted a row, that should editing and saved</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="645"/>
-        <location filename="pbltableview.cpp" line="655"/>
+        <source>warning</source>
+        <translation type="obsolete">замечание</translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="755"/>
+        <location filename="pbltableview.cpp" line="765"/>
         <source>the choise is not defined</source>
         <translation type="unfinished">выбор завершился не успешно</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="661"/>
+        <location filename="pbltableview.cpp" line="771"/>
         <source>setData returned  false</source>
         <translation type="unfinished">функция setData завершилась не удачно</translation>
-    </message>
-    <message>
-        <location filename="pbltableview.cpp" line="885"/>
-        <source> setHeaderData Qt::DecorationRole </source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="main.cpp" line="63"/>
-        <source>Невозможно открыть файл с базой данных</source>
+        <location filename="main.cpp" line="57"/>
+        <source>addDatabase returns false:
+ error: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="main.cpp" line="165"/>
+        <location filename="main.cpp" line="69"/>
+        <source>database file is not opened:
+ %1,
+ error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="171"/>
         <source>сбой при добавления строки в таблицу : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="my_sql.cpp" line="4"/>
+        <source>error</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="my_sql.cpp" line="5"/>
+        <source>warning</source>
+        <translation type="unfinished">замечание</translation>
+    </message>
+    <message>
+        <location filename="my_sql.cpp" line="7"/>
+        <source>submitAll returns false,
+ table :  &apos;%1&apos;,
+ error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="my_sql.cpp" line="9"/>
+        <source>submit returns false,
+ table :  &apos;%1&apos;,
+ error: %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -365,13 +440,13 @@ submit при OnRowChange должен быть true</source>
         <translation type="unfinished">Тестовая утилита</translation>
     </message>
     <message>
-        <location filename="table_dlg.cpp" line="40"/>
+        <location filename="table_dlg.cpp" line="72"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="table_dlg.cpp" line="40"/>
-        <source>false setTable </source>
+        <location filename="table_dlg.cpp" line="72"/>
+        <source>set_Table &apos;%1&apos; return false</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

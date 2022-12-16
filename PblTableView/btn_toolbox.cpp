@@ -1,19 +1,18 @@
 #include "btn_toolbox.h"
 #include "ui_btn_toolbox.h"
 #include "pbltableview.h"
-#include "PblSqlRelationalTableModel.h"
+#include "pblsqlrelationaltablemodel.h"
 #include "some_tests.h"
 #include <QMessageBox>
 #include "QSqlError"
+#include <QDebug>
+#include "PblTableView/my_sql.h"
 
 
 Btn_ToolBox::Btn_ToolBox(PblTableView *view_,
                          PblSqlRelationalTableModel *mdl_) :
     QWidget((QWidget*)view_),
-    ui(new Ui::Btn_ToolBox),
-    icon_selectedByField (QIcon(":icon/img/btn-db/select-by-value-2-100x100.png")),
-    icon_textSearchedInTable(QIcon(":icon/img/btn-db/text-find-100x100.png"))
-
+    ui(new Ui::Btn_ToolBox)
 {
     ui->setupUi(this);
 
@@ -46,13 +45,13 @@ Btn_ToolBox::Btn_ToolBox(PblTableView *view_,
 
     ui->cmb_Strategy->setCurrentIndex(mdl->editStrategy());
 
-    qDebug() << "isEnabled()" << ui->btn_searchInTable->isEnabled() << " isDown" << ui->btn_searchInTable->isDown() << " isChecked" << ui->btn_searchInTable->isChecked();
+    //qDebug() << "isEnabled()" << ui->btn_searchInTable->isEnabled() << " isDown" << ui->btn_searchInTable->isDown() << " isChecked" << ui->btn_searchInTable->isChecked();
     //mdl->setSort(1);
 
     ui->chk_exColumnsVisible->setChecked(false);
 
     setBtn_searchInTable(true, false);
-    setBtn_selectionByValue(true, false);
+    setBtn_selectionByValue(true, true);
 
 }
 
@@ -71,7 +70,7 @@ void Btn_ToolBox::on_cmb_Strategy_currentIndexChanged(int index)
     if(index == QSqlTableModel::OnFieldChange)
     {
         ui->btn_submitAll->setText("submit");
-        ui->btn_submitAll->setEnabled(false);
+        ui->btn_submitAll->setEnabled(true);
     }
     else if(index == QSqlTableModel::OnRowChange)
     {
@@ -90,7 +89,7 @@ void Btn_ToolBox::on_btn_submitAll_clicked()
 {
     if( ! mdl->submitAll())
     {
-        QMessageBox::warning(this, "error" , tr("submitAll wrong : ")+mdl->lastError().text());
+        QMessageBox::warning(this, mySql::error , tr("submitAll wrong : ")+mdl->lastError().text());
         qCritical(" ! submitAll");
     }
 }
@@ -106,6 +105,8 @@ void Btn_ToolBox::setVisible_searchBox(bool visible)
     ui->btn_find->setVisible(visible);
     ui->ledt_filter->setVisible(visible);
 }
+
+
 
 void Btn_ToolBox::setEnabled_actionBtns(bool enabled)
 {
@@ -126,7 +127,7 @@ void Btn_ToolBox::setEditable(bool on)
 
 void Btn_ToolBox::slot_setEditable(bool on)
 {
-    qDebug() << "Btn_ToolBox::slot_setEditable " << on;
+    //qDebug() << "Btn_ToolBox::slot_setEditable " << on;
 
     view->editable = on;
 
@@ -192,13 +193,7 @@ void Btn_ToolBox::on_btn_searchInTable_clicked(bool checked)
 
 void Btn_ToolBox::on_btn_selectByValue_clicked(bool checked)
 {
-    if(! checked)
-    {
-        mdl->setFilter("");
-
-        if ( mdl->select())
-            view->repaint_selectionByValueBtns(false);
-    }
+    view->slot_triggeredSelectByFieldValue(checked);
 
 }
 
@@ -207,7 +202,6 @@ void Btn_ToolBox::setBtn_searchInTable(bool visible , bool enabled)
     ui->btn_searchInTable->setVisible(visible);
     ui->btn_searchInTable->setEnabled(enabled);
 
-    qDebug() << "btn_searchInTable isEnabled()" << ui->btn_searchInTable->isEnabled() << " isDown" << ui->btn_searchInTable->isDown() << " isChecked" << ui->btn_searchInTable->isChecked();
 }
 
 void Btn_ToolBox::setBtn_selectionByValue(bool visible , bool enabled)
@@ -215,5 +209,18 @@ void Btn_ToolBox::setBtn_selectionByValue(bool visible , bool enabled)
     ui->btn_selectByValue->setVisible(visible);
     ui->btn_selectByValue->setEnabled(enabled);
 
-    qDebug() << " btn_selectByValue  isEnabled()" << ui->btn_selectByValue->isEnabled() << " isDown" << ui->btn_selectByValue->isDown() << " isChecked" << ui->btn_selectByValue->isChecked();
 }
+
+void Btn_ToolBox::setBtn_selectByValue(bool visible, bool checked)
+{
+    ui->btn_selectByValue->setVisible(visible);
+    ui->btn_selectByValue->setChecked(checked);
+}
+
+void Btn_ToolBox::on_btn_sortEnabled_clicked(bool checked)
+{
+
+    view->setSortingEnabled(checked);
+
+}
+

@@ -37,7 +37,7 @@ public:
 
     void setBtn_searchInTable(bool visible , bool enabled);
     void setBtn_selectionByValue(bool visible , bool enabled);
-
+    void setBtn_selectByValue(bool visible , bool enabled);
 
 signals:
 
@@ -57,6 +57,9 @@ private slots:
     void on_btn_selectByValue_clicked(bool checked);
 
     void on_btn_searchInTable_clicked(bool checked);
+
+    void on_btn_sortEnabled_clicked(bool checked);
+
 
 private:
     Ui::Btn_ToolBox *ui;

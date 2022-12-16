@@ -13,10 +13,12 @@ HEADERS += \
     PblTableView/search_settings_dlg.h \
     PblTableView/btn_toolbox.h \
     PblTableView/pbltableview.h \
+    PblTableView/pblapplication.h \
     PblTableView/table_dlg.h
 
 SOURCES += \
     PblTableView/btn_toolbox.cpp \
     PblTableView/search_settings_dlg.cpp \
     PblTableView/pbltableview.cpp \
+    PblTableView/pblapplication.cpp \
     PblTableView/table_dlg.cpp

@@ -12,12 +12,15 @@
 #include <QObject>
 
 #include "logging_system/logging_system.h"
+#include "pblapplication.h"
+#include <QIcon>
+#include "PblTableView/my_sql.h"
 
 bool firstInsertInto(const QString &tbl , const QString &nameCol , const QString &nameVal);
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    PblApplication app(argc, argv);
 
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
@@ -51,15 +54,19 @@ int main(int argc, char *argv[])
 
     if(sqlite.lastError().type() != QSqlError::NoError)
     {
+        QMessageBox::critical( 0 , mySql::error,  QObject::tr("addDatabase returns false:\n error: %1").arg(sqlite.lastError().text()));
         return 0;
     }
 
     sqlite.setDatabaseName(QDir::currentPath()+"/test.db");
+
+    qDebug() << QDir::currentPath()+"/test.db";
+
     //sqlite.setDatabaseName(":memory:");
 
     if (! sqlite.open())
     {
-        qCritical() << "Невозможно открыть файл с базой данных";
+        QMessageBox::critical( 0 , mySql::error,  QObject::tr("database file is not opened:\n %1,\n error: %2").arg(sqlite.databaseName().arg(sqlite.lastError().text())));
 
         return 0;
     }
@@ -68,45 +75,6 @@ int main(int argc, char *argv[])
     qWarning()  << "QSqlDatabase::databaseName() "<< sqlite.databaseName();
     qWarning()  << "QSqlDatabase::isOpen() "<< sqlite.isOpen();
 
-    /*QSqlQuery query;
-
-    QString tableName="goods";
-
-    QString sCreateTable = "CREATE TABLE "+tableName+" (id integer primary key autoincrement,productName varchar(100),price double default 0)";
-
-    if( ! query.exec(sCreateTable))
-    {
-        qCritical() << "Не удается создать таблицу базы данных : "<< sCreateTable << query.lastError().text();
-
-        return 0;
-    }
-    else
-        qWarning() << "succefully created table " ;
-
-
-    firstInsertInto(tableName , "productName,price" , "1, 123.45");
-    firstInsertInto(tableName , "productName,price" , "2, 234.56");
-    firstInsertInto(tableName , "productName,price" , "3, 345.67");
-
-    tableName ="purchases";
-
-    sCreateTable="CREATE TABLE "+tableName+" "\
-            "(id integer primary key autoincrement,productName_id int default 0,price double default 0,qty double default 1,sum double default 0)";
-
-    if( ! query.exec(sCreateTable))
-    {
-        qCritical() << "Не удается создать таблицу базы данных : "<< sCreateTable << query.lastError().text();
-
-        return 0;
-    }
-    else
-        qWarning() << "succefully created table " ;
-
-    firstInsertInto(tableName , "productName_id,price,qty,sum" , "1, 123.45, 1, 123.45");
-    firstInsertInto(tableName , "productName_id,price,qty,sum" , "2, 123.45, 1, 123.45");
-    firstInsertInto(tableName , "productName_id,price,qty,sum" , "3, 123.45, 1, 123.45");
-*/
-
     QString st = "QTableView{\n"\
             "border: 2px solid #3873d9;\n"\
             "/*padding: 35px;*/\n"\
@@ -114,7 +82,7 @@ int main(int argc, char *argv[])
             "/*selection-background-color: green;*/\n"\
             "}\n"\
             "QTableView::item{\n"\
-            "/*padding: 7px;*/\n"\
+            "margin: 7px;\n"\
             "}\n"\
             "QHeaderView{\n"\
             "/*margin-right: 25px; влияет отображение строк снизу*/\n"\
@@ -128,17 +96,29 @@ int main(int argc, char *argv[])
             "/*border: this solid #EEE;*/\n"\
             "}\n";
 
-    app.setStyleSheet(st);
+//    app.setStyleSheet(st);
 
-    Dialog *w = new Dialog();
+    app.slot_change_language("en_GB");
 
-    QObject::connect(w, SIGNAL(sig_openLoggingOnToOnNotepad()),
-              logSystem, SLOT(slot_openLoggingOnToOnNotepad()));
+    int res = 1;
 
+    while( res == 1 )
+    {
+        Dialog *w = new Dialog(app.langId , sqlite);
 
-    w->show();
-    
-    return app.exec();
+        QObject::connect(w, SIGNAL(sig_openLoggingOnToOnNotepad()),
+                         logSystem, SLOT(slot_openLoggingOnToOnNotepad()));
+
+        QObject::connect(w, SIGNAL(sig_changeLanguage(QString)),
+                         (PblApplication*)(&app), SLOT(slot_change_language(QString)));
+
+        res = w->exec();
+
+        delete w;
+    }
+
+    return 0;
+
 }
 
 bool firstInsertInto(const QString &tbl , const QString &nameCol , const QString &nameVal)
@@ -149,7 +129,7 @@ bool firstInsertInto(const QString &tbl , const QString &nameCol , const QString
 
     if( ! query.exec(str))
     {
-        qCritical() << "сбой добавления строки в таблицу : " +str;
+        QMessageBox::critical(0, mySql::error, str + "\n"+ query.lastError().text());
 
         return false;
     }
@@ -158,3 +138,42 @@ bool firstInsertInto(const QString &tbl , const QString &nameCol , const QString
 
     return true;
 }
+
+/*QSqlQuery query;
+
+QString tableName="goods";
+
+QString sCreateTable = "CREATE TABLE "+tableName+" (id integer primary key autoincrement,productName varchar(100),price double default 0)";
+
+if( ! query.exec(sCreateTable))
+{
+    qCritical() << "Не удается создать таблицу базы данных : "<< sCreateTable << query.lastError().text();
+
+    return 0;
+}
+else
+    qWarning() << "succefully created table " ;
+
+
+firstInsertInto(tableName , "productName,price" , "1, 123.45");
+firstInsertInto(tableName , "productName,price" , "2, 234.56");
+firstInsertInto(tableName , "productName,price" , "3, 345.67");
+
+tableName ="purchases";
+
+sCreateTable="CREATE TABLE "+tableName+" "\
+        "(id integer primary key autoincrement,productName_id int default 0,price double default 0,qty double default 1,sum double default 0)";
+
+if( ! query.exec(sCreateTable))
+{
+    qCritical() << "Не удается создать таблицу базы данных : "<< sCreateTable << query.lastError().text();
+
+    return 0;
+}
+else
+    qWarning() << "succefully created table " ;
+
+firstInsertInto(tableName , "productName_id,price,qty,sum" , "1, 123.45, 1, 123.45");
+firstInsertInto(tableName , "productName_id,price,qty,sum" , "2, 123.45, 1, 123.45");
+firstInsertInto(tableName , "productName_id,price,qty,sum" , "3, 123.45, 1, 123.45");
+*/

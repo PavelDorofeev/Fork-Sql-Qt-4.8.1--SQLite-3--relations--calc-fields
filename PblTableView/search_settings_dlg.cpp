@@ -1,8 +1,9 @@
 #include "search_settings_dlg.h"
 #include "ui_search_settings_dlg.h"
-#include "PblSqlRelationalTableModel.h"
+#include "pblsqlrelationaltablemodel.h"
 #include "pbltableview.h"
 #include <QDebug>
+#include <QSqlField>
 
 
 Search_Settings_Dlg::Search_Settings_Dlg(PblSqlRelationalTableModel * mdl_,
@@ -56,8 +57,6 @@ void Search_Settings_Dlg::cmb_Fields_currentIndexChanged(int row)
     QAbstractItemModel *mdl = ui->cmb_Fields->model();
 
     find_settings.searchedField = mdl->data(mdl->index(row,0),Qt::UserRole).toInt();
-
-    qDebug() << " searchedField " <<  find_settings.searchedField;
 
 }
 void Search_Settings_Dlg::setSettings(FIND_SETTINGS find_settings_)

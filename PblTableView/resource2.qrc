@@ -10,6 +10,11 @@
 		<file>img/btn-db/clear-field-100x100.png</file>
 		<file>img/btn-db/text-find-100x100.png</file>
 		<file>img/btn-db/text-find-100x100-disabled.png</file>
+		<file>img/btn-db/sort-100x100.png</file>
+		<file>img/btn-db/sort-100x100-disabled.png</file>
+		<file>img/countries/russian-100x100.png</file>
+		<file>img/countries/english-100x100.png</file>
+		<file>img/countries/china-100x100.png</file>
 		<file>img/mkt_50x50.png</file>
     </qresource>
 </RCC>

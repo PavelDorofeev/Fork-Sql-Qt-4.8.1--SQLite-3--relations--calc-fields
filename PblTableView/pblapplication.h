@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QTranslator>
+#include <QIcon>
 
 class PblApplication : public QApplication
 {
