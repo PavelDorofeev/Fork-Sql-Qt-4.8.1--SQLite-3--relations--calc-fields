@@ -52,9 +52,7 @@ Our wrapper support three languages en, ru, zh. You can add wanted languages.
 
 ![image](https://user-images.githubusercontent.com/13850002/208140021-5a0527c1-2024-4acd-ac59-29ec62b8a369.png)
 
-![image](https://user-images.githubusercontent.com/13850002/208103476-d2d0c17a-2cbb-48bf-bfeb-b6c1bea4bc32.png)
-
-![image](https://user-images.githubusercontent.com/13850002/205646576-f0c004a9-db6f-407a-b394-34aab209ea72.png)
+![image](https://user-images.githubusercontent.com/13850002/208140613-5d76a0e8-590a-40e0-ac5c-f9262b415030.png)
 
 PblSqlRelationalTableModel + PblTableView are convinient template (wrapper) for quick creating database table structure.
 
