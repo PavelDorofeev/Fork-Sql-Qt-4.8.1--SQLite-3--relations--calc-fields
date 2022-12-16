@@ -756,7 +756,7 @@ void PblTableView::slot_doubleClicked(QModelIndex index)
             return;
         }
 
-        QVariant txtVal = dlg.chosenRec.value(inf.exTextFieldName);
+        QVariant txtVal = dlg.chosenRec.value(inf.destField);
 
         lst << txtVal << dlg.chosenId;
 
@@ -819,7 +819,7 @@ bool PblTableView::slot_searchInTable(QString & txt)
 
         if(find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT)
         {
-            QString str = mdl->getRelationInfoForColumn(find_settings.searchedField).exTextFieldName;
+            QString str = mdl->getRelationInfoForColumn(find_settings.searchedField).destField;
 
             filter.append(QString::fromLatin1(" relTblAl_%1.%2 ").
                           arg(col).

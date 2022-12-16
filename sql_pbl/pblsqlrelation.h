@@ -40,37 +40,31 @@ public:
 public:
     PblSqlRelation() {}
 
-    explicit PblSqlRelation(const int col,
-                   const QString &sTableFrom,
-                   const QString &sIndexFieldFrom,
-                   const QString &sDisplayFieldFrom,
+    explicit PblSqlRelation(
+                   const int col,
+                   const QString &idField1,
+                   const QString &table,
+                   const QString &idField2,
+                   const QString &destField,
                    JoinMode join_mode = PblSqlRelation::LeftJoin);
 
     int col;
 
-    inline QString tableFrom() const
-    {
-        return sTableFrom;
-    }
+    JoinMode joinMode;
 
-    inline QString indexFieldFrom() const
-    {
-        return sIndexFieldFrom;
-    }
+    QString idField1;
 
-    inline QString displayFieldFrom() const
-    {
-        return sDisplayFieldFrom;
-    }
+    QString table;
 
-    inline bool isValid() const
-    {
-        return !(sTableFrom.isEmpty() || sIndexFieldFrom.isEmpty() || sDisplayFieldFrom.isEmpty());
-    }
+    QString idField2;
+
+    QString destField;
 
 private:
-    JoinMode joinMode;
-    QString sTableFrom, sIndexFieldFrom, sDisplayFieldFrom;
+
+
+
+
 
 };
 #endif // PBLSQLRELATION_H

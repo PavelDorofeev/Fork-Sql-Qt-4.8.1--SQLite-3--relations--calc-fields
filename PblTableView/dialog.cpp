@@ -28,7 +28,7 @@ Dialog::Dialog(QString langId, QSqlDatabase &db_, QWidget *parent) :
     ui->cmb_Language->setCurrentIndex(cmbLangIdx);
 
     QString title = windowTitle();
-    title += " 4.0.0.1";
+    title += " 4.0.1.1";
 
     setWindowTitle(title) ;
 
@@ -55,7 +55,7 @@ Dialog::Dialog(QString langId, QSqlDatabase &db_, QWidget *parent) :
     mdl->setAlignment(5, Qt::AlignCenter|Qt::AlignVCenter);
 
 
-    if( ! mdl->setRelation( 1 , PblSqlRelation(1, "goods" , "id" , "productName")))
+    if( ! mdl->setRelation( PblSqlRelation(1, "productName", "goods" , "id" , "productName")))
         QMessageBox::critical(this , mySql::error, tr("setRelation returns false"));
 
     //if()
@@ -174,8 +174,9 @@ void Dialog::on_btn_goods_clicked()
 
     CALC_COLUMN calc;
 
+    calc.idField1        = "id";
     calc.table          = "checks";
-    calc.idField        = "id";
+    calc.idField2        = "productName";
     calc.summaryField   = "sum";
     calc.calcFunc       = "sum";
     calc.calcFuncName_As = tr("sold");
@@ -207,7 +208,7 @@ void Dialog::on_btn_checks_clicked()
     QList<CALC_COLUMN> calcLst;
     QList<PblSqlRelation> relLst;
 
-    relLst << PblSqlRelation(1, "goods" , "id" , "productName");
+    relLst << PblSqlRelation(1, "productName",  "goods" , "id" , "productName");
 
     Table_Dlg dlg("checks" , db, this, false, calcLst ,relLst);
 

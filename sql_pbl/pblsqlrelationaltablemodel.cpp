@@ -140,20 +140,6 @@ const QSqlRecord & PblSqlRelationalTableModel::baseRecord()
 }
 
 
-bool PblSqlRelationalTableModel::setDoubleFormat(int exCol,
-                                                 const char &format,
-                                                 const int &precision)
-{
-    if(exCol >=0 && exCol < ex_columns.count())
-    {
-
-        ex_columns.value(exCol).setFormat(format , precision);
-        return true;
-    }
-    return false;
-
-}
-
 bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
                                                          const QVariant &value,
                                                          int role)
@@ -165,7 +151,7 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
     if(role != Qt::EditRole)
         return QSqlTableModel::setData(idx, value, role);
 
-    if(value.type() != QVariant::List) // значит txt + id
+    if(value.type() != QVariant::List) //  txt + id
     {
         qCritical("setData для поля relation д/б тип QList");
         return false;
@@ -175,7 +161,7 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
     int row = idx.row();
 
     // --------------------------------------------------------------
-    //  ОБЯЗАТЕЛЬНО тип должен быть QList (пара значений текст и id)
+    //  In is nesasary QBVaiant type is List
     // --------------------------------------------------------------
 
     QList<QVariant> lst = value.toList();
@@ -206,7 +192,6 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
     }
     case OnRowChange:
     {
-        // устанавливается расширенное поле
 
         if ( ! QSqlTableModel::setData( idxEx, id , role ))
         {
@@ -214,11 +199,6 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
             return false;
         }
 
-        /*if ( ! d->clearGeneratedFrom_editBuffer(exCol))
-        {
-            qCritical("error clearGeneratedFromEditBuffer расширенное поле %i" ,exCol);
-            return false;
-        }*/
 
         if ( ! QSqlTableModel::setData( idx, txt, role )) // text
         {
@@ -237,11 +217,6 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
             return false;
         }
 
-        /*if ( ! d->clearGeneratedFrom_cache(row , exCol)) // обязательно снимаем флаг genereated
-        {
-            qCritical("error clearGeneratedFromCache расширенное поле %i" ,exCol);
-            return false;
-        }*/
 
         if ( ! QSqlTableModel::setData(idx, txt, role)) // txt
         {
@@ -274,7 +249,7 @@ bool PblSqlRelationalTableModel::setData(const QModelIndex &idx,
     int row = idx.row();
 
 
-    if(relations.contains(col))  // внешняя связь
+    if(relations.contains(col))
     {
         return setDataForRelationField(idx , value, role);
     }
@@ -283,47 +258,32 @@ bool PblSqlRelationalTableModel::setData(const QModelIndex &idx,
 }
 
 
-bool PblSqlRelationalTableModel::setRelation(int col,
-                                             const PblSqlRelation &relation)
+bool PblSqlRelationalTableModel::setRelation(const PblSqlRelation &relation)
 {
-    if (col < 0)
+    if (relation.col < 0)
         return false;
 
-    if(relations.contains(col))
+    if(relations.contains(relation.col))
     {
-        qCritical() << tr("PblSqlRelationalTableModel::setRelation This is a second trying setRelation for column number : %1 ").arg(col);
+        qCritical() << tr("PblSqlRelationalTableModel::setRelation This is a second trying setRelation for column number : %1 ").arg(relation.col);
         return false;
     }
 
     int newRelIdCol = baseRec.count() + ex_columns.count();
 
-    //qDebug() << relation.tableFrom() << relation.indexFieldFrom() <<relation.displayFieldFrom();
 
-    PblColumn exCol = PblColumn(PblColumn::COLUMN_TYPE_RELATION_ID,
-                                relation.tableFrom(),
-                                relation.indexFieldFrom(),
-                                relation.displayFieldFrom(),
-                                QString(),
-                                col,
-                                newRelIdCol,
-                                QString()
-                                );
+    PblColumn exCol = PblColumn(relation,
+                                newRelIdCol);
     ex_columns.append(exCol);
 
     int ex_cols = ex_columns.count();
 
-    relations.insert(col ,newRelIdCol);
+    relations.insert(relation.col ,newRelIdCol);
 
     return true;
 }
 
 bool PblSqlRelationalTableModel::setCalcField(CALC_COLUMN & calc)
-/* const QString &tableFrom,
-                                              const QString foreignKeyField,
-                                              const QString &fieldFrom,
-                                              const QString &funcName,
-                                              const QString fieldNameTo
-                                              )*/
 {
     if(tableName().isNull() || tableName().isEmpty())
     {
@@ -334,7 +294,10 @@ bool PblSqlRelationalTableModel::setCalcField(CALC_COLUMN & calc)
     if(calc.table.isEmpty() || calc.table.isNull())
         return false;
 
-    if(calc.summaryField.isEmpty() || calc.summaryField.isNull())
+    if(calc.idField1.isEmpty() || calc.idField1.isNull())
+        return false;
+
+    if(calc.idField2.isEmpty() || calc.idField2.isNull())
         return false;
 
     if(calc.calcFunc.isEmpty() || calc.calcFunc.isNull())
@@ -342,15 +305,8 @@ bool PblSqlRelationalTableModel::setCalcField(CALC_COLUMN & calc)
 
     int count = ex_columns.count();
 
-    ex_columns.append(PblColumn(
-                          PblColumn::COLUMN_TYPE_CALCULATION,
-                          calc.table,
-                          calc.idField,
-                          calc.summaryField,
-                          calc.calcFunc,
-                          -1,
-                          count,
-                          calc.calcFuncName_As));
+    ex_columns.append(PblColumn(calc,
+                                count));
 
 
     return true;
@@ -482,9 +438,9 @@ bool PblSqlRelationalTableModel::updateRowInTable(int row, const QSqlRecord &val
 {
 
     // ----------------------------------------------------------------------
-    // тут relations оригинальные поля представлены как текстовые
-    // их надо ОБЯЗАТЕЛЬНО заменить на id из ex колонок
-    // SQLITE КСТАТИ ПРЕКРАСНО ЗАПИШЕТ и ТЕКСТ В ПОЛЕ INT
+    // We changed field names to original as in table were
+    // text filed values of relation field need to replaces with id values
+    // By the way SQLITE succesful writing a text  into int field
     // ----------------------------------------------------------------------
 
     QSqlRecord rec = values;
@@ -531,7 +487,7 @@ QString PblSqlRelationalTableModel::orderByClause() const
 
             s.append(relationField(
                          QLatin1String("relTblAl_") + QString::number(sortColumn),
-                         exCol.exTextFieldName));
+                         exCol.destField));
 
             s += sortOrder == Qt::AscendingOrder ? QLatin1String(" ASC") : QLatin1String(" DESC");
 
@@ -570,7 +526,7 @@ QString PblSqlRelationalTableModel::orderByClause() const
 
                 s.append( QString::fromLatin1("relTblAl_%1.").arg(exColData.origCol));
 
-                s.append( exColData.exIndexFieldName);
+                s.append( exColData.idField1);
 
                 s += sortOrder == Qt::AscendingOrder ? QLatin1String(" ASC") : QLatin1String(" DESC");
 
@@ -626,21 +582,15 @@ QString PblSqlRelationalTableModel::selectStatement() const
 
                 if (exCol.type == PblColumn::COLUMN_TYPE_RELATION_ID)
                 {
-                    //name = exCol.exTextFieldName;
-
-                    /*if (d->db.driver()->isIdentifierEscaped(name, QSqlDriver::FieldName))
-                                    {
-                                        name = d->db.driver()->stripDelimiters(name, QSqlDriver::FieldName);
-                                    }*/
                     PblColumn exCol = ex_columns.value(exNumCol - baseCount);
 
                     QString relTableAlias = QString::fromLatin1("relTblAl_%1").arg(col);
 
-                    name = QString(relationField(relTableAlias , exCol.exTextFieldName))
-                            .append(QString::fromLatin1(" AS %1_%2_%3").
-                                    arg(baseRec.fieldName(col)).
-                                    arg(col).
-                                    arg(exCol.exTextFieldName));
+                    name = QString(relationField(relTableAlias , exCol.destField)).
+                            append(QString::fromLatin1(" AS %1_%2_%3").
+                                   arg(exCol.idField1).
+                                   arg(col).
+                                   arg(exCol.destField));
 
                 }
             }
@@ -682,29 +632,29 @@ QString PblSqlRelationalTableModel::selectStatement() const
 
             sAddFields.append(QString::fromLatin1(",\n %1.%2 AS %3_%4_%5").
                               arg(relTableAlias).
-                              arg(exCol.exIndexFieldName).
-                              arg(exCol.exTableName).
+                              arg(exCol.idField1).
+                              arg(exCol.table).
                               arg( exCol.origCol ).
-                              arg(exCol.exIndexFieldName));
+                              arg(exCol.idField1));
 
 
         }
         else if(exCol.type == PblColumn::COLUMN_TYPE_CALCULATION)
         {
-            QStringList lst = exCol.exTextFieldName.split(QLatin1String(","));
+            QStringList lst = exCol.destField.split(QLatin1String(","));
 
             QString fields;
 
             sExtFieldNameAdds.
                     append(QLatin1String(", \n")).
-                    append(exCol.exFuncName).
+                    append(exCol.funcName).
                     append(QLatin1String("("));
 
             for(int ii=0; ii < lst.count(); ii++) // this is a sum by some fields
             {
 
                 sExtFieldNameAdds.
-                        append(exCol.exTableName).
+                        append(exCol.table).
                         append(QLatin1String(".")).
                         append(lst.at(ii));
 
@@ -722,7 +672,7 @@ QString PblSqlRelationalTableModel::selectStatement() const
             sExtFieldNameAdds.append(QLatin1String(") as "));
 
             if(exCol.renamedField_As.isNull())
-                sExtFieldNameAdds.append(exCol.exTableName).append(QLatin1String("_")).append(fields);
+                sExtFieldNameAdds.append(exCol.table).append(QLatin1String("_")).append(fields);
             else
                 sExtFieldNameAdds.append(exCol.renamedField_As);
 
@@ -744,52 +694,48 @@ QString PblSqlRelationalTableModel::selectStatement() const
         if( addCol.type == PblColumn::COLUMN_TYPE_RELATION_ID)
         {
 
-            if( ! joinedTables.contains(addCol.exTableName))
+            if( ! joinedTables.contains(addCol.table))
             {
-                int fggf= addCol.origCol;
 
                 QString relTableAlias = QString::fromLatin1("relTblAl_%1").arg(addCol.origCol);
 
                 sExtLeftJoins.append(QLatin1String(" \nLEFT JOIN ")).
-                        append(addCol.exTableName).
+                        append(addCol.table).
                         append(QLatin1String(" ")).
                         append(relTableAlias).
 
                         append(QLatin1String(" ON ")).
 
-                        append(tableName()).
-                        append(QLatin1String(".")).
-                        append(baseRec.fieldName(addCol.origCol)).
+                        append(tableName()).append(QLatin1String(".")).
+                        append(addCol.idField1).
 
                         append(QLatin1String("=")).
 
-                        append(relTableAlias).
-                        append(QLatin1String(".id"));
+                        append(relTableAlias).append(QLatin1String(".")).
+                        append(addCol.idField2);
 
-                joinedTables.append(addCol.exTableName);
+                joinedTables.append(addCol.table);
             }
         }
         else  if( addCol.type == PblColumn::COLUMN_TYPE_CALCULATION)
         {
-            if( ! joinedTables.contains(addCol.exTableName))
+            if( ! joinedTables.contains(addCol.table))
             {
                 sExtLeftJoins.append(QLatin1String(" \nLEFT JOIN ")).
-                        append(addCol.exTableName).
+                        append(addCol.table).
                         append(QLatin1String(" ")).
 
                         append(QLatin1String(" ON ")).
 
-                        append(tableName()).
-                        append(QLatin1String(".")).
-                        append(addCol.exIndexFieldName).
+                        append(tableName()).append(QLatin1String(".")).
+                        append(addCol.idField1).
 
                         append(QLatin1String("=")).
 
-                        append(addCol.exTableName).
-                        append(QLatin1String(".")).
-                        append(addCol.exTextFieldName);
+                        append(addCol.table).append(QLatin1String(".")).
+                        append(addCol.idField2);
 
-                joinedTables.append(addCol.exTableName);
+                joinedTables.append(addCol.table);
             }
         }
     }
@@ -931,7 +877,7 @@ PblColumn::COLUMN_TYPE PblSqlRelationalTableModel::columnType(int col)
 
 void PblSqlRelationalTableModel::setSort(int column, Qt::SortOrder order)
 {
-    qDebug() << "setSort "<< column;
+    //qDebug() << "setSort "<< column;
 
     sortColumn = column;
     sortOrder = order;
@@ -941,6 +887,4 @@ void PblSqlRelationalTableModel::setSort(int column, Qt::SortOrder order)
 }
 
 
-
 QT_END_NAMESPACE
-

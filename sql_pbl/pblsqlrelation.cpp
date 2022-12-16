@@ -30,16 +30,19 @@
 
 PblSqlRelation::PblSqlRelation(
         const int col_,
-        const QString &sTableFrom_,
-        const QString &sIndexFieldFrom_,
-        const QString &sDisplayFieldFrom_,
-        JoinMode join_mode)
-    : sTableFrom(sTableFrom_),
-      sIndexFieldFrom(sIndexFieldFrom_),
-      sDisplayFieldFrom(sDisplayFieldFrom_),
+        const QString &idField1_,
+        const QString &table_,
+        const QString &idField2_,
+        const QString &destField_,
+        JoinMode join_mode_)
+    :
+      idField1(idField1_),
+      table(table_),
+      idField2(idField2_),
+      destField(destField_),
       col(col_)
 {
-    joinMode = join_mode;
+    joinMode = join_mode_;
 }
 
 

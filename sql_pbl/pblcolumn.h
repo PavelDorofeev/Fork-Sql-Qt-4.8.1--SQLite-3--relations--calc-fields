@@ -2,6 +2,29 @@
 #define PBLCOLUMN_H
 
 #include <QString>
+//#include "pblsqlrelationaltablemodel.h"
+#include "pblsqlrelation.h"
+
+typedef struct CALC_COLUMN
+{
+    CALC_COLUMN():
+        table(QString()),
+        idField1(QString()),
+        idField2(QString()),
+        summaryField(QString()),
+        calcFunc(QString()),
+        calcFuncName_As(QString())
+    {
+
+    }
+
+    QString     summaryField;
+    QString     table;
+    QString     idField1;
+    QString     idField2;
+    QString     calcFunc;
+    QString     calcFuncName_As;
+};
 
 class PblColumn
 {
@@ -17,45 +40,27 @@ public:
 
     PblColumn();
 
-    PblColumn(
-            COLUMN_TYPE type,
-            const QString &exTableName,
-            const QString &indexFieldFrom,
-            const QString &fieldFrom,
-            const QString &funcName,
-            int origCol,
-            int exCol,
-            const QString fieldNameTo=QString());
+    PblColumn(CALC_COLUMN & calc,
+              int col);
+
+    PblColumn(const PblSqlRelation &relation,
+              int exCol);
 
     int origCol;
     int exCol;
 
     COLUMN_TYPE type;
 
-    QString exTableName;
-    QString exIndexFieldName;
-    QString exTextFieldName; //
-    QString exFuncName;
+    QString table;
+    QString idField1;
+    QString idField2;
+    QString destField;
+    QString funcName;
     QString renamedField_As;
-
-    char cFormat;
-    int precision;
-
-
 
     bool isValid();
 
-    void setFormat(const char &format, const int &precision_)
-    {
-        cFormat = format;
-        precision = precision_;
-    }
 
-    void setAlignment(Qt::Alignment align = Qt::AlignLeft)
-    {
-        alignment = align;
-    }
-    Qt::Alignment alignment;
 
 private:
 

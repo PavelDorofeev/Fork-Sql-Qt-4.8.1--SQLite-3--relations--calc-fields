@@ -45,24 +45,21 @@ QT_MODULE(Sql)
 class PblSqlRelationalTableModelPrivate;
 class PblSqlRelationalTableModel;
 
-typedef struct CALC_COLUMN
+/*
+typedef struct RELATION_COLUMN
 {
-    CALC_COLUMN():
+    RELATION_COLUMN():
         table(QString()),
-        idField(QString()),
-        summaryField(QString()),
-        calcFunc(QString()),
-        calcFuncName_As(QString())
+        idField1(QString()),
+        idField2(QString())
     {
 
     }
 
-    QString     summaryField;
     QString     table;
-    QString     idField;
-    QString     calcFunc;
-    QString     calcFuncName_As;
-};
+    QString     idField1;
+    QString     idField2;
+};*/
 
 typedef struct COLUMN_INFO
 {
@@ -140,13 +137,9 @@ public:
 
     virtual Qt::ItemFlags flags(const QModelIndex &idx) const;
 
-    bool setRelation(int column, const PblSqlRelation &relation);
+    bool setRelation(const PblSqlRelation &relation);
 
-    bool setCalcField(CALC_COLUMN & calcLst);/*const QString &tableFrom,
-                      const QString foreignKeyField,
-                      const QString &fieldFrom,
-                      const QString &funcName,
-                      const QString fieldNameTo=QString());*/
+    bool setCalcField(CALC_COLUMN & calcLst);
     
     bool select();
 
@@ -160,10 +153,7 @@ public:
     bool set_Table(const QString &tableName);
 
 
-    bool setDoubleFormat(int col,
-                         const char &format,
-                         const int &precision);
-    
+
     void setAlignment(int col , Qt::Alignment align);
     void setPrecision(int col , int precision);
     void setDblFormat(int col , char ch);

@@ -5,35 +5,38 @@ PblColumn::PblColumn()
     //qDebug() << "ctor ExColumns";
 }
 
-PblColumn::PblColumn(COLUMN_TYPE rel_Type,
-                     const QString &exTableName_,
-                     const QString &exIndexField_,
-                     const QString &exTextField_,
-                     const QString &funcName,
-                     int origCol_,
-                     int exCol_,
-
-                     const QString renamedField_As_):
-    exTableName(exTableName_),
-    exIndexFieldName(exIndexField_),
-    exTextFieldName(exTextField_),
-    exFuncName(funcName),
-    renamedField_As(renamedField_As_),
-    cFormat(0),
-    precision(0),
-    alignment(Qt::AlignRight)
+PblColumn::PblColumn(const PblSqlRelation &relation,
+                     int exCol_)
+    :
+    table(relation.table),
+    idField1(relation.idField1),
+    idField2(relation.idField2),
+    destField(relation.destField),
+    type(COLUMN_TYPE_RELATION_ID)
 {
-    type = rel_Type;
-    origCol = origCol_;
+    origCol = relation.col;
     exCol = exCol_;
 
 }
 
+PblColumn::PblColumn(CALC_COLUMN & calc , int col_ )
+{
+    table = calc.table;
+    idField1 = calc.idField1;
+    idField2 = calc.idField2;
+    destField = calc.summaryField;
+    funcName = calc.calcFunc;
+    renamedField_As  = calc.calcFuncName_As;
+    exCol = col_;
+
+    type = COLUMN_TYPE_CALCULATION;
+}
+
 bool PblColumn::isValid()
 {
-    if( ! exTableName.isEmpty()
-            && ! exIndexFieldName.isEmpty()
-            && ! exTextFieldName.isEmpty())
+    if( ! table.isEmpty()
+            && ! idField1.isEmpty()
+            && ! destField.isEmpty())
         return true;
 
     return false;

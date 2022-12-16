@@ -14,7 +14,7 @@ IDI_ICON1       ICON    DISCARDABLE     "img/mkt.ico"
 IDR_APP_ICON    ICON                    "img/mkt.ico"
 
 1 VERSIONINFO
-        FILEVERSION    3,0,0,2
+        FILEVERSION    4,0,1,1
         PRODUCTVERSION 1,2,4,1
         FILEOS         0x00040004 //VOS_NT_WINDOWS32
         FILETYPE       0x00000001 // VFT_APP

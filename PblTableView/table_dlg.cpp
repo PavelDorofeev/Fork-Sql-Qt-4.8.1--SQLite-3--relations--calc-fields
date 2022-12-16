@@ -62,7 +62,7 @@ Table_Dlg::Table_Dlg(const QString & tableName,
 
 
     foreach( PblSqlRelation rel , relLst)
-        mdl->setRelation(rel.col, rel);
+        mdl->setRelation(rel);
 
 
     setWindowTitle("table : "+tableName);
