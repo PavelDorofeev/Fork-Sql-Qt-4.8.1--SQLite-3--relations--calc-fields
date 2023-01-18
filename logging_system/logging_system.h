@@ -18,11 +18,9 @@
 
 //void myMessageOutput(QtMsgType type, const char *msg);
 
-#include "common/dll_my_lib_global.h"
-
 //DLL_MY_LIB_EXPORT void logCatcher(QtMsgType type, const char *msg);
 
-class DLL_MY_LIB_EXPORT logging_System : public QObject
+class logging_System : public QObject
 {
     Q_OBJECT
 public:
