@@ -17,15 +17,18 @@ RCC_DIR         = tmp\\rcc\\$$out_dir
 UI_DIR          = ui
 DESTDIR         = bin
 
-#TRANSLATIONS +=  QtLanguage_en.ts QtLanguage_ru.ts QtLanguage_zh.ts
+TRANSLATIONS +=  ../pbltableview/QtLangPblTableView_en.ts ../pbltableview/QtLangPblTableView_ru.ts ../pbltableview/QtLangPblTableView_zh.ts
 
-#CODECFORTR      = UTF-8
-#CODECFORSRC     = UTF-8
+CODECFORTR      = UTF-8
+CODECFORSRC     = UTF-8
 
 INCLUDEPATH += $$PWD
 
 INCLUDEPATH += ../
 DEPENDPATH  += ../
+
+INCLUDEPATH += ../pbltableview
+DEPENDPATH  += ../pbltableview
 
 include(../pbltableview/pbltableview.pri)
 
@@ -55,13 +58,14 @@ win32 {
   RC_FILE     += rc2.rc
 }
 
-PWD_WIN = $${PWD}
-DESTDIR_WIN = $${OUT_PWD}/bin
+PWD_WIN = $${PWD}/../pbltableview
+DESTDIR_WIN = $${OUT_PWD}/$${DESTDIR}
 
 PWD_WIN ~= s,/,\\,g
 DESTDIR_WIN ~= s,/,\\,g
 
-#copyfiles.commands = $$quote(cmd /c xcopy /S /I /Y $$PWD_WIN\*.qm $$DESTDIR_WIN)
-#QMAKE_EXTRA_TARGETS += copyfiles
-#PRE_TARGETDEPS += copyfiles
-#message(copyfiles.commands $$copyfiles.commands)
+# dont remember to make Tool/External/QtLinguist/Update Translations (lupdate) and Update Translations (lrelease) !
+copyfiles.commands = $$quote(cmd /c xcopy /S /I /Y $$PWD_WIN\*.qm $$DESTDIR_WIN)
+QMAKE_EXTRA_TARGETS += copyfiles
+PRE_TARGETDEPS += copyfiles
+message(copyfiles.commands $$copyfiles.commands)

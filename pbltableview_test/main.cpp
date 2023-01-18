@@ -17,6 +17,7 @@
 #include "pbltableview/my_sql.h"
 
 bool firstInsertInto(const QString &tbl , const QString &nameCol , const QString &nameVal);
+bool createTables();
 
 int main(int argc, char *argv[])
 {
@@ -72,20 +73,27 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if ( sqlite.tables().isEmpty())
+    qDebug() << " tables " << sqlite.tables();
+
+    if ( sqlite.tables().count() == 0
+         || ( sqlite.tables().count()==1  && sqlite.tables().at(0) == "sqlite_sequence") )
     {
         QMessageBox::critical( 0 ,
                                mySql::error_,
-                               QObject::tr("database is empty?\n %1:\n %2,\n error: %3").arg(sqlite.databaseName()).arg(sqlite.databaseName().arg(sqlite.lastError().text())));
+                               QObject::tr("database is empty?\n\n %1:\n\n error: %3").
+                               arg(sqlite.databaseName()).
+                               arg(sqlite.lastError().text()));
 
-        return 0;
+        if( ! createTables())
+            return 0;
+
     }
 
     qWarning()  << "sqlite.driverName() "<< sqlite.driverName();
     qWarning()  << "sqlite.databaseName() "<< sqlite.databaseName();
     qWarning()  << "sqlite.isOpen() "<< sqlite.isOpen();
     qWarning()  << "sqlite.connectionName() "<< sqlite.connectionName();
-    qDebug() << " tables " << sqlite.tables();
+
     // qDebug() << " sizeOf" << sizeof(QSqlDatabase::database()); = 4
 
 
@@ -110,7 +118,7 @@ int main(int argc, char *argv[])
             "/*border: this solid #EEE;*/\n"\
             "}\n";
 
-//    app.setStyleSheet(st);
+    //    app.setStyleSheet(st);
 
     app.slot_change_language("en");
 
@@ -140,7 +148,9 @@ bool firstInsertInto(const QString &tbl , const QString &nameCol , const QString
 
     if( ! query.exec(str))
     {
-        QMessageBox::critical(0, mySql::error_, str + "\n"+ query.lastError().text());
+        QMessageBox::critical(0,
+                              mySql::error_,
+                              str + "\n"+ query.lastError().text());
 
         return false;
     }
@@ -150,20 +160,94 @@ bool firstInsertInto(const QString &tbl , const QString &nameCol , const QString
     return true;
 }
 
+bool createTbl(const QString &tn, const QString & sCreateTable)
+{
+    QSqlQuery query;
+
+    if( ! query.exec(sCreateTable))
+    {
+        QMessageBox::warning(0 ,
+                             mySql::error_,
+                             QObject::tr("Не удается создать таблицу базы данных %1:\n\n%2 ").
+                             arg(tn).
+                             arg(query.lastError().text()));
+
+        return false;
+    }
+
+    QMessageBox::warning(0 ,
+                         "OK:",
+                         QObject::tr("succefully created table %1").
+                         arg(tn));
+    return true;
+}
+
+bool createTables()
+{
+    QString  tableName;
+
+    tableName = "checks";
+
+
+    if( ! createTbl( tableName, "CREATE TABLE "+tableName+" ("\
+                     "id	INTEGER UNIQUE,"\
+                     "productName	INTEGER NOT NULL,"\
+                     "sum	double DEFAULT 0,"\
+                     "PRIMARY KEY(id AUTOINCREMENT))"))
+        return false;
+
+    firstInsertInto(tableName , "productName,sum" , "1, 123");
+
+
+    tableName = "goods";
+
+    if( ! createTbl( tableName,
+                     "CREATE TABLE "+tableName+"" \
+                     "(id	INTEGER UNIQUE, " \
+                     "productName	VARCHAR," \
+                     "price	REAL," \
+                     " PRIMARY KEY(id AUTOINCREMENT)"\
+                     ")"))
+        return false;
+
+    firstInsertInto(tableName , "productName,price" , "'mango', 123.45");
+    firstInsertInto(tableName , "productName,price" , "'apple', 234.56");
+    firstInsertInto(tableName , "productName,price" , "'banana', 345.67");
+
+
+
+    tableName = "purchases";
+
+
+    if( ! createTbl( tableName, "CREATE TABLE "+tableName+" "\
+                     "(id INTEGER UNIQUE,"\
+                     "productName varchar(100),"\
+                     "price double default 0,"\
+                     "qty double default 0,"\
+                     "sum double default 0,"\
+                     "cmb	INTEGER DEFAULT -1,"\
+                     "chk	INTEGER DEFAULT 0,"\
+                     "PRIMARY KEY(id AUTOINCREMENT)"\
+                     ")"))
+        return false;
+
+
+    firstInsertInto(tableName , "productName,price,qty,cmb" , "1, 123.4, 1.3 ,0");
+    firstInsertInto(tableName , "productName,price,qty,cmb" , "2, 2.5, 2.334 ,1");
+    firstInsertInto(tableName , "productName,price,qty,chk" , "3, 345.6, 3.4, 1");
+
+
+
+    return true;
+
+}
+
+
 /*QSqlQuery query;
 
 QString tableName="goods";
 
-QString sCreateTable = "CREATE TABLE "+tableName+" (id integer primary key autoincrement,productName varchar(100),price double default 0)";
 
-if( ! query.exec(sCreateTable))
-{
-    qCritical() << "Не удается создать таблицу базы данных : "<< sCreateTable << query.lastError().text();
-
-    return 0;
-}
-else
-    qWarning() << "succefully created table " ;
 
 
 firstInsertInto(tableName , "productName,price" , "1, 123.45");

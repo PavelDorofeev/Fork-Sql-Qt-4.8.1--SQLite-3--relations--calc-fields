@@ -32,7 +32,7 @@ DialogTest::DialogTest(QString langId,
     ui->cmb_Language->setCurrentIndex(cmbLangIdx);
 
     QString title = windowTitle();
-    title += " 4.0.2.1";
+    title += " 6.0.0.1";
 
     setWindowTitle(title) ;
 
