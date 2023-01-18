@@ -5,7 +5,8 @@
 #include "search_settings_dlg.h"
 #include <QAbstractItemModel>
 #include <QIcon>
-
+#include "my_sql.h"
+#include <QSqlTableModel>
 
 
 namespace Ui {
@@ -26,12 +27,9 @@ public:
 
     PblTableView *view;
 
-    void setVisible_strategyBox(bool);
-    void setVisible_searchBox(bool visible);
-    void setEnabled_actionBtns(bool);
+    //void setEditable(bool on);
 
-    void setEditable(bool on);
-
+    Ui::Btn_ToolBox *getUi();
     QIcon icon_selectedByField;
     QIcon icon_textSearchedInTable;
 
@@ -39,18 +37,19 @@ public:
     void setBtn_selectionByValue(bool visible , bool enabled);
     void setBtn_selectByValue(bool visible , bool enabled);
 
+
+    Ui::Btn_ToolBox *ui;
+
 signals:
 
 public slots:
-    void slot_setEditable(bool on);
+
 
 private slots:
 
      void on_ledt_filter_returnPressed();
 
-    void on_btn_find_clicked();
-
-    void on_cmb_Strategy_currentIndexChanged(int index);
+    void on_btn_search_settings_clicked();
 
     void on_btn_submitAll_clicked();
 
@@ -61,8 +60,12 @@ private slots:
     void on_btn_sortEnabled_clicked(bool checked);
 
 
+    void on_btn_view_clicked();
+
+
+
 private:
-    Ui::Btn_ToolBox *ui;
+
 
     PblSqlRelationalTableModel * mdl;
 

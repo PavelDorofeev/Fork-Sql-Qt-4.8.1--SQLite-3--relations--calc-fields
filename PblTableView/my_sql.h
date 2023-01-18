@@ -8,7 +8,7 @@ class mySql
 public:
     mySql();
 
-    static const QString error;
+    static const QString error_;
     static const QString warning;
     static const QString submitAllFalse;
     static const QString submitFalse;

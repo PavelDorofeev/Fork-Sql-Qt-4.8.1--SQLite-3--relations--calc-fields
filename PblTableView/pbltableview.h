@@ -38,43 +38,82 @@
 #include <QIcon>
 #include <QDoubleSpinBox>
 #include "doubledelegate.h"
+#include "my_sql.h"
 
 class PblSqlRelationalTableModel;
 class Btn_ToolBox;
+class ComboBoxDelegate;
 
 class PblTableView : public QTableView
 {
     Q_OBJECT
 public:
-    enum SETTINGS
+    /*enum SETTINGS
     {
         FORM_IS_ONLY_READ =1,
         FM_ROW_WILL_BE_CHOSEN =2,
         FM_CHK_EDIT_ON = 4
-    };
+    };*/
 
-    enum ACTIONS
+    enum ACTION
     {
-        ACTION_CHOSE_ROW =1,
-        ACTION_INSERT_ROW,
-        ACTION_COPY_ROW,
-        ACTION_EDIT_ROW,
-        ACTION_DELETE_ROW,
-        ACTION_CLEAR_FIELD
+        ACT_INSERT_ROW =1,
+        ACT_COPY_ROW = 2,
+        ACT_EDIT_ROW = 4,
+        ACT_DELETE_ROW = 8,
+
+        ACT_CLEAR_FIELD = 16,
+
+        ACT_ALL_EDIT = ACT_INSERT_ROW | ACT_COPY_ROW | ACT_EDIT_ROW | ACT_DELETE_ROW | ACT_CLEAR_FIELD,
+
+        ACT_CHOICE_ROW =32,
+
+        ACT_SEARCH = 64,
+
+        ACT_SELECT_BY_FIELD_VALUE = 128,
+
+        ACT_SORT = 256,
+
+        ACT_CLEAR_SEARCH_RESULTS = 512,
+
+        ACT_SWITCH_EDIT_ENABLED = 0x0400,
+
+        ACT_SELECT_STRATEGY_ENABLED = 0x0800,
+
+        ACT_SHOW_EXTENDED_RELATION_COLUMNS = 0x1000,
+
+        ACT_EDIT_ON = 0x2000,
+
+        ACT_VIEW = 0x4000,
+
+        ACT_SELECT_AND_CLOSE = 0x8000,
+
+        ACT_ALL_SEARCH = ACT_SEARCH | ACT_SELECT_BY_FIELD_VALUE | ACT_SORT | ACT_CLEAR_SEARCH_RESULTS,
+
+
+        ACT_ALL = ACT_ALL_EDIT | ACT_CHOICE_ROW | ACT_CLEAR_FIELD | ACT_SEARCH | ACT_SELECT_BY_FIELD_VALUE | ACT_SORT | ACT_SELECT_STRATEGY_ENABLED | ACT_SHOW_EXTENDED_RELATION_COLUMNS | ACT_SWITCH_EDIT_ENABLED | ACT_CLEAR_SEARCH_RESULTS | ACT_EDIT_ON
+
 
     };
-
+    Q_DECLARE_FLAGS(ACTIONS, ACTION)
 
     explicit PblTableView(PblSqlRelationalTableModel *mdl,
                           QVBoxLayout * lo,
-                          QSqlDatabase db,
+                          QSqlDatabase &db,
                           QWidget *parent = 0,
-                          bool editable = false);
+                          bool editable = false,
+                          bool selectable = false);
 
+    virtual ~PblTableView();
+
+    static QIcon getActIcon(PblTableView::ACTION act);
+
+    static QIcon PblTableView::getIcon(int nn);
 
     QHBoxLayout *topLO;
 
     Btn_ToolBox *tlbx;
+
 
     QSize sizeHint() const;
 
@@ -86,14 +125,19 @@ public:
 
     QAction * act_selectByFieldValue;
     QAction * act_ClearField;
-    QAction * act_choiseCurrentRecord;
-    QAction * act_textsearch;
+    QAction * act_choiceCurrentRecord;
+    QAction * act_search;
+    QAction * act_view;
+
+    QAction * act_selectAndClose;
 
     QMenu * contextMenu;
 
     DoubleDelegate *dblDlg;
 
-    void setEditable(bool);
+    void initStrategy(QSqlTableModel::EditStrategy);
+
+    void setEditState(bool);
     int priCol;
 
     virtual bool insertRow(int row);
@@ -101,20 +145,45 @@ public:
     virtual bool copyRow(int row);
     virtual bool removeRow(int row);
 
-    void setActionVisible(ACTIONS , bool );
+    virtual bool viewRow(int row);
+
+    void setSelectAndClose();
+
+    void set_Actions(PblTableView::ACTIONS , bool );
+
+
+    PblSqlRelationalTableModel* model() const;
 
     void fillContextMenu();
+
     void setContextMenuItemsVisibleAfterFieldSelected();
+
     virtual bool clearField(const QModelIndex &currIdx);
+
+    void setEditStrategyVisible(bool on);
+
+    void setExRelIdColumnsVisible(bool visible);
+
+    bool prepare(const QString & tableName );
 
     Search_Settings_Dlg::FIND_SETTINGS find_settings;
 
-    //void setEditable(bool editable);
+    void setComboBoxDelegate(int col, QStringList &lst);
 
-    bool editable;
+    void setDateTimeDelegate(int col);
+
+    void setCheckBoxDelegate(int col);
+
+    QHash<int , QStyledItemDelegate*> dlgts;
+
     PblSqlRelationalTableModel * mdl;
 
     QSqlDatabase db;
+
+    void show_view_Btn();
+
+    bool selectable;
+    bool editable;
 
 protected:
 
@@ -122,13 +191,26 @@ protected:
 signals:
     void sig_rowSelected(QModelIndex);
 
+    bool sig_setRelations(QString tableName);
+
+    bool sig_editRow(int);
+
+    bool sig_viewRow(int row);
+
 public slots:
+
     void slot_CustomMenuRequested(const QPoint &pos);
+
     bool slot_clearFieldClick();
 
     bool slot_insertRowBtnClick();
+
     bool slot_editRowBtnClick();
+
+    bool slot_viewRowBtnClick();
+
     bool slot_copyRowBtnClick();
+
     bool slot_removeRowBtnClick();
 
     bool slot_searchInTable(QString & filter);
@@ -139,16 +221,27 @@ public slots:
 
     void slot_triggeredSelectByFieldValue(bool on);
 
-    void slot_rowsInserted(const QModelIndex &parent, int first, int last);
+    void slot_setEditable(bool on);
+
+    void slot_doubleClicked(const QModelIndex & );
+
+    void slot_cmb_Strategy_currentIndexChanged(int index);
+
+    void slot_editStrategyClicked(int);
+
 
 private slots:
-    void slot_doubleClicked(QModelIndex );
+
+
+    void slot_editStrategyChanged(QSqlTableModel::EditStrategy);
 
 private:
-    SETTINGS formMode;
-    QSqlIndex primaryIndex;
+    //SETTINGS formMode;
 
     QString filter;
+
+    bool selectAndClose;
+
 
 };
 

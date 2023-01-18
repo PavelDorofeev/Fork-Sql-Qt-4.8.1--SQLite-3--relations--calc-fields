@@ -13,7 +13,14 @@
 
 /* Необходима инициализация статических переменных */
 
-logging_System * logging_System::static_instance = NULL;
+logging_System * logging_System::logg = NULL;
+
+QString logging_System::logFilePath     = QString();
+QString logging_System::dirName     = QString();
+QString logging_System::fileName     = QString();
+
+
+
 //DLL_MY_LIB_EXPORT QString logging_System::dirName_=0;
 //DLL_MY_LIB_EXPORT QString logging_System::fileName_=0;
 //DLL_MY_LIB_EXPORT bool logging_System::toStdOut_ = false;
@@ -182,40 +189,40 @@ logging_System::logging_System(QString &dirName_,
 }
 
 
-logging_System * logging_System::pStatic_instance(QString dirName,
-                                                  QString fileName,
-                                                  LOG_TYPES debug,
-                                                  bool stdOut,
-                                                  bool history_ON)
+bool logging_System::init(QString dirName,
+                          QString fileName,
+                          LOG_TYPES debug,
+                          bool stdOut,
+                          bool history_ON)
 {
-    if( logging_System::static_instance == NULL)
-        logging_System::static_instance = new logging_System(dirName ,
-                                                             fileName,
-                                                             debug,
-                                                             stdOut,
-                                                             history_ON);
+    if( logging_System::logg == NULL)
 
-    return logging_System::static_instance;
+        logging_System::logg = new logging_System(dirName ,
+                                                  fileName,
+                                                  debug,
+                                                  stdOut,
+                                                  history_ON);
+
+    return true;
+}
+
+logging_System::~logging_System()
+{
+    if( logg != NULL)
+        logg = NULL;
 }
 
 void logging_System::logCatcher(QtMsgType type, const char *msg)
 {
-    //out << QDateTime::currentDateTime().toString("hh:mm:ss ");
 
-    //if(m_logFile_ == 0)    return;
+    if( logging_System::logg != NULL)
 
-    //if(! m_logFile_.isOpen())   return;
-
-    if( logging_System::static_instance !=NULL)
-        logging_System::static_instance->loggerMaster(type , msg);
+        logging_System::logg->mess(type , msg);
 
 }
 
-void logging_System::loggerMaster(QtMsgType type,const QString & msg)
+void logging_System::mess ( QtMsgType type,const QString & msg)
 {
-    /*static QTextStream cout(stdout);
-    static QTextStream cerr(stderr);*/
-    //qDebug() << "logging_System::loggerMaster";
 
     QString format="hh:mm:ss zzz";
 
@@ -371,7 +378,7 @@ bool logging_System::testLargeFileAndSave(QString &logFilePath)
 
     if( sz > 100000)
     {
-       // QDir toDir(dirName);
+        // QDir toDir(dirName);
 
         QString fn = QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss")+".txt";
 
@@ -387,9 +394,12 @@ bool logging_System::testLargeFileAndSave(QString &logFilePath)
         return true;
 }
 
-bool logging_System::slot_openLoggingOnToOnNotepad()
+bool logging_System::openLoggingOnToOnNotepad()
 {
-    if ( ! QDesktopServices::openUrl(QUrl::fromLocalFile(logFilePath)))
+    if(logg == NULL)
+        return false;
+
+    if ( ! QDesktopServices::openUrl( QUrl::fromLocalFile(logFilePath)))
     {
         qCritical() << "ERROR OPEN  logFilePath : " << logFilePath;
         return false;

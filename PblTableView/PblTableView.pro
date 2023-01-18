@@ -6,7 +6,7 @@
 
 QT       += core gui sql
 
-TARGET = PblTableView
+TARGET = pbltableview
 TEMPLATE = app
 
 CONFIG +=  console windows
@@ -22,41 +22,44 @@ TRANSLATIONS +=  QtLanguage_en.ts QtLanguage_ru.ts QtLanguage_zh.ts
 CODECFORTR      = UTF-8
 CODECFORSRC     = UTF-8
 
-include(../sql_pbl/sql_pbl.pri)
-
-INCLUDEPATH += ../../my_lib
-DEPENDPATH += ../../my_lib
-
-INCLUDEPATH += ../sql_pbl
-
 INCLUDEPATH += ../
+DEPENDPATH  += ../
 
+#include(../sql_pbl/sql_pbl.pri)
 
 include(../logging_system/logging_system.pri)
 
 
-SOURCES += main.cpp\
-        dialog.cpp \
+SOURCES +=\
     pbltableview.cpp \
     some_tests.cpp \
-    table_dlg.cpp \
     search_settings_dlg.cpp \
     btn_toolbox.cpp \
     pblapplication.cpp \
     pblsqlrelationaltablemodel_purchases.cpp \
     doubledelegate.cpp \
-    my_sql.cpp
+    my_sql.cpp \
+    pblsqlrelationaltablemodel.cpp \
+    pblsqlrelation.cpp \
+    pblcolumn.cpp \
+    main.cpp \
+    dialog.cpp \
+    pbl_table_dlg.cpp
 
-HEADERS  += dialog.h \
+HEADERS  += \
     pbltableview.h \
     some_tests.h \
-    table_dlg.h \
     search_settings_dlg.h \
     btn_toolbox.h \
     pblapplication.h \
     pblsqlrelationaltablemodel_purchases.h \
     doubledelegate.h \
-    my_sql.h
+    my_sql.h \
+    pblsqlrelationaltablemodel.h \
+    pblsqlrelation.h \
+    pblcolumn.h \
+    dialog.h \
+    pbl_table_dlg.h
 
 FORMS    += dialog.ui \
     table_dlg.ui \
@@ -72,10 +75,6 @@ OTHER_FILES += \
 win32 {
   RC_FILE     += rc2.rc
 }
-
-#QMAKE_EXTRA_TARGETS += QtLanguage
-#PRE_TARGETDEPS += QtLanguage
-#QtLanguage.commands =  $$PWD/QtLanguage_
 
 PWD_WIN = $${PWD}
 DESTDIR_WIN = $${OUT_PWD}/bin

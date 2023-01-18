@@ -1,0 +1,221 @@
+19:05:33 480 Debug: "D:/DEVELOPMENT/MyGitHub/Fork-Sql-Qt-4.8.1--SQLite-3---relations--calc-fields/bin/test.db" 
+19:05:33 Warning: QSqlDatabase::driverName()  "QSQLITE" 
+19:05:33 Warning: QSqlDatabase::databaseName()  "D:/DEVELOPMENT/MyGitHub/Fork-Sql-Qt-4.8.1--SQLite-3---relations--calc-fields/bin/test.db" 
+19:05:33 Warning: QSqlDatabase::isOpen()  true 
+19:05:33 486 Debug: baseRec  QSqlRecord( 5 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "0" 
+ " 1:" QSqlField("productName", int, required: no, generated: yes, auto-value: "QVariant(QString, "0") " ) "0" 
+ " 2:" QSqlField("price", double, required: no, generated: yes, auto-value: "QVariant(QString, "0") " ) "0" 
+ " 3:" QSqlField("qty", double, required: no, generated: yes, auto-value: "QVariant(QString, "0") " ) "0" 
+ " 4:" QSqlField("sum", double, required: no, generated: yes, auto-value: "QVariant(QString, "0") " ) "0" 
+19:05:33 486 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT purchases.id,
+relTblAl_1.productName AS productName_1_productName,
+purchases.price,
+purchases.qty,
+purchases.sum,
+ relTblAl_1.id AS goods_id_1 
+FROM purchases 
+LEFT JOIN goods relTblAl_1 ON purchases.productName=relTblAl_1.id" 
+ 
+19:05:33 497 Debug: PblTableView headerData :  QVariant(, ) 
+19:07:38 589 Debug: baseRec  QSqlRecord( 3 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "0" 
+ " 1:" QSqlField("productName", QString, required: no, generated: yes) "" 
+ " 2:" QSqlField("price", double, required: no, generated: yes) "0" 
+19:07:38 589 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT goods.id,
+goods.productName,
+goods.price, 
+sum(checks.sum) as sold 
+FROM goods 
+LEFT JOIN checks  ON goods.id=checks.productName 
+GROUP BY goods.id" 
+ 
+19:07:38 591 Debug: PblTableView headerData :  QVariant(, ) 
+19:10:15 957 Debug: baseRec  QSqlRecord( 3 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "0" 
+ " 1:" QSqlField("productName", QString, required: no, generated: yes) "" 
+ " 2:" QSqlField("price", double, required: no, generated: yes) "0" 
+19:10:15 957 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT goods.id,
+goods.productName,
+goods.price, 
+sum(checks.sum) as sold 
+FROM goods 
+LEFT JOIN checks  ON goods.id=checks.productName 
+GROUP BY goods.id" 
+ 
+19:10:15 959 Debug: PblTableView headerData :  QVariant(, ) 
+19:10:21 877 Debug: baseRec  QSqlRecord( 3 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "0" 
+ " 1:" QSqlField("productName", QString, required: no, generated: yes) "" 
+ " 2:" QSqlField("price", double, required: no, generated: yes) "0" 
+19:10:21 877 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT goods.id,
+goods.productName,
+goods.price, 
+sum(checks.sum) as sold 
+FROM goods 
+LEFT JOIN checks  ON goods.id=checks.productName 
+GROUP BY goods.id" 
+ 
+19:10:21 879 Debug: PblTableView headerData :  QVariant(, ) 
+19:10:43 413 Debug: baseRec  QSqlRecord( 3 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "0" 
+ " 1:" QSqlField("productName", int, required: yes, generated: yes) "0" 
+ " 2:" QSqlField("sum", double, required: no, generated: yes, auto-value: "QVariant(QString, "0") " ) "0" 
+19:10:43 413 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT checks.id,
+relTblAl_1.productName AS productName_1_productName,
+checks.sum,
+ relTblAl_1.id AS goods_id_1 
+FROM checks 
+LEFT JOIN goods relTblAl_1 ON checks.productName=relTblAl_1.id" 
+ 
+19:10:43 415 Debug: PblTableView headerData :  QVariant(, ) 
+19:10:43 417 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT checks.id,
+relTblAl_1.productName AS productName_1_productName,
+checks.sum,
+ relTblAl_1.id AS goods_id_1 
+FROM checks 
+LEFT JOIN goods relTblAl_1 ON checks.productName=relTblAl_1.id" 
+ 
+19:10:43 417 Debug: PblTableView::slot_rowsInserted  QModelIndex(-1,-1,0x0,QObject(0x0) ) 0 2 
+19:10:55 198 Debug: baseRec  QSqlRecord( 3 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "0" 
+ " 1:" QSqlField("productName", int, required: yes, generated: yes) "0" 
+ " 2:" QSqlField("sum", double, required: no, generated: yes, auto-value: "QVariant(QString, "0") " ) "0" 
+19:10:55 198 Debug: 
+
+QSqlTableModel::insertRowIntoTable()  "INSERT INTO checks ("productName", "sum") VALUES (?, ?)" 
+ 
+19:10:55 198 Debug:       "productName" QVariant(qlonglong, 8) 
+19:10:55 198 Debug:       "sum" QVariant(QString, "0.00") 
+19:10:55 303 Debug: 
+
+QSqlTableModel::insertRowIntoTable()  "INSERT INTO checks ("productName", "sum") VALUES (?, ?)" 
+ 
+19:10:55 303 Debug:       "productName" QVariant(qlonglong, 2) 
+19:10:55 303 Debug:       "sum" QVariant(QString, "46.00") 
+19:10:55 367 Debug: 
+
+QSqlTableModel::insertRowIntoTable()  "INSERT INTO checks ("productName", "sum") VALUES (?, ?)" 
+ 
+19:10:55 367 Debug:       "productName" QVariant(qlonglong, 4) 
+19:10:55 367 Debug:       "sum" QVariant(QString, "1.23") 
+19:10:55 445 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT id,
+productName,
+sum 
+FROM checks" 
+ 
+19:10:55 446 Debug: 
+
+QSqlTableModel::deleteRowFromTable()  "DELETE FROM purchases WHERE "id" = ?" 
+19:10:55 446 Debug:      whereValues :  QSqlRecord( 1 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "30" 
+ 
+19:10:55 501 Debug: 
+
+QSqlTableModel::deleteRowFromTable()  "DELETE FROM purchases WHERE "id" = ?" 
+19:10:55 501 Debug:      whereValues :  QSqlRecord( 1 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "31" 
+ 
+19:10:55 551 Debug: 
+
+QSqlTableModel::deleteRowFromTable()  "DELETE FROM purchases WHERE "id" = ?" 
+19:10:55 551 Debug:      whereValues :  QSqlRecord( 1 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "32" 
+ 
+19:10:55 601 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT purchases.id,
+relTblAl_1.productName AS productName_1_productName,
+purchases.price,
+purchases.qty,
+purchases.sum,
+ relTblAl_1.id AS goods_id_1 
+FROM purchases 
+LEFT JOIN goods relTblAl_1 ON purchases.productName=relTblAl_1.id" 
+ 
+19:10:57 077 Debug: baseRec  QSqlRecord( 3 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "0" 
+ " 1:" QSqlField("productName", int, required: yes, generated: yes) "0" 
+ " 2:" QSqlField("sum", double, required: no, generated: yes, auto-value: "QVariant(QString, "0") " ) "0" 
+19:10:57 077 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT checks.id,
+relTblAl_1.productName AS productName_1_productName,
+checks.sum,
+ relTblAl_1.id AS goods_id_1 
+FROM checks 
+LEFT JOIN goods relTblAl_1 ON checks.productName=relTblAl_1.id" 
+ 
+19:10:57 079 Debug: PblTableView headerData :  QVariant(, ) 
+19:10:57 081 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT checks.id,
+relTblAl_1.productName AS productName_1_productName,
+checks.sum,
+ relTblAl_1.id AS goods_id_1 
+FROM checks 
+LEFT JOIN goods relTblAl_1 ON checks.productName=relTblAl_1.id" 
+ 
+19:10:57 081 Debug: PblTableView::slot_rowsInserted  QModelIndex(-1,-1,0x0,QObject(0x0) ) 0 5 
+19:10:59 830 Debug: baseRec  QSqlRecord( 3 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "0" 
+ " 1:" QSqlField("productName", QString, required: no, generated: yes) "" 
+ " 2:" QSqlField("price", double, required: no, generated: yes) "0" 
+19:10:59 830 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT goods.id,
+goods.productName,
+goods.price, 
+sum(checks.sum) as sold 
+FROM goods 
+LEFT JOIN checks  ON goods.id=checks.productName 
+GROUP BY goods.id" 
+ 
+19:10:59 831 Debug: PblTableView headerData :  QVariant(, ) 

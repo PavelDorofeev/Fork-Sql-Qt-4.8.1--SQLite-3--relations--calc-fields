@@ -1,0 +1,4 @@
+13:49:27 473 Debug: "D:/DEVELOPMENT/QT4/_MY__/my_lib/pbltableview_test/bin/test.db" 
+13:49:27 Warning: QSqlDatabase::driverName()  "QSQLITE" 
+13:49:27 Warning: QSqlDatabase::databaseName()  "D:/DEVELOPMENT/QT4/_MY__/my_lib/pbltableview_test/bin/test.db" 
+13:49:27 Warning: QSqlDatabase::isOpen()  true 

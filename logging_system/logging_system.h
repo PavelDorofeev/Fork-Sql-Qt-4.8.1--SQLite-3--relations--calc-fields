@@ -35,7 +35,9 @@ public:
      Q_DECLARE_FLAGS(LOG_TYPES, LOG_TYPE)
 
     static const QString LOGS_DIR;
+
     static const QString LOGS_HYSTORY_DIR;
+
     static const QString LOG_FILE_NAME;
 
     explicit logging_System(QString &dirName,
@@ -47,42 +49,51 @@ public:
             );
 
 
+    ~logging_System();
 
     bool init();
 
     static void logCatcher(QtMsgType type, const char *msg);
 
-    static logging_System *static_instance;
-    static logging_System *pStatic_instance(QString dirName,
+    static logging_System *logg;
+
+    static bool init(QString dirName,
                                             QString fileName,
                                             LOG_TYPES debug,
                                             bool stdOut,
                                             bool history_ON);
 
 public:
-    void loggerMaster(QtMsgType type,const QString &);
 
-    QString dirName;
-    QString fileName;
+    void mess(QtMsgType type,const QString &);
+
+    static QString dirName;
+    static QString fileName;
     bool toStdOut_;
 
-    QString logFilePath;
+    static QString logFilePath;
     static QObject *parent_;
+
     bool initLoggingFiles();
+
     bool initLoggingSystem();
-    //QFile *m_logFile_;
-    //static void myMessageOutput(QtMsgType type, const char *msg);
 
     QFile m_logFile_;
+
     QSocketNotifier *stdOutNotifier;
+
+
+    static bool openLoggingOnToOnNotepad();
+
 signals:
 
     
 public slots:
     void stdOutDataAvailable(int);
-    bool slot_openLoggingOnToOnNotepad();
+
 
 private:
+
     int old_stdout;
     bool history_ON;
     FILE *stdOutFile;

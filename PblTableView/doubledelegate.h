@@ -2,10 +2,10 @@
 #define DOUBLEDELEGATE_H
 
 #include <QStyledItemDelegate>
-#include "pblsqlrelationaltablemodel.h"
+#include "pbltableview/pblsqlrelationaltablemodel.h"
 
 
-class DoubleDelegate : public QStyledItemDelegate
+class Q_DECL_EXPORT DoubleDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:

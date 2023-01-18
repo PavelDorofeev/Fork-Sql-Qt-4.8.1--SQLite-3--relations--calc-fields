@@ -28,165 +28,86 @@
 #include <QToolButton>
 #include <QDebug>
 #include "some_tests.h"
-#include "pblsqlrelationaltablemodel.h"
+#include "pbltableview/pblsqlrelationaltablemodel.h"
 #include <QSqlError>
 #include "btn_toolbox.h"
 #include <QSqlDatabase>
 #include <QSqlIndex>
-#include "table_dlg.h"
+#include "pbl_table_dlg.h"
 #include <QHeaderView>
 #include <QSqlField>
 #include <QDoubleSpinBox>
 #include <QStyledItemDelegate>
 #include <QApplication>
+#include <QComboBox>
+#include <QSqlQuery>
 #include "pbltableview/my_sql.h"
+#include "pbltableview/combobox_delegate.h"
+#include "pbltableview/checkbox_delegate.h"
+#include "config.h"
+#include "ui_btn_toolbox.h"
+#include "date_delegate.h"
 
-
-static QIcon getIcon(int nn) //
-{
-    /*
-      this function exists because of below code occure errors by onloading application
-
-    const QIcon * PblTableView::icon1 = new QIcon(":icon/img/btn-db/select-by-value-1-100x100.png");
-
-      Error: "Pixmap must construct a QApplication before a QPaintDevice"
-    */
-
-    static QIcon icon1 = QIcon(":icon/img/btn-db/select-by-value-1-100x100.png");
-
-    static QIcon icon2 = QIcon(":icon/img/btn-db/select-by-value-2-100x100.png");
-
-    if(nn==1)
-        return icon1;
-    else
-        return icon2;
-}
 
 PblTableView::PblTableView(PblSqlRelationalTableModel * mdl_,
                            QVBoxLayout * lo,
-                           QSqlDatabase db_,
+                           QSqlDatabase &db_,
                            QWidget *parent,
-                           bool editable):
+                           bool editable_,
+                           bool selectable_):
     QTableView(parent),
     priCol(-1),
-    editable(false),
-    dblDlg(0)
+    act_InsertRow(0),
+    act_CopyRow(0),
+    act_EditRow(0),
+    act_DeleteRow(0),
+    act_ClearField(0),
+    act_choiceCurrentRecord(0),
+    act_search(0),
+    act_selectByFieldValue(0),
+    act_view(0),
+    act_selectAndClose(0),
+    dblDlg(0),
+    selectAndClose(0),
+    //db(db_),
+    selectable(selectable_),
+    editable(editable_)
 {
 
-    //icon1 = new QIcon(":icon/img/btn-db/select-by-value-1-100x100.png");
-
+    db = QSqlDatabase::database();
     mdl = mdl_;
-
-    db = db_;
 
     setSelectionMode(QAbstractItemView::SingleSelection);
 
-    setModel(mdl);
-
-    primaryIndex = mdl->database().primaryIndex(mdl->tableName());
-
-    //qDebug() << "primaryIndex " <<primaryIndex;
-
-    for(int nn=0;  nn <primaryIndex.count(); nn++)
+    if( ! mdl )
     {
-        QSqlField ff = primaryIndex.field(nn);
-
-        //qDebug() << "ff " <<ff << ff.name() << mdl->fieldIndex(ff.name());
-
-        priCol = mdl->fieldIndex(ff.name());
+        qCritical("error mdl is null");
+        return;
     }
 
-    formMode =  (SETTINGS)( FM_ROW_WILL_BE_CHOSEN | FM_CHK_EDIT_ON) ;
+    setModel(mdl);
 
     // ----------------------------------------------------
-    //              контекстное меню
+    //              context menu
     // ----------------------------------------------------
 
     contextMenu = new QMenu(this);
 
-    fillContextMenu();
+    //fillContextMenu();
 
     _CONNECT_(this, SIGNAL(customContextMenuRequested(const QPoint &)),
               this, SLOT(slot_CustomMenuRequested(const QPoint &)));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
+    _CONNECT_(mdl, SIGNAL(sig_editStrategyChanged(QSqlTableModel::EditStrategy)),
+              this, SLOT(slot_editStrategyChanged(QSqlTableModel::EditStrategy)));
 
 
     tlbx = new Btn_ToolBox(this , mdl);
 
     lo->addWidget(tlbx);
     lo->addWidget(this);
-
-    QSqlRecord baseRec = mdl->baseRecord();
-    QSqlRecord rec = mdl->record();
-
-    // -----------------------------------------------------------------
-
-    int searchedRelationTxtDefaultColumn = -1;
-    int searchedTxtDefaultColumn = -1;
-    int searchedDblDefaultColumn = -1;
-
-    for(int col=0; col< baseRec.count(); col++)
-    {
-        if(col == priCol)
-            continue;
-
-        if(mdl->getRelIdColumn(col) >=0)
-        {
-            mdl->setHeaderData(col, Qt::Horizontal, baseRec.fieldName(col),Qt::EditRole);
-
-            if(searchedRelationTxtDefaultColumn == -1)
-                searchedRelationTxtDefaultColumn= col;
-
-        }
-        else if(rec.field(col).type() == QVariant::String
-                && searchedTxtDefaultColumn == -1)
-        {
-            searchedTxtDefaultColumn = col;
-        }
-        else if(rec.field(col).type() == QVariant::Double)
-        {
-            if(mdl->colInfo.contains(col) && mdl->colInfo.value(col).precision>2)
-            {
-                if( ! dblDlg)
-                    dblDlg = new DoubleDelegate(mdl, this);
-
-                setItemDelegateForColumn(col , (QAbstractItemDelegate *)dblDlg);
-
-                QStyledItemDelegate * stI = qobject_cast<DoubleDelegate*>(itemDelegateForColumn(col));
-
-            }
-
-        }
-        if( rec.field(col).type() == QVariant::Int)
-        {
-            searchedDblDefaultColumn = col;
-
-        }
-    }
-
-
-
-    if(searchedRelationTxtDefaultColumn >= 0)
-    {
-        find_settings.searchedField = searchedRelationTxtDefaultColumn;
-        find_settings.seachType = Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT;
-    }
-    else if(searchedTxtDefaultColumn >= 0)
-    {
-        find_settings.searchedField = searchedTxtDefaultColumn;
-        find_settings.seachType = Search_Settings_Dlg::FIND_SETTINGS::SEARCH_TEXT;
-    }
-    else if (searchedDblDefaultColumn >=0)
-    {
-        find_settings.searchedField = searchedDblDefaultColumn;
-        find_settings.seachType = Search_Settings_Dlg::FIND_SETTINGS::SEARCH_NUMBER;
-    }
-    else
-    {
-        find_settings.seachType = Search_Settings_Dlg::FIND_SETTINGS::SEARCH_UNDEFINED_TYPE;
-    }
 
 
     qDebug() << "PblTableView headerData : " << mdl->headerData(0 , Qt::Horizontal, Qt::BackgroundRole);
@@ -204,20 +125,119 @@ PblTableView::PblTableView(PblSqlRelationalTableModel * mdl_,
     _CONNECT_( this , SIGNAL(doubleClicked(QModelIndex)),
                this , SLOT(slot_doubleClicked(QModelIndex)));
 
-    _CONNECT_( mdl , SIGNAL(rowsInserted(QModelIndex, int, int )),
-               this , SLOT(slot_rowsInserted(QModelIndex , int , int )));
-
-
     setSortingEnabled(false);
 
-    setEditable(editable);
+    tlbx->ui->btn_insert->setVisible(false);
+    tlbx->ui->btn_copy->setVisible(false);
+    tlbx->ui->btn_edit->setVisible(false);
+    tlbx->ui->btn_delete->setVisible(false);
+
+    tlbx->ui->btn_view->setVisible(false);
+
+    tlbx->ui->chk_showRelExColumns->setVisible(false);
+    tlbx->ui->chk_editable->setVisible(false);
+
+    tlbx->ui->cmb_Strategy->setVisible(false);
+    tlbx->ui->btn_submitAll->setVisible(false);
+    tlbx->ui->btn_sortEnabled->setVisible(false);
+
+    tlbx->ui->btn_searchInTable->setVisible(false);
+    tlbx->ui->btn_search_settings->setVisible(false);
+    tlbx->ui->ledt_filter->setVisible(false);
+
+    tlbx->ui->btn_selectByValue->setVisible(false);
+
     slot_setVisibleExRelIdColumns(false);
 
-    resizeRowsToContents();
-    resizeColumnsToContents();
+    if( editable )
+    {
+        PblTableView::ACTIONS acts = PblTableView::ACT_ALL_EDIT
+                | PblTableView::ACT_SWITCH_EDIT_ENABLED
+                | PblTableView::ACT_ALL_SEARCH;
+
+        set_Actions(acts , editable);
+    }
+
+    PblTableView::ACTIONS acts = PblTableView::ACT_VIEW;
+
+    set_Actions(acts , true);
+
+    setEditState(editable);
 
 
 }
+
+PblTableView::~PblTableView()
+{
+    qDebug() << "~PblTableView()";
+
+}
+
+QIcon PblTableView::getActIcon(PblTableView::ACTION act)
+{
+
+    static QIcon insert = QIcon(":icon/img/btn-db/insert-100x100.png");
+    static QIcon copy   = QIcon(":icon/img/btn-db/copy-100x100.png");
+    static QIcon edit   = QIcon(":icon/img/btn-db/edit-100x100.png");
+    static QIcon remove = QIcon(":icon/img/btn-db/delete-100x100.png");
+    static QIcon search = QIcon(":icon/img/btn-db/text-find-100x100.png");
+    static QIcon clrFld = QIcon(":icon/img/btn-db/clear-field-100x100.png");
+    static QIcon txtFind = QIcon(":icon/img/btn-db/text-find-100x100.png");
+    static QIcon view = QIcon(":icon/img/btn-db/view-100x100.png");
+    static QIcon selectAndClose = QIcon(":icon/img/btn-db/select-and-close-100x100.png");
+
+    if(act == PblTableView::ACT_INSERT_ROW)
+        return insert;
+
+    else if(act == PblTableView::ACT_COPY_ROW)
+        return copy;
+
+    else if(act == PblTableView::ACT_EDIT_ROW)
+        return edit;
+
+    else if(act == PblTableView::ACT_DELETE_ROW)
+        return remove;
+
+    else if(act == PblTableView::ACT_SEARCH)
+        return search;
+
+    else if(act == PblTableView::ACT_CLEAR_SEARCH_RESULTS)
+        return txtFind;
+
+    else if(act == PblTableView::ACT_CLEAR_FIELD)
+        return clrFld;
+
+    else if(act == PblTableView::ACT_VIEW)
+        return view;
+
+    else if(act == PblTableView::ACT_SELECT_AND_CLOSE)
+        return selectAndClose;
+
+
+
+}
+
+QIcon PblTableView::getIcon(int nn) //
+{
+    /*
+      this function exists because of below code occure errors by onloading application
+
+    const QIcon * PblTableView::icon1 = new QIcon(":icon/img/btn-db/select-by-value-1-100x100.png");
+
+      Error: "Pixmap must construct a QApplication before a QPaintDevice"
+    */
+
+    static QIcon icon1 = QIcon(":icon/img/btn-db/select-by-value-1-100x100.png");
+
+    static QIcon icon2 = QIcon(":icon/img/btn-db/select-by-value-2-100x100.png");
+
+
+    if(nn==1)
+        return icon1;
+    else
+        return icon2;
+}
+
 
 QSize PblTableView::sizeHint() const
 {
@@ -226,106 +246,27 @@ QSize PblTableView::sizeHint() const
 
 void PblTableView::fillContextMenu()
 {
-    contextMenu->clear();
-
-    // ---------------------------------------------------------------
-
-    act_InsertRow = new QAction( QIcon(":icon/img/btn-db/insert-100x100.png") , trUtf8("create row"), this);
-    act_InsertRow->setShortcut(Qt::Key_Insert);
-
-    _CONNECT_(act_InsertRow, SIGNAL(triggered()), this, SLOT(slot_insertRowBtnClick()));
-
-    contextMenu->addAction(act_InsertRow);
-    addAction(act_InsertRow);
-
-    contextMenu->addSeparator();
-
-    // ---------------------------------------------------------------
-
-    act_CopyRow = new QAction( QIcon(":icon/img/btn-db/copy-100x100.png") , trUtf8("copy row"), this);
-    act_CopyRow->setShortcut(Qt::Key_F9);
-
-    _CONNECT_(act_CopyRow, SIGNAL(triggered()), this, SLOT(slot_copyRowBtnClick()));
-
-    contextMenu->addAction(act_CopyRow);
-    addAction(act_CopyRow);
-
-    // ---------------------------------------------------------------
-
-    act_EditRow = new QAction( QIcon(":icon/img/btn-db/edit-100x100.png") , trUtf8("edit row"), this );
-    act_EditRow->setShortcut(Qt::Key_F4);
-
-    _CONNECT_(act_EditRow, SIGNAL(triggered()), this, SLOT(slot_editRowBtnClick()));
-
-    contextMenu->addAction(act_EditRow);
-    addAction(act_EditRow);
-
-    // ---------------------------------------------------------------
-
-    act_DeleteRow = new QAction(QIcon(":icon/img/btn-db/delete-100x100.png"), trUtf8("remove row"), this);
-    act_DeleteRow->setShortcut(Qt::Key_Delete);
-
-    _CONNECT_(act_DeleteRow, SIGNAL(triggered()), this, SLOT(slot_removeRowBtnClick()));
-
-    contextMenu->addAction(act_DeleteRow);
-    addAction(act_DeleteRow);
-
-    // ---------------------------------------------------------------
-
-    act_textsearch = new QAction(QIcon(":icon/img/btn-db/text-find-100x100.png"), trUtf8("search"), this);
-    act_textsearch->setShortcut(Qt::Key_F3);
-
-    _CONNECT_(act_textsearch, SIGNAL(triggered()), this, SLOT(slot_removeRowBtnClick()));
-
-    //contextMenu->addAction(act_textsearch);
-    addAction(act_textsearch);
-
-    // ---------------------------------------------------------------
-
-    act_choiseCurrentRecord = new QAction(trUtf8("choise row"), this);
-    act_choiseCurrentRecord->setShortcut(Qt::Key_Enter);
-
-    if( formMode & FM_ROW_WILL_BE_CHOSEN)
-        contextMenu->addAction(act_choiseCurrentRecord);
-
-    // -------------------------------------------------------
-
-    contextMenu->addSeparator();
-
-    act_ClearField = new QAction(QIcon(":icon/img/btn-db/clear-field-100x100.png"), trUtf8("clear field"), this);
-
-    _CONNECT_(act_ClearField, SIGNAL(triggered()), this, SLOT(slot_clearFieldClick()));
-
-    contextMenu->addAction(act_ClearField);
-
-    // ---------------------------------------------------------------
-
-    act_selectByFieldValue = new QAction( getIcon(1),
-                                          trUtf8("select by field value"),
-                                          this);
-    act_selectByFieldValue->setShortcut(Qt::Key_F8);
-    //act_selectByFieldValue->setCheckable(true); // draw square border around btn
-    act_selectByFieldValue->setChecked(false);
-
-
-    _CONNECT_(act_selectByFieldValue, SIGNAL(triggered(bool)), this, SLOT(slot_triggeredSelectByFieldValue(bool)));
-
-    contextMenu->addAction(act_selectByFieldValue);
-    addAction(act_selectByFieldValue);
 
 
 }
 
+void PblTableView::setExRelIdColumnsVisible(bool visible)
+{
+    set_Actions(PblTableView::ACT_SHOW_EXTENDED_RELATION_COLUMNS , visible);
+}
+
 void PblTableView::slot_setVisibleExRelIdColumns(bool visible)
 {
-    //for(int col = mdl->baseRecord().count(); col < mdl->record().count(); col++)
+
     for(int col = 0; col < mdl->baseRecord().count(); col++)
     {
+        // after select only
+
         int relIdCol = mdl->getRelIdColumn(col);
 
         if( relIdCol >=0)
         {
-            PblColumn::COLUMN_TYPE type = mdl->getRelationInfoForColumn(col).type;
+            PblColumn::COLUMN_TYPE type = mdl->getRelationInfoForColumn(col).type; //??
 
             if(type  == PblColumn::COLUMN_TYPE_RELATION_ID)
 
@@ -333,6 +274,9 @@ void PblTableView::slot_setVisibleExRelIdColumns(bool visible)
         }
 
     }
+
+
+
 }
 
 void PblTableView::slot_CustomMenuRequested(const QPoint &pos)
@@ -343,8 +287,10 @@ void PblTableView::slot_CustomMenuRequested(const QPoint &pos)
 
     contextMenu->popup(this->viewport()->mapToGlobal(pos));
 }
+
 void PblTableView::setContextMenuItemsVisibleAfterFieldSelected()
 {
+
     if( ! currentIndex().isValid()) // когда еще нет записей(строк)
         return;
 
@@ -354,21 +300,39 @@ void PblTableView::setContextMenuItemsVisibleAfterFieldSelected()
     // сначала все очищием
     //act_openCurrentRecord->setVisible(false);
     //act_openRelRecord->setVisible(false);
-    act_ClearField->setVisible(false);
 
-    act_EditRow->setVisible(false);
-    act_DeleteRow->setVisible(false);
-    act_CopyRow->setVisible(false);
-    act_InsertRow->setVisible(false);
+    if( act_ClearField != 0)
+        act_ClearField->setVisible(false);
 
-    act_EditRow->setEnabled(false);
-    act_DeleteRow->setEnabled(false);
-    act_CopyRow->setEnabled(false);
-    act_InsertRow->setEnabled(false);
+    if( act_EditRow != 0)
+        act_EditRow->setVisible(false);
+
+    if( act_DeleteRow != 0)
+        act_DeleteRow->setVisible(false);
+
+    if( act_CopyRow != 0)
+        act_CopyRow->setVisible(false);
+
+    if( act_InsertRow != 0)
+        act_InsertRow->setVisible(false);
+
+    if( act_EditRow != 0)
+        act_EditRow->setEnabled(false);
+
+    if( act_DeleteRow != 0)
+        act_DeleteRow->setEnabled(false);
+
+    if( act_CopyRow != 0)
+        act_CopyRow->setEnabled(false);
+
+    if( act_InsertRow != 0)
+        act_InsertRow->setEnabled(false);
 
     //act_openCurrentRecord->setEnabled(false);
     //act_openRelRecord->setEnabled(false);
-    act_ClearField->setEnabled(false);
+
+    if( act_ClearField != 0)
+        act_ClearField->setEnabled(false);
 
 
     if( ! editable )
@@ -379,7 +343,7 @@ void PblTableView::setContextMenuItemsVisibleAfterFieldSelected()
         //act_openCurrentRecord->setVisible(true);
         //act_openCurrentRecord->setEnabled(true);
 
-        if( formMode & FM_ROW_WILL_BE_CHOSEN)
+        if( selectable )
         {
             //act_selectCurrentRecord->setVisible(true);
             //act_selectCurrentRecord->setEnabled(true);
@@ -403,25 +367,44 @@ void PblTableView::setContextMenuItemsVisibleAfterFieldSelected()
         }
 
     }
-    else        // форма редактируемая
+    else if( editable )       // форма редактируемая
     {
-        act_EditRow->setVisible(true);
-        act_DeleteRow->setVisible(true);
-        act_CopyRow->setVisible(true);
-        act_InsertRow->setVisible(true);
-        act_ClearField->setVisible(true);
+        if( act_EditRow != 0)
+            act_EditRow->setVisible(true);
 
-        if(formMode &  FM_CHK_EDIT_ON)
+        if( act_DeleteRow != 0)
+            act_DeleteRow->setVisible(true);
+
+        if( act_CopyRow != 0)
+            act_CopyRow->setVisible(true);
+
+        if( act_InsertRow != 0)
+            act_InsertRow->setVisible(true);
+
+        if( act_ClearField != 0)
+            act_ClearField->setVisible(true);
+
+        if( editable )
         {
-            act_EditRow->setEnabled(true);
-            act_DeleteRow->setEnabled(true);
-            act_CopyRow->setEnabled(true);
-            act_InsertRow->setEnabled(true);
+            if( act_EditRow != 0)
+                act_EditRow->setEnabled(true);
+
+            if( act_DeleteRow != 0)
+                act_DeleteRow->setEnabled(true);
+
+            if( act_CopyRow != 0)
+                act_CopyRow->setEnabled(true);
+
+            if( act_InsertRow != 0)
+                act_InsertRow->setEnabled(true);
 
             if(col < mdl->baseRecord().count())
             {
-                act_ClearField->setVisible(true);
-                act_ClearField->setEnabled(true);
+                if( act_ClearField != 0)
+                {
+                    act_ClearField->setVisible(true);
+                    act_ClearField->setEnabled(true);
+                }
             }
 
         }
@@ -432,7 +415,7 @@ void PblTableView::setContextMenuItemsVisibleAfterFieldSelected()
         }
 
 
-        if( formMode  &  FM_ROW_WILL_BE_CHOSEN)
+        if( selectable )
         {
             //act_selectCurrentRecord->setVisible(true);
             //act_selectCurrentRecord->setEnabled(true);
@@ -440,7 +423,9 @@ void PblTableView::setContextMenuItemsVisibleAfterFieldSelected()
         //act_openRelRecord->setVisible(false);
     }
 
-    act_selectByFieldValue->setVisible(true);
+
+    if( act_selectByFieldValue != 0)
+        act_selectByFieldValue->setVisible(true);
 
     //act_selectByFieldValue->setChecked( filter.isEmpty() );
 
@@ -520,34 +505,36 @@ bool PblTableView::insertRow(int row) // функцию можно переоп�
     // We are insert row at row number xx!
     // xx in QTableView is not id of data model
 
-    if ( mdl->isInsertingRow >= 0)
+    if ( mdl->isDirtyRow != -1)
     {
-      if( mdl->editStrategy() <= QSqlTableModel::OnRowChange)
-      {
-          if( ! mdl->submit()) // this is important to make before insert new row because of new record already was initialized but maybe not saved
-          {
-              QMessageBox::warning(this, mySql::error, tr("You are already inserted a row, that should editing and saved"));
-
-              QModelIndex idxIns = mdl->index(mdl->isInsertingRow,0);
-              setCurrentIndex(idxIns);
-              selectRow(idxIns.row());
-
-              return false;
-
-          }
-          else
-              mdl->isInsertingRow = -1; // clear flag
-
-          // isDirty is not helpы for you because of this tests only by update row, not inserting
-
-          // rowsAboutToBeInserted
-          //      emit rowsAboutToBeInserted
-          // emit primeInsert
-          // endInsertRows
-          //      emit rowsInserted -- we use this signal
+        if( mdl->editStrategy() <= QSqlTableModel::OnRowChange)
+        {
+            if( ! mdl->submit()) // this is important to make before insert new row because of new record already was initialized but maybe not saved
+            {
+                QMessageBox::warning(this,
+                                     mySql::error_,
+                                     tr("You are already editing or inserting some row, that you should saved before insert new"));
 
 
-      }
+                QModelIndex dirtyRowIdx = mdl->index(mdl->isDirtyRow,0);
+
+                if(dirtyRowIdx.isValid())
+                {
+                    setCurrentIndex(dirtyRowIdx);
+                    selectRow(dirtyRowIdx.row());
+                }
+
+
+                return false;
+
+            }
+
+            // rowsAboutToBeInserted
+            //      emit rowsAboutToBeInserted
+            // emit primeInsert
+            // endInsertRows
+            //      emit rowsInserted -- we use this signal
+        }
     }
 
 
@@ -604,7 +591,27 @@ bool PblTableView::editRow(int row)
 bool PblTableView::slot_editRowBtnClick()
 {
     int row = currentIndex().row();
-    return editRow(row);
+
+    return emit sig_editRow(row);
+
+    //return editRow(row);
+}
+
+//-------------------------------------------------
+
+bool PblTableView::viewRow(int row)
+{
+    // this code you implement youself
+    return false;
+}
+
+bool PblTableView::slot_viewRowBtnClick()
+{
+    if( ! currentIndex().isValid())
+        return false;
+
+
+    return sig_viewRow(currentIndex().row());
 }
 
 //-------------------------------------------------
@@ -629,7 +636,10 @@ bool PblTableView::copyRow(int srcRow)
         if ( mdl->record().field(col).isAutoValue() ) // dont works i dont understand
             continue;
 
-        if( primaryIndex.contains(mdl->record().fieldName(col) ))
+        if( mdl->primaryIndex.contains(mdl->record().fieldName(col) ))
+            continue;
+
+        if( mdl->isCalcColumn(col) )
             continue;
 
         QVariant value = mdl->data(mdl->index(srcRow , col), Qt::DisplayRole);
@@ -673,8 +683,10 @@ bool PblTableView::copyRow(int srcRow)
 
     if(mdl->editStrategy() == QSqlTableModel::OnRowChange
             || mdl->editStrategy() == QSqlTableModel::OnFieldChange)
+    {
         if ( ! mdl->submit() )
             QMessageBox::warning(this , mySql::warning , mySql::submitFalse.arg(mdl->tableName()).arg(mdl->lastError().text()));
+    }
 
     return true;
 }
@@ -715,19 +727,32 @@ bool PblTableView::slot_removeRowBtnClick()
 }
 //-------------------------------------------------
 
-void PblTableView::setEditable(bool on)
+void PblTableView::setEditState(bool editOn)
 {
-    tlbx->setEditable(on);
+
+    tlbx->ui->chk_editable->setChecked(editOn);
+
+    slot_setEditable(editOn);
+
 }
 
-void PblTableView::slot_doubleClicked(QModelIndex index)
+//-------------------------------------------------
+
+void PblTableView::setSelectAndClose()
+{
+    selectAndClose = true;
+
+}
+
+
+void PblTableView::slot_doubleClicked(const QModelIndex & index)
 {
 
     qDebug() << "slot_doubleClicked" << mdl->tableName();
 
-    if( ! editable) // chosing
+    if(selectable &&  ! tlbx->ui->chk_editable->isChecked())
     {
-        emit sig_rowSelected(index);
+        act_selectAndClose->trigger();
         return;
     }
 
@@ -741,7 +766,15 @@ void PblTableView::slot_doubleClicked(QModelIndex index)
             return;
 
 
-        Table_Dlg dlg = Table_Dlg("goods" , db, this);
+        PblTableDlg dlg = PblTableDlg( db, this, true , true );
+
+        if( ! dlg.view->prepare(inf.table) )
+        {
+            QMessageBox::critical(this , "error" , tr("table '%1' is not opened").arg(inf.table));
+            return;
+        }
+
+        dlg.view->setEditState(false);
 
         dlg.exec();
 
@@ -760,6 +793,8 @@ void PblTableView::slot_doubleClicked(QModelIndex index)
 
         lst << txtVal << dlg.chosenId;
 
+        qDebug() << "lst " << lst;
+
         if(dlg.chosenId == -1)
         {
             QMessageBox::critical(this , "error" , tr("the choise is not defined"));
@@ -768,16 +803,26 @@ void PblTableView::slot_doubleClicked(QModelIndex index)
 
         if( ! mdl->setData(index , lst ,Qt::EditRole))
         {
-            QMessageBox::critical(this , "error" , tr("setData returned  false"));
+            QMessageBox::critical(this , "error" , tr("setData returns  false\n%1").arg(mdl->lastError().text()));
             return;
         }
 
-
     }
+    else if(dlgts.contains(col))
+    {
+        if(qobject_cast<checkBox_Delegate *>(dlgts.value(col)))
+        {
+            checkBox_Delegate * chk = qobject_cast<checkBox_Delegate *>(dlgts.value(col));
 
+            bool b = mdl->data(index).toBool();
 
+            if ( ! mdl->setData(index , (int)! b) )
+                qCritical("error setData checkbox field");
+
+            return;
+        }
+    }
 }
-
 
 
 bool PblTableView::slot_searchInTable(QString & txt)
@@ -870,52 +915,488 @@ bool PblTableView::slot_searchInTable(QString & txt)
 
     mdl->setFilter(filter);
 
-    bool bbb = mdl->select();
+    bool selectOk = mdl->select();
 
     if(! filter.isEmpty() )
     {
-        if( ! mdl->setHeaderData(col , Qt::Horizontal, tlbx->icon_textSearchedInTable, Qt::DecorationRole))
+        if( ! mdl->setHeaderData(col , Qt::Horizontal, getActIcon(ACT_CLEAR_SEARCH_RESULTS), Qt::DecorationRole))
             QMessageBox::critical(this , "error" , "setHeaderData return false 6575637657");
 
-        if(bbb)
-            tlbx->setBtn_searchInTable(true , true);
+        if(selectOk)
+        {
+            tlbx->ui->btn_searchInTable->setVisible(true);
+            tlbx->ui->btn_searchInTable->setEnabled(true);
+
+        }
     }
     else
     {
         mdl->setHeaderData(col , Qt::Horizontal, QVariant(), Qt::DecorationRole);
-        if(bbb)
-            tlbx->setBtn_searchInTable(true , false);
+        if(selectOk)
+        {
+            tlbx->ui->btn_searchInTable->setVisible(true);
+            tlbx->ui->btn_searchInTable->setEnabled(false);
+
+        }
+    }
+
+    return selectOk;
+}
+
+void PblTableView::setEditStrategyVisible(bool on)
+{
+    set_Actions(PblTableView::ACT_SELECT_STRATEGY_ENABLED , on);
+
+}
+bool PblTableView::prepare(const QString & tableName )
+{
+
+
+    if ( ! mdl->set_Table(tableName))
+    {
+        QMessageBox::warning(this,
+                             mySql::error_,
+                             tr("table '%1' not exists in database\n error : %2").
+                             arg(tableName).
+                             arg(mdl->lastError().text()));
+
+        return false;
+    }
+
+    if ( ! config::setting_mdl( mdl ) )
+    {
+        QMessageBox::warning(this,
+                             mySql::error_,
+                             tr("error in setting_mdl"));
+        return false;
+    }
+
+    if ( ! mdl->select())
+    {
+        QMessageBox::warning(this,
+                             mySql::error_,
+                             tr("error in select query:\n\n%1\n\n\n%2").
+                             arg(mdl->query().lastQuery()).
+                             arg(mdl->lastError().text()));
+        return false;
+    }
+
+    if ( ! config::setting_view( this ) )
+    {
+        QMessageBox::warning(this,
+                             mySql::error_,
+                             tr("error in setting_view\n table :%1").arg(tableName));
+        return false;
+    }
+
+
+    return true;
+
+}
+
+void PblTableView::set_Actions(PblTableView::ACTIONS act, bool On)
+{
+
+    // ----------------------------------------------------------
+    //                       INSERT_ROW
+    // ----------------------------------------------------------
+
+    if(act & ACT_INSERT_ROW)
+    {
+        if(On)
+        {
+            if(act_InsertRow  == 0)
+            {
+
+                act_InsertRow = new QAction( getActIcon(ACT_INSERT_ROW) , trUtf8("create row"), this);
+                act_InsertRow->setShortcut(Qt::Key_Insert);
+
+                _CONNECT_(act_InsertRow, SIGNAL(triggered()), this, SLOT(slot_insertRowBtnClick()));
+
+                _CONNECT_(tlbx->ui->btn_insert, SIGNAL(clicked()),
+                          act_InsertRow, SLOT( trigger() ));
+
+                contextMenu->addAction(act_InsertRow);
+
+                addAction(act_InsertRow);
+
+            }
+        }
+        else if ( ! On)
+        {
+            if(act_InsertRow  != 0)
+            {
+                act_InsertRow->setVisible(On);
+            }
+
+        }
+        tlbx->ui->btn_insert->setVisible(On);
+        tlbx->ui->btn_insert->setEnabled(On);
+    }
+
+    // ----------------------------------------------------------
+    //                       EDIT_ROW
+    // ----------------------------------------------------------
+    if(act & ACT_EDIT_ROW)
+    {
+        if(On)
+        {
+            if(act_EditRow  == 0)
+            {
+
+                act_EditRow = new QAction( getActIcon(ACT_EDIT_ROW) , trUtf8("edit row"), this);
+
+                act_EditRow->setShortcut(Qt::Key_F4);
+
+                _CONNECT_(act_EditRow, SIGNAL(triggered()), this, SLOT(slot_editRowBtnClick()));
+
+                _CONNECT_(tlbx->ui->btn_edit, SIGNAL(clicked()),
+                          act_EditRow, SLOT( trigger() ));
+
+                contextMenu->addAction(act_EditRow);
+
+                addAction(act_EditRow);
+            }
+        }
+        else if ( ! On)
+        {
+            if(act_EditRow  != 0)
+            {
+                act_EditRow->setVisible(On);
+            }
+
+
+        }
+        tlbx->ui->btn_edit->setVisible(On);
+        tlbx->ui->btn_edit->setEnabled(On);
+    }
+
+    // ----------------------------------------------------------
+    //                       COPY_ROW
+    // ----------------------------------------------------------
+
+    if(act & ACT_COPY_ROW)
+    {
+        if(On)
+        {
+            if(act_CopyRow  == 0)
+            {
+
+                act_CopyRow = new QAction( getActIcon(ACT_COPY_ROW) , trUtf8("copy row"), this);
+
+                act_CopyRow->setShortcut(Qt::Key_F9);
+
+                _CONNECT_(act_CopyRow, SIGNAL(triggered()), this, SLOT(slot_copyRowBtnClick()));
+
+
+                _CONNECT_(tlbx->ui->btn_copy, SIGNAL(clicked()), act_CopyRow, SLOT( trigger() ));
+
+                contextMenu->addAction(act_CopyRow);
+
+                addAction(act_CopyRow);
+            }
+        }
+        else if ( ! On)
+        {
+            if(act_CopyRow  != 0)
+            {
+                act_CopyRow->setVisible(On);
+            }
+
+
+        }
+        tlbx->ui->btn_copy->setVisible(On);
+        tlbx->ui->btn_copy->setEnabled(On);
+    }
+
+    // ----------------------------------------------------------
+    //                       DELETE_ROW
+    // ----------------------------------------------------------
+
+    if(act & ACT_DELETE_ROW)
+    {
+        if(On)
+        {
+            if(act_DeleteRow  == 0)
+            {
+
+                act_DeleteRow = new QAction( getActIcon(ACT_DELETE_ROW), trUtf8("remove row"), this);
+
+                act_DeleteRow->setShortcut(Qt::Key_Delete);
+
+                _CONNECT_(act_DeleteRow, SIGNAL(triggered()), this, SLOT(slot_removeRowBtnClick()));
+
+                _CONNECT_(tlbx->ui->btn_delete, SIGNAL(clicked()), act_DeleteRow, SLOT( trigger() ));
+
+                contextMenu->addAction(act_DeleteRow);
+
+                addAction(act_DeleteRow);
+
+            }
+        }
+        else if ( ! On)
+        {
+            if(act_DeleteRow  != 0)
+            {
+                act_DeleteRow->setVisible(On);
+            }
+
+        }
+        tlbx->ui->btn_delete->setVisible(On);
+        tlbx->ui->btn_delete->setEnabled(On);
+    }
+
+    // ----------------------------------------------------------
+    //                       VIEW
+    // ----------------------------------------------------------
+
+    if(act & ACT_VIEW)
+    {
+
+        if( On )
+        {
+            if(act_view  == 0)
+            {
+
+                act_view = new QAction( getActIcon(ACT_VIEW), trUtf8("view"), this);
+
+                act_view->setShortcut(Qt::Key_F3);
+
+                _CONNECT_(act_view, SIGNAL(triggered()), this, SLOT(slot_viewRowBtnClick()));
+
+                addAction(act_view);
+
+                contextMenu->addAction(act_view);
+
+                act_view->setVisible(On);
+
+            }
+        }
+        else if ( ! On )
+        {
+            if(act_view  != 0)
+            {
+                act_view->setVisible(On);
+            }
+
+        }
+
+        if(act_view  != 0)
+            tlbx->ui->btn_view->setVisible(On);
 
     }
 
-    return bbb;
+
+    // ----------------------------------------------------------
+    //                       SEARCH
+    // ----------------------------------------------------------
+
+    if(act & ACT_SEARCH)
+    {
+
+        if( On )
+        {
+            if(act_search  == 0)
+            {
+
+                act_search = new QAction( getActIcon(ACT_SEARCH), trUtf8("search"), this);
+
+                act_search->setShortcut(Qt::Key_F2);
+
+                //_CONNECT_(act_search, SIGNAL(triggered()), this, SLOT(slot_removeRowBtnClick()));
+
+                addAction(act_search);
+
+                act_search->setVisible(On);
+
+            }
+        }
+        else if ( ! On )
+        {
+            if(act_search  != 0)
+            {
+                act_search->setVisible(On);
+            }
+
+        }
+
+        tlbx->ui->btn_searchInTable->setVisible(On);
+        tlbx->ui->ledt_filter->setVisible(On);
+        tlbx->ui->btn_search_settings->setVisible(On);
+    }
+
+    // ----------------------------------------------------------
+    //                       CLEAR_FIELD
+    // ----------------------------------------------------------
+
+    if(act & ACT_CLEAR_FIELD)
+    {
+        if(On)
+        {
+            if(act_ClearField  == 0)
+            {
+
+                act_ClearField = new QAction( getActIcon(ACT_CLEAR_FIELD), trUtf8("clear field"), this);
+
+                _CONNECT_(act_ClearField, SIGNAL(triggered()), this, SLOT(slot_clearFieldClick()));
+
+                contextMenu->addAction(act_ClearField);
+
+                addAction(act_ClearField);
+
+            }
+        }
+        else if ( ! On)
+        {
+            if(act_ClearField  != 0)
+            {
+                act_ClearField->setVisible(On);
+            }
+
+
+        }
+    }
+
+    // ----------------------------------------------------------
+    //                       SELECT_BY_FIELD_VALUE
+    // ----------------------------------------------------------
+
+    if(act & ACT_SELECT_BY_FIELD_VALUE)
+    {
+        if(On)
+        {
+            if(act_selectByFieldValue  == 0)
+            {
+                act_selectByFieldValue = new QAction( getIcon(1),
+                                                      trUtf8("select by field value"),
+                                                      this);
+
+                act_selectByFieldValue->setShortcut(Qt::Key_F8);
+
+                act_selectByFieldValue->setChecked(false);
+
+
+                _CONNECT_(act_selectByFieldValue, SIGNAL(triggered(bool)),
+                          this, SLOT(slot_triggeredSelectByFieldValue(bool)));
+
+                contextMenu->addAction(act_selectByFieldValue);
+
+                addAction(act_selectByFieldValue);
+
+            }
+        }
+        else if ( ! On)
+        {
+            if(act_selectByFieldValue  != 0)
+            {
+                act_selectByFieldValue->setVisible(On);
+            }
+        }
+        tlbx->ui->btn_selectByValue->setVisible(On);
+    }
+
+    // ----------------------------------------------------------
+    //                       SELECT_BY_FIELD_VALUE
+    // ----------------------------------------------------------
+
+    if(act & ACT_SORT)
+    {
+        tlbx->ui->btn_sortEnabled->setVisible(On);
+    }
+
+    // ----------------------------------------------------------
+    //                       SELECT_STRATEGY_ENABLED
+    // ----------------------------------------------------------
+
+    if(act & ACT_SELECT_STRATEGY_ENABLED)
+    {
+        tlbx->ui->cmb_Strategy->setVisible(On);
+        tlbx->ui->btn_submitAll->setVisible(On);
+    }
+
+    // ----------------------------------------------------------
+    //                       SHOW_EXTENDED_RELATION_COLUMNS
+    // ----------------------------------------------------------
+
+    if(act & ACT_SHOW_EXTENDED_RELATION_COLUMNS)
+    {
+        tlbx->ui->chk_showRelExColumns->setVisible(On);
+        tlbx->ui->chk_showRelExColumns->setChecked(On);
+
+        if( On )
+        {
+            _CONNECT_(tlbx->ui->chk_showRelExColumns, SIGNAL(clicked(bool)),
+                      this, SLOT( slot_setVisibleExRelIdColumns(bool)));
+
+
+        }
+        else if ( ! On )
+        {
+            _DISCONNECT_(tlbx->ui->chk_showRelExColumns, SIGNAL(clicked(bool)),
+                         this, SLOT( slot_setVisibleExRelIdColumns(bool)));
+        }
+    }
+
+    // ----------------------------------------------------------
+    //                       SWITCH_EDIT_ENABLED
+    // ----------------------------------------------------------
+
+    if(act & ACT_SWITCH_EDIT_ENABLED)
+    {
+        tlbx->ui->chk_editable->setVisible(On);
+
+        if(On)
+        {
+            _CONNECT_(tlbx->ui->chk_editable, SIGNAL(clicked(bool)),
+                      this, SLOT( slot_setEditable(bool)));
+        }
+        else
+        {
+            _DISCONNECT_(tlbx->ui->chk_editable, SIGNAL(clicked(bool)),
+                         this, SLOT( slot_setEditable(bool)));
+        }
+    }
+
+    // ----------------------------------------------------------
+    //
+    // ----------------------------------------------------------
+
+    if(act & ACT_EDIT_ON)
+    {
+        //tlbx->ui->chk_editable->setVisible(visible);
+
+        setEditState(On);
+
+        if(On)
+        {
+
+            /*_CONNECT_(tlbx->ui->chk_editable, SIGNAL(clicked(bool)),
+                      this, SLOT( slot_setEditable(bool)));*/
+        }
+        else
+        {
+            /*_DISCONNECT_(tlbx->ui->chk_editable, SIGNAL(clicked(bool)),
+                      this, SLOT( slot_setEditable(bool)));*/
+        }
+    }
+
 }
 
-void PblTableView::setActionVisible(ACTIONS act, bool visible)
+void PblTableView::show_view_Btn()
 {
-    if(act == ACTION_CHOSE_ROW)
-        act_choiseCurrentRecord->setVisible(visible);
-
-    else if(act == ACTION_INSERT_ROW)
-        act_InsertRow->setVisible(visible);
-
-    else if(act == ACTION_EDIT_ROW)
-        act_EditRow->setVisible(visible);
-
-    else if(act == ACTION_COPY_ROW)
-        act_CopyRow->setVisible(visible);
-
-    else if(act == ACTION_DELETE_ROW)
-        act_DeleteRow->setVisible(visible);
-
-    else if(act == ACTION_CLEAR_FIELD)
-        act_ClearField->setVisible(visible);
-
-
+    if(tlbx->ui->chk_editable->isChecked())
+    {
+        set_Actions(PblTableView::ACT_VIEW , false);
+    }
+    else
+        set_Actions(PblTableView::ACT_VIEW, true);
 }
 
 void PblTableView::slot_triggeredSelectByFieldValue(bool on)
 {
+    if(act_selectByFieldValue ==0)
+        return;
+
     if( ! currentIndex().isValid())
     {
         mdl->setFilter("");
@@ -941,12 +1422,80 @@ void PblTableView::slot_triggeredSelectByFieldValue(bool on)
     }
 }
 
-void PblTableView::slot_rowsInserted(const QModelIndex &parent, int first, int last)
+void PblTableView::setCheckBoxDelegate(int col)
 {
-    qDebug() << "PblTableView::slot_rowsInserted " << parent << first << last;
-    // start insert row
-    mdl->isInsertingRow = first;
+    if(col <0 || col >= mdl->record().count())
+    {
+        QMessageBox::warning(this , mySql::error_ , tr("column is out of range , field : %1").arg(col));
+        return;
+    }
+
+    if(dlgts.contains(col))
+    {
+        QMessageBox::warning(this , mySql::error_ , tr("second attempting adding QCheckBox to field : %1").arg(col));
+        return;
+    }
+
+
+    dlgts.insert( col, new checkBox_Delegate(this) );
+
+    QStyledItemDelegate * cmbDeleg = dlgts.value(col);
+
+    setItemDelegateForColumn(col, cmbDeleg);
 }
+
+void PblTableView::setComboBoxDelegate(int col, QStringList &lst)
+{
+    if(col <0 || col>=mdl->record().count())
+    {
+        QMessageBox::warning(this , mySql::error_ , tr("column is out of range , field : %1").arg(col));
+        return;
+    }
+
+    if(dlgts.contains(col))
+    {
+        QMessageBox::warning(this , mySql::error_ , tr("second attempting adding QComboBox to field : %1").arg(col));
+        return;
+    }
+
+
+    dlgts.insert( col,
+                  new ComboBoxDelegate(
+                      mdl ,
+                      col,
+                      lst,
+                      this)
+                  );
+
+    QStyledItemDelegate * cmbDeleg = dlgts.value(col);
+
+    setItemDelegateForColumn(col, cmbDeleg);
+
+}
+
+void PblTableView::setDateTimeDelegate(int col)
+{
+    if(col <0 || col>=mdl->record().count())
+    {
+        QMessageBox::warning(this , mySql::error_ , tr("column is out of range , field : %1").arg(col));
+        return;
+    }
+
+    if(dlgts.contains(col))
+    {
+        QMessageBox::warning(this , mySql::error_ , tr("second attempting add a date_Delegate to field : %1").arg(col));
+        return;
+    }
+
+
+    dlgts.insert( col,
+                  new date_Delegate( 0, this)
+                  );
+
+    setItemDelegateForColumn(col, dlgts.value(col));
+
+}
+
 
 bool PblTableView::slot_selectByFieldValue(QModelIndex idx)
 {
@@ -1008,3 +1557,133 @@ bool PblTableView::slot_selectByFieldValue(QModelIndex idx)
 
     return bb;
 }
+
+
+PblSqlRelationalTableModel* PblTableView::model() const
+{
+
+    return mdl;
+}
+
+void PblTableView::slot_setEditable(bool on)
+{
+
+    editable = on;
+
+    if(on)
+    {
+        setSelectionBehavior(QAbstractItemView::SelectItems);
+
+        setEditTriggers(QAbstractItemView::DoubleClicked
+                        |QAbstractItemView::AnyKeyPressed); //EditKeyPressed);//AllEditTriggers);
+
+        if(act_DeleteRow != 0)
+            tlbx->ui->btn_delete->setVisible(on);
+
+        if(act_CopyRow != 0)
+            tlbx->ui->btn_copy->setVisible(on);
+
+        if(act_EditRow != 0)
+            tlbx->ui->btn_edit->setVisible(on);
+
+        if(act_InsertRow != 0)
+            tlbx->ui->btn_insert->setVisible(on);
+
+        if(act_view != 0)
+            tlbx->ui->btn_view->setVisible(on);
+
+    }
+    else if ( ! on )
+    {
+
+        setSelectionBehavior(QAbstractItemView::SelectRows);
+
+        setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+        if(act_view != 0)
+            tlbx->ui->btn_view->setVisible(true);
+    }
+
+
+    if(act_DeleteRow != 0)
+        tlbx->ui->btn_delete->setEnabled(on);
+
+    if(act_CopyRow != 0)
+        tlbx->ui->btn_copy->setEnabled(on);
+
+    if(act_EditRow != 0)
+        tlbx->ui->btn_edit->setEnabled(on);
+
+    if(act_InsertRow != 0)
+        tlbx->ui->btn_insert->setEnabled(on);
+
+    //  view->repaint();
+}
+
+void PblTableView::slot_editStrategyChanged(QSqlTableModel::EditStrategy newStrategy)
+{
+    qDebug() << "editStrategy" << mdl->editStrategy();
+
+    if(mdl->editStrategy() == newStrategy)
+        return;
+
+    if(mdl->isDirtyRow != -1)
+        mdl->submitAll();
+
+    if(newStrategy >=0 && newStrategy < tlbx->ui->cmb_Strategy->count())
+        tlbx->ui->cmb_Strategy->setCurrentIndex(newStrategy);
+}
+
+
+void PblTableView::initStrategy(QSqlTableModel::EditStrategy strat)
+{
+    tlbx->ui->cmb_Strategy->setCurrentIndex( strat);
+
+    // _CONNECT_ have to be after setCurrentIndex
+
+    _CONNECT_(tlbx->ui->cmb_Strategy , SIGNAL(currentIndexChanged(int)),
+              this, SLOT(slot_editStrategyClicked(int)));
+}
+
+void PblTableView::slot_editStrategyClicked(int newStrategy)
+{
+    if(mdl->editStrategy() == newStrategy)
+        return;
+
+    if(newStrategy < QSqlTableModel::OnFieldChange || newStrategy >QSqlTableModel::OnManualSubmit )
+    {
+        QMessageBox::warning(this,
+                             mySql::error_,
+                             tr("You are trying to set wrong edit strategy number %1").arg(newStrategy));
+        return;
+    }
+
+    mdl->setEditStrategy( ( QSqlTableModel::EditStrategy ) newStrategy);
+
+}
+
+void PblTableView::slot_cmb_Strategy_currentIndexChanged(int index)
+{
+    QSqlTableModel::EditStrategy strat = mdl->editStrategy();
+
+    if(strat != index)
+        mdl->setEditStrategy((QSqlTableModel::EditStrategy)index);
+
+    if(index == QSqlTableModel::OnFieldChange)
+    {
+        tlbx->ui->btn_submitAll->setText("submit");
+        tlbx->ui->btn_submitAll->setEnabled(true);
+    }
+    else if(index == QSqlTableModel::OnRowChange)
+    {
+        tlbx->ui->btn_submitAll->setText("submit");
+        tlbx->ui->btn_submitAll->setEnabled(true);
+    }
+    else if(index == QSqlTableModel::OnManualSubmit)
+    {
+        tlbx->ui->btn_submitAll->setText("submitAll");
+        tlbx->ui->btn_submitAll->setEnabled(true);
+    }
+
+}
+

@@ -1,6 +1,6 @@
 #include "search_settings_dlg.h"
 #include "ui_search_settings_dlg.h"
-#include "pblsqlrelationaltablemodel.h"
+#include "pbltableview/pblsqlrelationaltablemodel.h"
 #include "pbltableview.h"
 #include <QDebug>
 #include <QSqlField>
