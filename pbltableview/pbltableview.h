@@ -106,6 +106,8 @@ public:
 
     virtual ~PblTableView();
 
+    void reset();
+
     static QIcon getActIcon(PblTableView::ACTION act);
 
     static QIcon PblTableView::getIcon(int nn);
@@ -197,7 +199,7 @@ signals:
 
     bool sig_viewRow(int row);
 
-public slots:
+public Q_SLOTS:
 
     void slot_CustomMenuRequested(const QPoint &pos);
 
@@ -229,6 +231,21 @@ public slots:
 
     void slot_editStrategyClicked(int);
 
+protected Q_SLOTS:
+    virtual void rowsInserted(const QModelIndex &parent, int start, int end);
+    virtual void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
+    virtual void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    virtual void currentChanged(const QModelIndex &current, const QModelIndex &previous);
+    virtual void updateEditorData();
+    virtual void updateEditorGeometries();
+    virtual void updateGeometries();
+    virtual void verticalScrollbarAction(int action);
+    virtual void horizontalScrollbarAction(int action);
+    virtual void verticalScrollbarValueChanged(int value);
+    virtual void horizontalScrollbarValueChanged(int value);
+    virtual void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint);
+    virtual void commitData(QWidget *editor);
+    virtual void editorDestroyed(QObject *editor);
 
 private slots:
 

@@ -14,6 +14,7 @@
 #include "pbltableview/pbl_table_dlg.h"
 #include "config.h"
 #include "logging_system/logging_system.h"
+#include <QDateTime>
 
 DialogTest::DialogTest(QString langId,
                        QSqlDatabase &db_,
@@ -113,15 +114,36 @@ void DialogTest::on_btn_save_clicked()
 
         QVariant sumValue = mdl->data(mdl->index(row , sumCol1));
 
-        int sumCol2 =  mdl_checks.record().indexOf("sum");
-
-        if ( ! mdl_checks.setData(mdl_checks.index(0 , sumCol2), sumValue) )
+        if ( ! mdl_checks.setData(mdl_checks.index(0 , mdl_checks.fieldIndex("sum")), sumValue) )
         {
-            QMessageBox::critical(this , mySql::error_ , tr("setData return false, table").append(mdl_checks.tableName()).append(", field : sum"));
+            QMessageBox::critical(this ,
+                                  mySql::error_ ,
+                                  tr("setData return false,\n table '%1',\n field %2").
+                                  arg(mdl_checks.tableName()).
+                                  arg(", field : sum"));
             return;
         }
 
         // -----------------------------------------------------------------
+
+        //int da =  mdl->record().indexOf("sum");
+
+        //QVariant sumValue = mdl->data(mdl->index(row , sumCol1));
+
+        int dat =  QDateTime::currentDateTime().toTime_t() ;
+
+        if ( ! mdl_checks.setData(mdl_checks.index(0 , mdl_checks.fieldIndex("date_")), dat) )
+        {
+            QMessageBox::critical(this ,
+                                  mySql::error_ ,
+                                  tr("setData return false,\n table '%1',\n field %2").
+                                  arg(mdl_checks.tableName()).
+                                  arg(", field : date_"));
+            return;
+        }
+
+        // -----------------------------------------------------------------
+
 
         int productNameCol1 = mdl->baseRecord().indexOf("productName");
 

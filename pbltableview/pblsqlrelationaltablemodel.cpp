@@ -39,12 +39,18 @@
 #include <QMessageBox>
 #include "pbltableview/my_sql.h"
 #include <QSqlTableModel>
-
+#include "some_tests.h"
 #include "qdebug.h"
+#include <QApplication>
+#include <QSqlQuery>
 
 QT_BEGIN_NAMESPACE
 
 
+PblSqlRelationalTableModel::PblSqlRelationalTableModel()
+{
+
+}
 
 PblSqlRelationalTableModel::PblSqlRelationalTableModel(
         QSqlDatabase &db_,
@@ -55,17 +61,25 @@ PblSqlRelationalTableModel::PblSqlRelationalTableModel(
       sortColumn(-1),
       sortOrder(Qt::AscendingOrder),
       isDirtyRow(-1),
-      db(db_)
+      lastDirtyCol(-1),
+      lastDirtyRowId(-1),
+      isSelectedLine(-1),
+      db(db_),
+      priCol(-1)
 {
 
     qDebug() << "PblSqlRelationalTableModel editStrategy" << editStrategy();
+
+    _CONNECT_(this, SIGNAL(sig_rowIsDirty(int)),
+              this, SLOT(slot_rowIsDirty(int)));
+
 
 }
 
 
 PblSqlRelationalTableModel::~PblSqlRelationalTableModel()
 {
-    qDebug() << "dtor PblSqlRelationalTableModel " << tableName()<< "  isDirtyRow " <<isDirtyRow;
+    //qDebug() << "dtor PblSqlRelationalTableModel " << tableName()<< "  isDirtyRow " <<isDirtyRow;
 
     if(isDirtyRow != -1)
     {
@@ -92,6 +106,16 @@ QVariant PblSqlRelationalTableModel::data(const QModelIndex &idx, int role) cons
     if( role == Qt::TextAlignmentRole)
         if( colInfo.contains(col))
             return colInfo.value(col).alignment;
+
+    if(row == isSelectedLine && role == Qt::BackgroundColorRole) // repaint
+    {
+        // here returns color
+
+        // int r,g,b,a=0;
+        // qDebug() << " brush.color() " << r<< g << b <<a;
+
+        return  QColor(QApplication::palette().color(QPalette::AlternateBase));
+    }
 
 
     if( role != Qt::DisplayRole && role != Qt::UserRole )
@@ -142,6 +166,8 @@ Qt::ItemFlags PblSqlRelationalTableModel::flags(const QModelIndex &index) const
 {
 
     int col = index.column();
+    int row = index.row();
+
     int baseCount = baseRec.count();
 
     Qt::ItemFlags flgs=0;
@@ -186,14 +212,16 @@ bool PblSqlRelationalTableModel::submit()
     return bbb;
 }
 
-int PblSqlRelationalTableModel::getRowIndexValue(int row, const QSqlIndex & primaryIndex)
+int PblSqlRelationalTableModel::getPriColumn( )
 {
-    if(primaryIndex.count() != 1)
+    return priCol;
+}
+
+int PblSqlRelationalTableModel::getRowPriValue(int row,
+                                               const QSqlIndex & primaryIndex)
+{
+    if(priCol == -1)
         return -1;
-
-    QString field = primaryIndex.fieldName(0);
-
-    int priCol = fieldIndex(field);
 
     QVariant vv = data(index(row , priCol ));
 
@@ -225,7 +253,7 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
     if(editStrategy() <= QSqlTableModel::OnRowChange)
     {
         // save pri values of current row
-        oldPriValue = getRowIndexValue(row, primaryIndex);
+        oldPriValue = getRowPriValue(row, primaryIndex);
         //qDebug() << "priIdx : "  <<priIdx;
     }
 
@@ -253,15 +281,37 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
     {
     case OnFieldChange:
     {
-        if ( ! QSqlTableModel::setData( idx, id, role )) // id
-            // afterward will be called updateRowInTable and select
+        if ( ! QSqlTableModel::setData( idx, id, role )) // text
         {
-            qCritical() << "error 4768975654" << lastError().text();
+            QMessageBox::warning(0,
+                                 mySql::error_,
+                                 tr("setData returns false\n table %1\n field %2\n\nerror: %3").
+                                 arg(tableName()).
+                                 arg(record().fieldName(idx2.column())).
+                                 arg(lastError().text())
+                                 );
+
+            qCritical() << "error 47663736576" << lastError().text();
+
             return false;
         }
 
-        // just in case
-        isDirtyRow = row;
+        if( idxEx.isValid() )
+        {
+            if ( ! submit() ) // needs submit
+            {
+                QMessageBox::warning(0,
+                                     mySql::error_,
+                                     tr("OnFieldChange: after setData needs submit.\n but submit returns false\n table %1\n field %2").
+                                     arg(tableName().arg( record().fieldName(idx2.column())))
+                                     );
+
+                qCritical() << "error 47663736576" << lastError().text();
+
+                return false;
+            }
+
+        }
 
         return true;
     }
@@ -283,7 +333,7 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
 
             if(editStrategy() <= QSqlTableModel::OnRowChange)
             {
-                int newPriValue = getRowIndexValue(row, primaryIndex);
+                int newPriValue = getRowPriValue(row, primaryIndex);
 
                 if(newPriValue == -1)
                 {
@@ -329,9 +379,6 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
 
         }
 
-        // following unsaved fields
-        isDirtyRow = row;
-
         return true;
     }
     case OnManualSubmit:
@@ -350,9 +397,6 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
             qCritical("         error 4768975654");
             return false;
         }
-
-        // just in case
-        isDirtyRow = row;
 
         // far is calling updateRowInTable and select
 
@@ -385,25 +429,38 @@ bool PblSqlRelationalTableModel::setData(const QModelIndex &idx,
     if(relations.contains(col))
     {
         bSetData = setDataForRelationField(idx , value, role);
+
+        if(editStrategy() == QSqlTableModel::OnFieldChange)
+            ;
+        else
+        {
+
+        }
     }
     else
     {
         bSetData = QSqlTableModel::setData(idx, value, role);
+    }
 
-        if(bSetData) // && editStrategy() >= QSqlTableModel::OnFieldChange
-        {
-            // with QSqlTableModel::OnFieldChange click and edit and lost focus (without Enter)
-            // isDirtyRow must to row too
+    // with QSqlTableModel::OnFieldChange click and edit and lost focus (without Enter)
+    // isDirtyRow must to set to row value
 
-            isDirtyRow = row;
-            qDebug() << "setData isDirtyRow = row";
-        }
+    if( bSetData )
+    {
+        // following unsaved fields
 
+        setDirtyRow(row , col);
+        emit sig_rowIsDirty(row);
     }
 
     return bSetData;
 }
 
+void PblSqlRelationalTableModel::slot_rowIsDirty(int row)
+{
+
+
+}
 
 bool PblSqlRelationalTableModel::setRelation(const PblSqlRelation &relation)
 {
@@ -472,18 +529,79 @@ QString PblSqlRelationalTableModel::relationField(const QString &tableName,
 }
 
 
+void PblSqlRelationalTableModel::setDirtyRow(int dirtyRow , int dirtyCol)
+{
+    // 0 - undefined because of insertRow
+
+    lastDirtyRowId  = getRowPriValue( dirtyRow , primaryIndex);
+
+    lastDirtyCol    = dirtyCol;
+
+    isDirtyRow      = dirtyRow;
+
+    //isSelectedLine  = dirtyRow;
+
+    qDebug() << "PblSqlRelationalTableModel::setDirtyRow ";
+    qDebug() << "        lastDirtyRowId " <<lastDirtyRowId ;
+    qDebug() << "        lastDirtyCol   " <<lastDirtyCol ;
+    qDebug() << "        isDirtyRow     " <<isDirtyRow ;
+    qDebug() << "        isSelectedLine " <<isSelectedLine ;
+
+}
+
+
+
+void PblSqlRelationalTableModel::clearDirtyRow()
+{
+    isDirtyRow      = -1;
+    isSelectedLine  = -1;
+
+}
+
+void PblSqlRelationalTableModel::clear()
+{
+    qDebug() << "PblSqlRelationalTableModel::clear() " <<tableName();
+
+    QSqlTableModel::clear();
+
+}
+
+/*void PblSqlRelationalTableModel::fetchMore(const QModelIndex &parent)
+{
+    qDebug() << "PblSqlRelationalTableModel::fetchMore( " << tableName();
+    QSqlQueryModel::fetchMore(parent);
+
+}*/
+
+bool PblSqlRelationalTableModel::canFetchMore(const QModelIndex &parent) const
+{
+    qDebug() << "PblSqlRelationalTableModel::canFetchMore( " << tableName();
+    return QSqlQueryModel::canFetchMore(parent);
+
+}
+
 
 bool PblSqlRelationalTableModel::select()
 {
-    //qDebug() << "PblSqlRelationalTableModel::select()";
-
-    if ( ! QSqlTableModel::select())
-        return false;
+    qDebug() << "PblSqlRelationalTableModel::select() " << tableName() << " lastDirtyRowId"
+             << lastDirtyRowId << " isDirtyRow" << isDirtyRow << " lastDirtyCol " << lastDirtyCol
+             << " isSelectedLine" << isSelectedLine;
 
     if(editStrategy() <= QSqlTableModel::OnRowChange)
     {
-        isDirtyRow = -1;
+        clearDirtyRow();
     }
+
+    if ( ! QSqlTableModel::select()) // here occures PblTableView::reset()
+        return false;
+
+    lastDirtyRowId = -1;
+    lastDirtyCol = -1;
+
+    qDebug() << " after PblSqlRelationalTableModel::select() : "
+             << tableName()<< " lastDirtyRowId " << lastDirtyRowId << " isDirtyRow"
+             << isDirtyRow << " lastDirtyCol " << lastDirtyCol << " isSelectedLine" << isSelectedLine;
+
 
 
     // ------------------------------------------------------------
@@ -568,10 +686,15 @@ bool PblSqlRelationalTableModel::set_Table(const QString &tableName)
 
     colInfo.clear();
 
-
     primaryIndex = db.primaryIndex(tableName);
 
-    return true;
+    if( ! primaryIndex.isEmpty() && primaryIndex.count() == 1)
+    {
+        QString field = primaryIndex.fieldName(0);
+
+        priCol = fieldIndex(field);
+    }
+
 }
 
 
@@ -653,7 +776,37 @@ bool PblSqlRelationalTableModel::insertRowIntoTable(const QSqlRecord &values)
 
     //qDebug() << "PblSqlRelationalTableModel::insertRowIntoTable rec " << rec;
 
-    return QSqlTableModel::insertRowIntoTable(rec);
+    bool res = QSqlTableModel::insertRowIntoTable(rec);
+
+    if( res )
+    {
+        QSqlQuery qq;
+
+        if( qq.exec("SELECT last_insert_rowid()") )
+        {
+
+            if(qq.next())
+            {
+                bool ok = false;
+
+                int lastIsertId = qq.value(0).toInt(&ok);
+
+                if(ok)
+                {
+                    lastDirtyRowId = lastIsertId;
+                }
+                else
+                {
+                    lastDirtyRowId = -1;
+
+                }
+
+                qDebug() << "lastInsertId " <<  lastIsertId;
+            }
+        }
+    }
+
+    return res;
 
 }
 
@@ -729,9 +882,6 @@ QString PblSqlRelationalTableModel::orderByClause() const
     else
         return QSqlTableModel::orderByClause();
 }
-
-
-
 
 QString PblSqlRelationalTableModel::selectStatement() const
 {
@@ -1065,6 +1215,13 @@ bool PblSqlRelationalTableModel::isCalcColumn(int col)
     return true;
 }
 
+bool PblSqlRelationalTableModel::isRelationalColumn(int col)
+{
+    if(relations.contains(col))
+        return true;
+
+    return false;
+}
 
 int PblSqlRelationalTableModel::getRelIdColumn(int relCol)
 {

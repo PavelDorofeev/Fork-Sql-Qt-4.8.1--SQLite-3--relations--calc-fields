@@ -193,6 +193,7 @@ bool createTables()
                      "id	INTEGER UNIQUE,"\
                      "productName	INTEGER NOT NULL,"\
                      "sum	double DEFAULT 0,"\
+                     "date_ INTEGER DEFAULT 0," \
                      "PRIMARY KEY(id AUTOINCREMENT))"))
         return false;
 

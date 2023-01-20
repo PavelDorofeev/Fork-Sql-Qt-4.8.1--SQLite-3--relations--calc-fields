@@ -6,18 +6,18 @@
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QPalette>
+#include <QApplication>
 
-
-ComboBoxDelegate::ComboBoxDelegate(PblSqlRelationalTableModel *mdl,
+ComboBoxDelegate::ComboBoxDelegate(PblSqlRelationalTableModel *Mdl,
                                    int column,
                                    QStringList &lst_,
                                    QWidget *parent)
     : QStyledItemDelegate(parent)
 
 {
-    column_=column;
+    col=column;
     lst=lst_;
-    mdl_=mdl;
+    mdl=Mdl;
 
 }
 
@@ -31,7 +31,7 @@ QWidget *ComboBoxDelegate::createEditor(QWidget *parent,
     QComboBox *cmb = new QComboBox(parent);
     cmb->insertItems(0,lst);
 
-    _CONNECT_(cmb,  SIGNAL(activated(int)), this, SLOT(slot_commitAndCloseEditor(int)));
+    //_CONNECT_(cmb,  SIGNAL(activated(int)), this, SLOT(slot_commitAndCloseEditor(int)));
 
     QPalette palette = option.palette; //editor->palette();
 
@@ -40,12 +40,14 @@ QWidget *ComboBoxDelegate::createEditor(QWidget *parent,
     return cmb;
 }
 
+/*
 void ComboBoxDelegate::slot_commitAndCloseEditor(int pos)
 {
     QComboBox *editor = qobject_cast<QComboBox *>(sender());
     //emit commitData(editor);
     //emit closeEditor(editor);
 }
+*/
 
 void ComboBoxDelegate::setModelData(QWidget *editor,
                                     QAbstractItemModel *model,
@@ -88,36 +90,18 @@ void ComboBoxDelegate::paint(QPainter *painter,
                              const QModelIndex &index) const
 {
 
-    if(index.column()== column_)
+
+
+    if(index.column()== col)
     {
+        QString text="";
+
         int col=index.column();
         int row=index.row();
 
-        //option.palette.setColor(QPalette::Normal, QPalette::Background, Qt::red);
-
-        QStyleOptionComboBox style;
-
-        if (option.state & QStyle::State_Selected)
+        if(mdl->index(row,col).isValid())
         {
-            painter->setPen(QPen(option.palette.color(QPalette::HighlightedText))); // Цвет пера
-            painter->fillRect(option.rect, option.palette.highlight());
-        }
-        else if (option.state & (QStyle::State_Enabled ))
-        {
-            painter->setPen(QPen(option.palette.color(QPalette::Text))); // Цвет пера
-            painter->fillRect(option.rect, option.palette.base());
-
-        }
-
-        // последовательность drawComplexControl и drawControl ИМЕЕТ ЗНАЧЕНИЕ !!!
-
-        painter->save();
-
-        QString text="";
-
-        if(mdl_->index(row,col).isValid())
-        {
-            int ii=mdl_->data(mdl_->index(row,col)).toInt();
+            int ii=mdl->data(mdl->index(row,col)).toInt();
 
             if( ii >=0)
                 text = lst.at(ii);
@@ -126,7 +110,35 @@ void ComboBoxDelegate::paint(QPainter *painter,
 
         }
 
-        painter->drawText(option.rect, Qt::AlignLeft | Qt::AlignVCenter, text);
+        painter->save();
+
+        if(mdl->isSelectedLine != -1 && row == mdl->isSelectedLine)
+        {
+            QStyleOptionViewItem newOpt = option;
+
+            painter->setPen(QPen(newOpt.palette.color(QPalette::Text))); // Цвет пера
+            painter->fillRect( newOpt.rect, QApplication::palette().color(QPalette::AlternateBase));
+
+            painter->drawText(newOpt.rect, Qt::AlignLeft | Qt::AlignVCenter, text);
+
+        }
+        else
+        {
+            if (option.state & QStyle::State_Selected)
+            {
+                painter->setPen( QPen ( option.palette.color(QPalette::HighlightedText))); // Цвет пера
+                painter->fillRect( option.rect, option.palette.highlight());
+            }
+            else if (option.state & (QStyle::State_Enabled ))
+            {
+                painter->setPen(QPen(option.palette.color(QPalette::Text))); // Цвет пера
+                painter->fillRect(option.rect, option.palette.base());
+
+            }
+            painter->drawText(option.rect, Qt::AlignLeft | Qt::AlignVCenter, text);
+        }
+
+        // последовательность drawComplexControl и drawControl ИМЕЕТ ЗНАЧЕНИЕ !!!
 
         painter->restore();
 

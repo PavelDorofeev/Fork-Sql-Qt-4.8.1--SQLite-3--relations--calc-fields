@@ -3,13 +3,14 @@
 
 #include <QStyledItemDelegate>
 #include <QCheckBox>
-//#include "db/dll_db_global.h"
+#include "pbltableview/PblSqlRelationalTableModel.h"
 
 class checkBox_Delegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit checkBox_Delegate(QWidget *parent = 0);
+    explicit checkBox_Delegate(PblSqlRelationalTableModel * Mdl,
+                               QWidget *parent = 0);
 
     ~checkBox_Delegate();
     
@@ -29,7 +30,7 @@ signals:
 public slots:
 
 private:
-    //QCheckBox  *chk_;
+    PblSqlRelationalTableModel * mdl;
 };
 
 #endif // CHECKBOX_DELEGATE_H

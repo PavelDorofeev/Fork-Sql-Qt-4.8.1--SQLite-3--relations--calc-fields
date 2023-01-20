@@ -67,6 +67,7 @@ class PblSqlRelationalTableModel: public QSqlTableModel
     
 public:
     
+    PblSqlRelationalTableModel(); //??
     explicit PblSqlRelationalTableModel(QSqlDatabase &db ,
                                         QObject *parent = 0
 
@@ -97,6 +98,10 @@ public:
 
     QString relationField(const QString &tableName, const QString &fieldName) const;
 
+
+    //void fetchMore(const QModelIndex &parent);
+    bool canFetchMore(const QModelIndex &parent) const;
+
     QHash<int , int> relations;     // connecting relation text and id fields
 
     QList<PblColumn> ex_columns;    // extended columns info
@@ -105,10 +110,17 @@ public:
 
     QSqlIndex primaryIndex;
 
+    int priCol;
+
+    int getPriColumn();
+
     int isDirtyRow;
+    uint lastDirtyRowId;
+    uint isSelectedLine;
+    uint lastDirtyCol;
 
 
-    int getRowIndexValue(int row, const QSqlIndex & primaryIndex);
+    int getRowPriValue(int row, const QSqlIndex & primaryIndex);
 
     QSqlRecord baseRec; // the original table record without extended fields (relations id, calc functions,..)
 
@@ -129,7 +141,9 @@ public:
 
     bool setCalcField(CALC_COLUMN & calcLst);
     
-    bool select();
+    virtual bool select();
+
+    virtual  void clear();
 
 
     int sortColumn;
@@ -156,6 +170,7 @@ public:
     bool isRelationColumn(int col);
 
     int getRelIdColumn(int relCol);
+    bool isRelationalColumn(int col);
 
     bool setDataForRelationField(const QModelIndex &idx,
                                  const QVariant &value,
@@ -170,8 +185,13 @@ signals:
 
     void sig_editStrategyChanged(QSqlTableModel::EditStrategy);
 
+    void sig_rowIsDirty(int row);
+
 public Q_SLOTS:
+
     virtual void setEditStrategy(EditStrategy strategy);
+
+    void slot_rowIsDirty(int);
     
 protected:
     
@@ -183,7 +203,8 @@ protected:
     
 private:
 
-
+    void clearDirtyRow();
+    void setDirtyRow(int dirtyRow, int dirtyCol);
 };
 
 

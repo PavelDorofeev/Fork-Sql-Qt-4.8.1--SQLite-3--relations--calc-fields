@@ -40,13 +40,13 @@ public slots:
     void slot_currentIndexChanged(int pos);
 
 private slots:
-    void slot_commitAndCloseEditor(int);
+    //void slot_commitAndCloseEditor(int);
 
 private:
-    int column_;
+    int col;
     QStringList lst;
     QComboBox *cmb;
-    PblSqlRelationalTableModel *mdl_;
+    PblSqlRelationalTableModel *mdl;
 
 };
 

@@ -62,6 +62,8 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
         mdl->setAlignment(2, Qt::AlignRight|Qt::AlignVCenter);
         mdl->setDblFormat(2, 'f');
 
+        mdl->setEditable( mdl->fieldIndex("sum") , false);
+
         return true;
 
     }
@@ -124,7 +126,14 @@ bool config::setting_view(PblTableView *view)
 
     }
     else
+    {
+        if(tableName == "checks")
+        {
+            view->setDateTimeDelegate( view->model()->fieldIndex("date_") );
+        }
+
         view->parentWidget()->setWindowTitle(tableName);
+    }
 
     view->slot_setVisibleExRelIdColumns(config::visibleRelIdColumns_byDefault);
 

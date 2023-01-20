@@ -59,7 +59,7 @@ PblTableDlg::PblTableDlg(
 
     mdl = new PblSqlRelationalTableModel( db , this);
 
-    view = new PblTableView ( mdl , ui->for_table_lo , db, this , editable , selectable);
+    view = new PblTableView ( mdl , ui->for_table_lo , db, this, editable , selectable);
 
     if(selectable)
     {

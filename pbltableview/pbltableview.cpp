@@ -502,10 +502,7 @@ bool PblTableView::insertRow(int row) // функцию можно переоп�
 {
     //qDebug() << "PblTableView::insertRow()";
 
-    // We are insert row at row number xx!
-    // xx in QTableView is not id of data model
-
-    if ( mdl->isDirtyRow != -1)
+    if ( mdl->isDirtyRow != -1)      // If we are left dirty row it needs to submit
     {
         if( mdl->editStrategy() <= QSqlTableModel::OnRowChange)
         {
@@ -520,13 +517,12 @@ bool PblTableView::insertRow(int row) // функцию можно переоп�
 
                 if(dirtyRowIdx.isValid())
                 {
-                    setCurrentIndex(dirtyRowIdx);
-                    selectRow(dirtyRowIdx.row());
+                    setCurrentIndex( dirtyRowIdx );
+
+                    selectRow( dirtyRowIdx.row());
                 }
 
-
                 return false;
-
             }
 
             // rowsAboutToBeInserted
@@ -546,7 +542,7 @@ bool PblTableView::insertRow(int row) // функцию можно переоп�
     }
 
     // ------------------------------------------------------------------------
-    // для модели OnManualSubmit надо поля выставить по умолчанию (дефолтные)
+    // for OnManualSubmit it nneds set default field values
     // ------------------------------------------------------------------------
 
     if(mdl->editStrategy() == QSqlTableModel::OnManualSubmit)
@@ -585,6 +581,9 @@ bool PblTableView::slot_insertRowBtnClick()
 
 bool PblTableView::editRow(int row)
 {
+    QMessageBox::warning(this,
+                         mySql::error_,
+                         tr("You should realize this code yourself"));
     return true;//slot_editRow(row);
 }
 
@@ -602,6 +601,9 @@ bool PblTableView::slot_editRowBtnClick()
 bool PblTableView::viewRow(int row)
 {
     // this code you implement youself
+    QMessageBox::warning(this,
+                         mySql::error_,
+                         tr("You should implement this code yourself"));
     return false;
 }
 
@@ -629,7 +631,9 @@ bool PblTableView::copyRow(int srcRow)
         return false;
     }
 
-    qDebug() << "mdl->columnCount() " << mdl->columnCount();
+    //mdl->isDirtyRow = newRow;
+
+    // qDebug() << "mdl->columnCount() " << mdl->columnCount();
 
     for (int col=0; col < mdl->columnCount(); col++)
     {
@@ -681,11 +685,12 @@ bool PblTableView::copyRow(int srcRow)
         }
     }
 
-    if(mdl->editStrategy() == QSqlTableModel::OnRowChange
-            || mdl->editStrategy() == QSqlTableModel::OnFieldChange)
+    if(mdl->editStrategy() <= QSqlTableModel::OnRowChange)
     {
         if ( ! mdl->submit() )
-            QMessageBox::warning(this , mySql::warning , mySql::submitFalse.arg(mdl->tableName()).arg(mdl->lastError().text()));
+            QMessageBox::warning(this ,
+                                 mySql::warning ,
+                                 mySql::submitFalse.arg(mdl->tableName()).arg(mdl->lastError().text()));
     }
 
     return true;
@@ -694,8 +699,11 @@ bool PblTableView::copyRow(int srcRow)
 bool PblTableView::slot_copyRowBtnClick()
 {
     int row = currentIndex().row();
+
     bool bbb= copyRow(row);
+
     resizeRowsToContents();
+
     return bbb;
 }
 //-------------------------------------------------
@@ -758,7 +766,7 @@ void PblTableView::slot_doubleClicked(const QModelIndex & index)
 
     int col = index.column();
 
-    if(mdl->getRelIdColumn( col) >=0 ) // relations
+    if(mdl->isRelationalColumn( col) ) // relations
     {
         PblColumn inf = mdl->getRelationInfoForColumn(col);
 
@@ -1321,7 +1329,7 @@ void PblTableView::set_Actions(PblTableView::ACTIONS act, bool On)
     if(act & ACT_SHOW_EXTENDED_RELATION_COLUMNS)
     {
         tlbx->ui->chk_showRelExColumns->setVisible(On);
-        tlbx->ui->chk_showRelExColumns->setChecked(On);
+        tlbx->ui->chk_showRelExColumns->setChecked(false);
 
         if( On )
         {
@@ -1437,7 +1445,7 @@ void PblTableView::setCheckBoxDelegate(int col)
     }
 
 
-    dlgts.insert( col, new checkBox_Delegate(this) );
+    dlgts.insert( col, new checkBox_Delegate(mdl , this) );
 
     QStyledItemDelegate * cmbDeleg = dlgts.value(col);
 
@@ -1662,6 +1670,174 @@ void PblTableView::slot_editStrategyClicked(int newStrategy)
 
 }
 
+void PblTableView::commitData(QWidget *editor)
+{
+    qDebug() << "PblTableView::commitData";
+
+    QTableView::commitData(editor);
+}
+
+void PblTableView::updateEditorData()
+{
+    qDebug() << "PblTableView::updateEditorData";
+
+    QTableView::updateEditorData();
+}
+
+
+void PblTableView::updateEditorGeometries()
+{
+    qDebug() << "PblTableView::updateEditorGeometries";
+
+    QTableView::updateEditorGeometries();
+
+}
+
+void PblTableView::updateGeometries()
+{
+    qDebug() << "PblTableView::updateGeometries";
+
+    QTableView::updateGeometries();
+
+}
+
+void PblTableView::editorDestroyed(QObject *editor)
+{
+    qDebug() << "PblTableView::editorDestroyed";
+
+    QTableView::editorDestroyed(editor);
+
+}
+
+void PblTableView::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)
+{
+    qDebug() << "PblTableView::closeEditor";
+
+    QTableView::closeEditor(editor , hint);
+}
+
+void PblTableView::verticalScrollbarAction(int action)
+{
+    qDebug() << "PblTableView::verticalScrollbarAction";
+
+    QTableView::verticalScrollbarAction(action);
+}
+
+void PblTableView::horizontalScrollbarAction(int action)
+{
+    qDebug() << "PblTableView::horizontalScrollbarAction";
+
+    QTableView::horizontalScrollbarAction(action);
+}
+
+void PblTableView::verticalScrollbarValueChanged(int value)
+{
+    qDebug() << "PblTableView::verticalScrollbarValueChanged";
+
+    QTableView::verticalScrollbarValueChanged(value);
+}
+
+void PblTableView::horizontalScrollbarValueChanged(int value)
+{
+    qDebug() << "PblTableView::horizontalScrollbarValueChanged";
+
+    QTableView::horizontalScrollbarValueChanged(value);
+}
+
+void PblTableView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    qDebug() << "PblTableView::selectionChanged";
+
+    QTableView::selectionChanged(selected , deselected);
+}
+
+
+void PblTableView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    qDebug() << "PblTableView::currentChanged";
+
+    QTableView::currentChanged(current , previous);
+}
+
+
+void PblTableView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
+{
+    qDebug() << "PblTableView::rowsAboutToBeRemoved";
+
+    int priCol = mdl->getPriColumn();
+
+    for( int row = start; row <= end; row++ )
+    {
+        bool ok = false;
+
+        int id = mdl->data(mdl->index( row, priCol)).toInt(&ok);
+
+        if(! ok )
+            continue;
+
+        /*if( id == mdl->lastDirtyRowId)
+        {
+            qDebug() << "   found " <<id;
+            isPriIdRowFound = row;
+            break;
+        }
+        else*/
+        qDebug() << "   row id " << id;// << " <> " << mdl->lastDirtyRowId;
+    }
+
+}
+void PblTableView::rowsInserted(const QModelIndex &parent, int start, int end)
+{
+
+    qDebug() << "PblTableView::rowsInserted";
+
+    int isPriIdRowFound = -1;
+    int isRowFound = -1;
+    // start and end are line numbers
+
+    if(mdl->lastDirtyRowId != -1)
+    {
+        int priCol = mdl->getPriColumn();
+
+        for( int row = start; row <= end; row++ )
+        {
+            bool ok = false;
+
+            int id = mdl->data(mdl->index( row, priCol)).toInt(&ok);
+
+            if(! ok )
+                continue;
+
+            if( id == mdl->lastDirtyRowId)
+            {
+                qDebug() << "   row is found " << id;
+                isPriIdRowFound = id;
+                isRowFound = row;
+
+                break;
+            }
+            else
+                qDebug() << "   row id " << id << " <> " << mdl->lastDirtyRowId;
+        }
+    }
+
+    QTableView::rowsInserted( parent , start, end);
+
+    if(isPriIdRowFound >= 0)
+    {
+        // set position to last before select query
+        int col =0;
+        if(mdl->lastDirtyCol != -1)
+            col = mdl->lastDirtyCol;
+
+        setCurrentIndex( mdl->index( isRowFound , col));
+        mdl->isSelectedLine = isRowFound;
+
+        qDebug() << "   setCurrentIndex row id " << isPriIdRowFound << "  row " << isRowFound << " lastDirtyCol "<< mdl->lastDirtyCol << " isSelectedLine " <<mdl->isSelectedLine;
+        //
+    }
+}
+
 void PblTableView::slot_cmb_Strategy_currentIndexChanged(int index)
 {
     QSqlTableModel::EditStrategy strat = mdl->editStrategy();
@@ -1687,3 +1863,15 @@ void PblTableView::slot_cmb_Strategy_currentIndexChanged(int index)
 
 }
 
+
+void PblTableView::reset()
+{
+    qDebug() << "PblTableView::reset() mdl->lastDirtyRowId " << mdl->lastDirtyRowId << mdl->tableName();
+
+    QTableView::reset();
+
+    if(mdl->lastDirtyRowId != -1)
+    {
+        qDebug() << "   go to last row";
+    }
+}
