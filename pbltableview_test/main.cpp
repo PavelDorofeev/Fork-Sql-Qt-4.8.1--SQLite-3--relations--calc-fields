@@ -228,6 +228,7 @@ bool createTables()
                      "sum double default 0,"\
                      "cmb	INTEGER DEFAULT -1,"\
                      "chk	INTEGER DEFAULT 0,"\
+                     "foo	INTEGER DEFAULT 0,"\
                      "PRIMARY KEY(id AUTOINCREMENT)"\
                      ")"))
         return false;

@@ -42,9 +42,9 @@ public:
 
     explicit PblSqlRelation(
                    const int col,
-                   const QString &idField1,
-                   const QString &table,
-                   const QString &idField2,
+                   int idField1,
+                   const QString &ext_table,
+                   QString idField2,
                    const QString &destField,
                    JoinMode join_mode = PblSqlRelation::LeftJoin);
 
@@ -52,9 +52,9 @@ public:
 
     JoinMode joinMode;
 
-    QString idField1;
+    int idField1;
 
-    QString table;
+    QString ext_table;
 
     QString idField2;
 

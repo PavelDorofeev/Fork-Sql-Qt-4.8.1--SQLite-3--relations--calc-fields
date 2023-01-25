@@ -44,7 +44,8 @@ SOURCES +=\
 HEADERS  += \
     dialog.h \
     pblsqlrelationaltablemodel_purchases.h \
-    config.h
+    config.h \
+    version.h
 
 FORMS    += dialog.ui
 

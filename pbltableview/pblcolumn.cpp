@@ -8,7 +8,7 @@ PblColumn::PblColumn()
 PblColumn::PblColumn(const PblSqlRelation &relation,
                      int exCol_)
     :
-    table(relation.table),
+    ext_table(relation.ext_table),
     idField1(relation.idField1),
     idField2(relation.idField2),
     destField(relation.destField),
@@ -21,7 +21,7 @@ PblColumn::PblColumn(const PblSqlRelation &relation,
 
 PblColumn::PblColumn(CALC_COLUMN & calc , int col_ )
 {
-    table = calc.table;
+    ext_table = calc.table;
     idField1 = calc.idField1;
     idField2 = calc.idField2;
     destField = calc.summaryField;
@@ -34,8 +34,8 @@ PblColumn::PblColumn(CALC_COLUMN & calc , int col_ )
 
 bool PblColumn::isValid()
 {
-    if( ! table.isEmpty()
-            && ! idField1.isEmpty()
+    if( ! ext_table.isEmpty()
+            && idField1 != -1
             && ! destField.isEmpty())
         return true;
 

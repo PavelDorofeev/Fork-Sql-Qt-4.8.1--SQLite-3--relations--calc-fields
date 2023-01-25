@@ -24,8 +24,8 @@ Btn_ToolBox::Btn_ToolBox(PblTableView *view_,
     ui->ledt_filter->setMaximumWidth(200);
 
 
-   // setBtn_searchInTable(true, false);
-   // setBtn_selectionByValue(true, true);
+    // setBtn_searchInTable(true, false);
+    // setBtn_selectionByValue(true, true);
 
 }
 
@@ -44,10 +44,29 @@ Btn_ToolBox::~Btn_ToolBox()
 
 void Btn_ToolBox::on_btn_submitAll_clicked()
 {
-    if( ! mdl->submitAll())
+    if(ui->cmb_Strategy->currentIndex() == QSqlTableModel::OnManualSubmit)
     {
-        QMessageBox::warning(this, mySql::error_ , tr("submitAll wrong : ")+mdl->lastError().text());
-        qCritical(" ! submitAll");
+        if( ! mdl->submitAll())
+        {
+            QMessageBox::warning(this,
+                                 mySql::error_ ,
+                                 tr("submitAll was wrong,\n error: %1").
+                                 arg(mdl->lastError().text()));
+
+            qCritical(" ! submitAll 578695987496");
+        }
+    }
+    else
+    {
+        if( ! mdl->submit())
+        {
+            QMessageBox::warning(this,
+                                 mySql::error_ ,
+                                 tr("submit was wrong,\n error: %1").
+                                 arg(mdl->lastError().text()));
+
+            qCritical(" ! submitAll 578695987496");
+        }
     }
 }
 

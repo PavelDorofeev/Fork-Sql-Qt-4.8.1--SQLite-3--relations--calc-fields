@@ -44,7 +44,7 @@ p, li { white-space: pre-wrap; }
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../../driver_KKT_BIT/app/rrr.qrc">
+        <iconset resource="resource2.qrc">
          <normaloff>:/icon/img/btn-db/insert-100x100.png</normaloff>:/icon/img/btn-db/insert-100x100.png</iconset>
        </property>
        <property name="autoRaise">
@@ -68,7 +68,7 @@ p, li { white-space: pre-wrap; }
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../../driver_KKT_BIT/app/rrr.qrc">
+        <iconset resource="resource2.qrc">
          <normaloff>:/icon/img/btn-db/copy-100x100.png</normaloff>:/icon/img/btn-db/copy-100x100.png</iconset>
        </property>
        <property name="checkable">
@@ -92,7 +92,7 @@ p, li { white-space: pre-wrap; }
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../../driver_KKT_BIT/app/rrr.qrc">
+        <iconset resource="resource2.qrc">
          <normaloff>:/icon/img/btn-db/edit-100x100.png</normaloff>:/icon/img/btn-db/edit-100x100.png</iconset>
        </property>
       </widget>
@@ -113,7 +113,7 @@ p, li { white-space: pre-wrap; }
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../../driver_KKT_BIT/app/rrr.qrc">
+        <iconset resource="resource2.qrc">
          <normaloff>:/icon/img/btn-db/delete-100x100.png</normaloff>:/icon/img/btn-db/delete-100x100.png</iconset>
        </property>
        <property name="checkable">
@@ -177,7 +177,7 @@ p, li { white-space: pre-wrap; }
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../../driver_KKT_BIT/app/rrr.qrc">
+        <iconset resource="resource2.qrc">
          <normaloff>:/icon/img/btn-db/find-100x100.png</normaloff>:/icon/img/btn-db/find-100x100.png</iconset>
        </property>
       </widget>
@@ -257,6 +257,9 @@ p, li { white-space: pre-wrap; }
      </item>
      <item>
       <widget class="QPushButton" name="btn_submitAll">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>submitAll</string>
        </property>
@@ -294,9 +297,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../../driver_KKT_BIT/app/rrr.qrc"/>
-  <include location="../../driver_KKT_BIT/app/rrr.qrc"/>
-  <include location="../../driver_KKT_BIT/app/rrr.qrc"/>
+  <include location="resource2.qrc"/>
   <include location="resource2.qrc"/>
  </resources>
  <connections/>

@@ -52,17 +52,23 @@ typedef struct COLUMN_INFO
     int precision;
     char cFormat;
     bool editable;
+    PblColumn::COLUMN_TYPE type;
 };
 
 class PblSqlRelationalTableModel: public QSqlTableModel
 {
     Q_OBJECT
-
+public:
     enum FILTER_TYPE
     {
         FILTER_TYPE_UNKNOWN=-1,
         FILTER_TYPE_SEARCH_TEXT_BY_COLUMN = 1,
         FILTER_TYPE_SEARCH_BY_FIELD_VALUE,
+    };
+
+    enum MODE{
+        UPDATE=1,
+        INSERT
     };
     
 public:
@@ -112,19 +118,26 @@ public:
 
     int priCol;
 
-    int getPriColumn();
+    int getPriColumn() const;
+
+    int findRowById(int id);
 
     int isDirtyRow;
+
+    int isInsertRow;
+
     uint lastDirtyRowId;
+
     uint isSelectedLine;
+
     uint lastDirtyCol;
 
 
-    int getRowPriValue(int row, const QSqlIndex & primaryIndex);
+    int getRowPriValue(int row) const;
 
     QSqlRecord baseRec; // the original table record without extended fields (relations id, calc functions,..)
 
-    void translateFieldNames(int row, QSqlRecord &values, QSqlTableModel::EditStrategy editStrategy) const;
+    void translateFieldNames(int row, QSqlRecord &values, PblSqlRelationalTableModel::MODE rowMode ) const;
 
     
     virtual QString selectStatement() const;
@@ -132,6 +145,11 @@ public:
     virtual QVariant data(const QModelIndex &item, int role = Qt::DisplayRole) const;
 
     virtual bool setData(const QModelIndex &item, const QVariant &value, int role = Qt::EditRole);
+
+    bool setDataForRelationField(const QModelIndex &idx,
+                                 const QVariant &value,
+                                 int role);
+
 
     virtual Qt::ItemFlags flags(const QModelIndex &idx) const;
 
@@ -144,6 +162,8 @@ public:
     virtual bool select();
 
     virtual  void clear();
+
+    PblSqlRelationalTableModel::MODE rowMode(int row) const;
 
 
     int sortColumn;
@@ -166,19 +186,18 @@ public:
 
     PblColumn  getRelationInfoForColumn(int col);
 
-    bool isCalcColumn(int col);
-    bool isRelationColumn(int col);
+    bool isCalcColumn(int col) const;
+    bool isRelationColumn(int col) const;
 
-    int getRelIdColumn(int relCol);
+    int getRelIdColumn(int relCol) const;
     bool isRelationalColumn(int col);
 
-    bool setDataForRelationField(const QModelIndex &idx,
-                                 const QVariant &value,
-                                 int role);
 
     PblColumn::COLUMN_TYPE columnType(int col);
 
     Filter filterDone;
+
+    int getLastInsertId();
 
 
 signals:
@@ -187,11 +206,14 @@ signals:
 
     void sig_rowIsDirty(int row);
 
+    void sig_showSubmit(bool);
+
 public Q_SLOTS:
 
     virtual void setEditStrategy(EditStrategy strategy);
 
-    void slot_rowIsDirty(int);
+
+    void slot_primeInsert(int row, QSqlRecord &rec);
     
 protected:
     

@@ -6,11 +6,115 @@
 #include "pbltableview/btn_toolbox.h"
 #include "pbltableview/some_tests.h"
 #include <QObject>
+#include <QSqlError>
 
 bool config::visibleRelIdColumns_byDefault = true;
 
+char * config::prog_version = "7.0.0.1";
+
+
 config::config()
 {
+}
+
+int config::get_defaultColumn( PblSqlRelationalTableModel * mdl)
+{
+    if(mdl->tableName().isNull())
+        return false;
+
+    QString tableName = mdl->tableName();
+
+
+    if(tableName == "purchases")
+    {
+        return mdl->baseRec.indexOf("productName");
+    }
+    return 0;
+
+}
+
+bool config::set_newInsertedRowParameters_withSetData( PblSqlRelationalTableModel * mdl, int row)
+{
+    if(mdl->tableName().isNull())
+        return false;
+
+    QString tableName = mdl->tableName();
+
+
+    if(tableName == "purchases")
+    {
+        QModelIndex idx = mdl->index( row , mdl->fieldIndex("foo"));
+
+        if( ! idx.isValid())
+        {
+            QMessageBox::warning( 0 ,
+                                  mySql::error_,
+                                  QObject::tr("table '%1'\n\nindex row %2x%3 \n\n%4").
+                                  arg(mdl->tableName()).
+                                  arg(idx.row()).
+                                  arg(idx.column()).
+                                  arg(mdl->lastError().text()));
+            return false;
+
+        }
+
+        if( ! mdl->setData(idx  , (int)1) );
+        {
+            QMessageBox::warning( 0 ,
+                                  mySql::error_,
+                                  QObject::tr("setData returns false , table '%1'\n\n%2").
+                                  arg(mdl->tableName()).arg(mdl->lastError().text()));
+            return false;
+        }
+
+        if(! idx.isValid() ) // submit() was done
+            return false;
+
+        return true;
+    }
+
+    return false;
+
+}
+
+bool config::set_newInsertedRowParameters( PblSqlRelationalTableModel * mdl, QSqlRecord & rec)
+{
+    if(mdl->tableName().isNull())
+        return false;
+
+    // -----------------------------------------------------------
+    //              This is important!
+    // new inserted row has not genereted (yes) flag in editBuffer for any fileds
+    // we have to repare this
+
+    for(int col=0; col < mdl->columnCount(); col++)
+    {
+        if(col == mdl->priCol)
+            continue;
+
+        rec.setGenerated( col , true ); // any col is not priCol will be generateg yes
+        // with insertRow this is forbidden created fully empty row
+
+    }
+    // ------------------------------------------------------------
+
+
+    QString tableName = mdl->tableName();
+
+    if(tableName == "purchases")
+    {
+
+        //rec.setValue( mdl->fieldIndex("foo") , (int)1);
+        //rec.setGenerated( mdl->fieldIndex("foo") , true );
+
+        //rec.setValue(mdl->fieldIndex("cmb") , 0);
+        //rec.setGenerated( mdl->fieldIndex("cmb") , true );
+
+        return true;
+    }
+
+    return true;
+
 }
 
 bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
@@ -41,7 +145,7 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
 
         CALC_COLUMN calc;
 
-        calc.idField1           = "id";
+        calc.idField1           = mdl->baseRec.indexOf("id");
         calc.table              = "checks";
         calc.idField2           = "productName";
         calc.summaryField       = "sum";
@@ -54,7 +158,11 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
     }
     else if(tableName == "checks")
     {
-        mdl->setRelation(PblSqlRelation(1, "productName",  "goods" , "id" , "productName"));
+        mdl->setRelation(PblSqlRelation(1,
+                                        mdl->baseRec.indexOf("productName"),
+                                        "goods" ,
+                                        "id" ,
+                                        "productName"));
 
         mdl->setAlignment(0, Qt::AlignCenter);
 
@@ -83,7 +191,11 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
         mdl->setPrecision(4, 2);
         mdl->setDblFormat(4, 'f');
 
-        if( ! mdl->setRelation( PblSqlRelation(1, "productName", "goods" , "id" , "productName")))
+        if( ! mdl->setRelation( PblSqlRelation(1,
+                                               mdl->baseRec.indexOf("productName"),
+                                               "goods" ,
+                                               "id" ,
+                                               "productName")))
         {
             QMessageBox::critical(0 ,
                                   mySql::error_,
@@ -120,7 +232,7 @@ bool config::setting_view(PblTableView *view)
 
     if(tableName == "purchases")
     {
-        view->setComboBoxDelegate( 5 , QStringList() << "big" << "small");
+        view->setComboBoxDelegate( 5 , QStringList() << "big" << "medium" << "small");
 
         view->setCheckBoxDelegate( 6 );
 
@@ -135,9 +247,8 @@ bool config::setting_view(PblTableView *view)
         view->parentWidget()->setWindowTitle(tableName);
     }
 
-    view->slot_setVisibleExRelIdColumns(config::visibleRelIdColumns_byDefault);
 
-    view->setExRelIdColumnsVisible(true);
+    view->set_Actions(PblTableView::ACT_SHOW_EXTENDED_RELATION_COLUMNS , config::visibleRelIdColumns_byDefault);
 
     view->resizeColumnsToContents();
 

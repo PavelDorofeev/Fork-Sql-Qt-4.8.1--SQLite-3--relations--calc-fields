@@ -116,6 +116,9 @@ public:
 
     Btn_ToolBox *tlbx;
 
+    static const QString s_submit;
+    static const QString s_submitAll;
+
 
     QSize sizeHint() const;
 
@@ -132,6 +135,8 @@ public:
     QAction * act_view;
 
     QAction * act_selectAndClose;
+
+    QAction * act_showRelExColumns;
 
     QMenu * contextMenu;
 
@@ -164,8 +169,6 @@ public:
 
     void setEditStrategyVisible(bool on);
 
-    void setExRelIdColumnsVisible(bool visible);
-
     bool prepare(const QString & tableName );
 
     Search_Settings_Dlg::FIND_SETTINGS find_settings;
@@ -180,12 +183,15 @@ public:
 
     PblSqlRelationalTableModel * mdl;
 
+    int restoreCurrentRowPositionAfterSubmit(int srcRow);
+
     QSqlDatabase db;
 
     void show_view_Btn();
 
     bool selectable;
     bool editable;
+
 
 protected:
 
@@ -198,6 +204,7 @@ signals:
     bool sig_editRow(int);
 
     bool sig_viewRow(int row);
+
 
 public Q_SLOTS:
 
@@ -230,6 +237,10 @@ public Q_SLOTS:
     void slot_cmb_Strategy_currentIndexChanged(int index);
 
     void slot_editStrategyClicked(int);
+
+    void slot_showSubmitBtn(bool enabled);
+
+    void slot_rowIsDirty(int);
 
 protected Q_SLOTS:
     virtual void rowsInserted(const QModelIndex &parent, int start, int end);

@@ -9,7 +9,7 @@ typedef struct CALC_COLUMN
 {
     CALC_COLUMN():
         table(QString()),
-        idField1(QString()),
+        idField1(-1),
         idField2(QString()),
         summaryField(QString()),
         calcFunc(QString()),
@@ -20,7 +20,7 @@ typedef struct CALC_COLUMN
 
     QString     summaryField;
     QString     table;
-    QString     idField1;
+    int         idField1;
     QString     idField2;
     QString     calcFunc;
     QString     calcFuncName_As;
@@ -51,8 +51,8 @@ public:
 
     COLUMN_TYPE type;
 
-    QString table;
-    QString idField1;
+    QString ext_table;
+    int     idField1;
     QString idField2;
     QString destField;
     QString funcName;

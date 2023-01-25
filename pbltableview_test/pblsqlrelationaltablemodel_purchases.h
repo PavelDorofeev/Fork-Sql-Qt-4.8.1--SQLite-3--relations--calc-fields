@@ -13,6 +13,10 @@ public:
     
     virtual bool setData(const QModelIndex &item, const QVariant &value, int role = Qt::EditRole);
 
+protected:
+
+    bool updateRowInTable(int row, const QSqlRecord &values);
+
 signals:
     
 public slots:

@@ -15,6 +15,7 @@
 #include "config.h"
 #include "logging_system/logging_system.h"
 #include <QDateTime>
+#include "version.h"
 
 DialogTest::DialogTest(QString langId,
                        QSqlDatabase &db_,
@@ -33,7 +34,8 @@ DialogTest::DialogTest(QString langId,
     ui->cmb_Language->setCurrentIndex(cmbLangIdx);
 
     QString title = windowTitle();
-    title += " 6.0.0.1";
+
+    title.append(" ").append(PROG_VERSION);
 
     setWindowTitle(title) ;
 

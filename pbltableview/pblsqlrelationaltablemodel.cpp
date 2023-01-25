@@ -43,6 +43,7 @@
 #include "qdebug.h"
 #include <QApplication>
 #include <QSqlQuery>
+#include "config.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -61,6 +62,7 @@ PblSqlRelationalTableModel::PblSqlRelationalTableModel(
       sortColumn(-1),
       sortOrder(Qt::AscendingOrder),
       isDirtyRow(-1),
+      isInsertRow(-1),
       lastDirtyCol(-1),
       lastDirtyRowId(-1),
       isSelectedLine(-1),
@@ -70,12 +72,70 @@ PblSqlRelationalTableModel::PblSqlRelationalTableModel(
 
     qDebug() << "PblSqlRelationalTableModel editStrategy" << editStrategy();
 
-    _CONNECT_(this, SIGNAL(sig_rowIsDirty(int)),
-              this, SLOT(slot_rowIsDirty(int)));
+    _CONNECT_(this, SIGNAL(primeInsert(int,QSqlRecord&)),
+              this, SLOT(slot_primeInsert(int,QSqlRecord&)));
 
 
 }
 
+
+int PblSqlRelationalTableModel::findRowById(int id)
+{
+    if(rowCount()==0)
+        return -1;
+
+    for(int row = 0 ; row < rowCount(); row++)
+    {
+        QModelIndex idx = index( row , getPriColumn() );
+
+        if( ! idx.isValid())
+            return -1;
+
+        bool ok =false;
+
+        int currId = data( idx ).toInt(&ok);
+
+        if(! ok )
+            return -1;
+
+        if(currId == id)
+            return row;
+    }
+
+    return -1;
+}
+
+void PblSqlRelationalTableModel::slot_primeInsert(int row, QSqlRecord &rec)
+{
+    qDebug() << "PblSqlRelationalTableModel::slot_primeInsert ";// <<    rec;
+
+    // this writes into private d->editBuffer (= rec)
+    // and don't calls setData
+
+
+    if ( ! config::set_newInsertedRowParameters(this , rec))
+    {
+        QMessageBox::warning(0,
+                             mySql::error_,
+                             tr("874584584 inserting row:\n set_newInsertedRowParameters returns false, table name '%1'").
+                             arg(tableName()));
+    }
+
+
+    /*if ( ! config::set_newInsertedRowParameters_withSetData(this , row) )
+    {
+        QMessageBox::warning(0,
+                             mySql::error_,
+                             tr("inserting row: set_newInsertedRowParameters returns false, table name '%1'").
+                             arg(tableName()));
+    }*/
+
+
+
+
+    setDirtyRow( row , 0);
+
+}
 
 PblSqlRelationalTableModel::~PblSqlRelationalTableModel()
 {
@@ -205,27 +265,50 @@ const QSqlRecord & PblSqlRelationalTableModel::baseRecord()
 
 bool PblSqlRelationalTableModel::submit()
 {
-    // hier we are following for dirty row
+    // here we are following for dirty row
 
     bool bbb = QSqlTableModel::submit();
 
     return bbb;
 }
 
-int PblSqlRelationalTableModel::getPriColumn( )
+int PblSqlRelationalTableModel::getPriColumn( ) const
 {
     return priCol;
 }
 
-int PblSqlRelationalTableModel::getRowPriValue(int row,
-                                               const QSqlIndex & primaryIndex)
+int PblSqlRelationalTableModel::getRowPriValue(int row) const
 {
     if(priCol == -1)
         return -1;
 
     QVariant vv = data(index(row , priCol ));
 
-    return vv.toInt();
+    bool ok = false;
+
+    int pri = vv.toInt(&ok);
+
+    if( ! ok )
+        return -1;
+
+    if( pri == 0 )
+        return -1;
+
+    return pri;
+}
+
+PblSqlRelationalTableModel::MODE PblSqlRelationalTableModel::rowMode(int row) const
+{
+    int pri = getRowPriValue( row );
+
+    if( pri == -1 ) // this is insert mode
+
+        return PblSqlRelationalTableModel::INSERT;
+
+    else
+
+        return PblSqlRelationalTableModel::UPDATE;
+
 }
 
 bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
@@ -253,7 +336,7 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
     if(editStrategy() <= QSqlTableModel::OnRowChange)
     {
         // save pri values of current row
-        oldPriValue = getRowPriValue(row, primaryIndex);
+        oldPriValue = getRowPriValue(row);
         //qDebug() << "priIdx : "  <<priIdx;
     }
 
@@ -281,29 +364,16 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
     {
     case OnFieldChange:
     {
-        if ( ! QSqlTableModel::setData( idx, id, role )) // text
+        if ( rowMode( row ) == INSERT )
         {
-            QMessageBox::warning(0,
-                                 mySql::error_,
-                                 tr("setData returns false\n table %1\n field %2\n\nerror: %3").
-                                 arg(tableName()).
-                                 arg(record().fieldName(idx2.column())).
-                                 arg(lastError().text())
-                                 );
-
-            qCritical() << "error 47663736576" << lastError().text();
-
-            return false;
-        }
-
-        if( idxEx.isValid() )
-        {
-            if ( ! submit() ) // needs submit
+            if ( ! QSqlTableModel::setData( idx, txt, role )) // text
             {
                 QMessageBox::warning(0,
                                      mySql::error_,
-                                     tr("OnFieldChange: after setData needs submit.\n but submit returns false\n table %1\n field %2").
-                                     arg(tableName().arg( record().fieldName(idx2.column())))
+                                     tr("setData returns false\n table %1\n field %2\n\nerror: %3").
+                                     arg(tableName()).
+                                     arg(record().fieldName(idx.column())).
+                                     arg(lastError().text())
                                      );
 
                 qCritical() << "error 47663736576" << lastError().text();
@@ -311,6 +381,55 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
                 return false;
             }
 
+            if ( ! QSqlTableModel::setData( idxEx, id, role )) // id
+            {
+                QMessageBox::warning(0,
+                                     mySql::error_,
+                                     tr("setData returns false\n table %1\n field %2\n\nerror: %3").
+                                     arg(tableName()).
+                                     arg(record().fieldName(idxEx.column())).
+                                     arg(lastError().text())
+                                     );
+
+                qCritical() << "error 47663736576" << lastError().text();
+
+                return false;
+            }
+
+
+        }
+        else if ( rowMode( row ) == UPDATE )// update mode , will be submit / select
+        {
+
+            if ( ! QSqlTableModel::setData( idx, id, role )) // text
+            {
+                QMessageBox::warning(0,
+                                     mySql::error_,
+                                     tr("setData returns false\n table %1\n field %2\n\nerror: %3").
+                                     arg(tableName()).
+                                     arg(record().fieldName(idx.column())).
+                                     arg(lastError().text())
+                                     );
+
+                qCritical() << "error 47663736576 " << lastError().text();
+
+                return false;
+            }
+
+            if( ! idx.isValid() )
+            {
+
+                QMessageBox::warning(0,
+                                     mySql::error_,
+                                     tr("OnFieldChange: update mode\nit is strange\nidxEx.isValid \n table %1\n field %2").
+                                     arg(tableName())
+                                     );
+
+                qCritical() << "error 47663736576 " << lastError().text();
+
+                return true;
+
+            }
         }
 
         return true;
@@ -333,7 +452,7 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
 
             if(editStrategy() <= QSqlTableModel::OnRowChange)
             {
-                int newPriValue = getRowPriValue(row, primaryIndex);
+                int newPriValue = getRowPriValue(row);
 
                 if(newPriValue == -1)
                 {
@@ -424,22 +543,64 @@ bool PblSqlRelationalTableModel::setData(const QModelIndex &idx,
     int col = idx.column();
     int row = idx.row();
 
+    QModelIndex idx2 = idx; // after submit idx will be unvalid
+
+    if(editStrategy() <= QSqlTableModel::OnRowChange)
+    {
+        if(isDirtyRow != -1 && isDirtyRow != row ) // needs to submit
+        {
+            int pri = getRowPriValue( row );
+
+            if( pri != -1 )
+            {
+                if ( ! submit() )
+                {
+                    QMessageBox::warning(0 ,
+                                         mySql::error_ ,
+                                         tr("OnRowChange: needs to submit dirty row %1 (id : %2)").
+                                         arg(row).
+                                         arg(pri));
+                    return false;
+
+                }
+                qDebug() << "PblSqlRelationalTableModel::setData() , submit dirty row is OK";
+            }
+
+            row = findRowById( pri);
+
+            if ( row == -1 )
+            {
+                QMessageBox::warning(0 ,
+                                     mySql::error_ ,
+                                     tr("OnRowChange: lost focus on row %1 (id : %2)").
+                                     arg(row).
+                                     arg(pri));
+                return false;
+
+            }
+
+            qDebug() << "PblSqlRelationalTableModel::setData() , restore current row after submit/select is OK";
+
+            idx2 = createIndex( row , col);
+
+            if( ! idx2.isValid() )
+                return false;
+
+            emit sig_rowIsDirty(isDirtyRow);
+
+        }
+    }
+
     bool bSetData = false;
 
     if(relations.contains(col))
     {
-        bSetData = setDataForRelationField(idx , value, role);
+        bSetData = setDataForRelationField(idx2 , value, role);
 
-        if(editStrategy() == QSqlTableModel::OnFieldChange)
-            ;
-        else
-        {
-
-        }
     }
     else
     {
-        bSetData = QSqlTableModel::setData(idx, value, role);
+        bSetData = QSqlTableModel::setData(idx2, value, role);
     }
 
     // with QSqlTableModel::OnFieldChange click and edit and lost focus (without Enter)
@@ -447,19 +608,42 @@ bool PblSqlRelationalTableModel::setData(const QModelIndex &idx,
 
     if( bSetData )
     {
+        if(editStrategy() == QSqlTableModel::OnFieldChange
+                && idx2.isValid())
+        {
+            /*
+                after updateRowInTable QModelIndex is not set to unValid
+                after insertRowIntoTable with OnFieldChange QModelIndex is set to unValid
+
+                    QMessageBox::warning(0 ,
+                                  mySql::error_ ,
+                                  tr("It is strange with OnFieldChange strategy,\n table"));*/
+        }
+
+        // -------------------------------------------------
+        //          sig_showSubmit
+        // ------------------------------------------------
+        bool en = true;
+
+        if( editStrategy() == QSqlTableModel::OnFieldChange )
+        {
+            if ( rowMode( row ) == UPDATE )
+                en = false;
+        }
+
+        emit sig_showSubmit( en );
+
+
+        // ---------------------------------------------------
+
         // following unsaved fields
 
         setDirtyRow(row , col);
+
         emit sig_rowIsDirty(row);
     }
 
     return bSetData;
-}
-
-void PblSqlRelationalTableModel::slot_rowIsDirty(int row)
-{
-
-
 }
 
 bool PblSqlRelationalTableModel::setRelation(const PblSqlRelation &relation)
@@ -498,7 +682,7 @@ bool PblSqlRelationalTableModel::setCalcField(CALC_COLUMN & calc)
     if(calc.table.isEmpty() || calc.table.isNull())
         return false;
 
-    if(calc.idField1.isEmpty() || calc.idField1.isNull())
+    if(calc.idField1 == -1 )
         return false;
 
     if(calc.idField2.isEmpty() || calc.idField2.isNull())
@@ -531,19 +715,21 @@ QString PblSqlRelationalTableModel::relationField(const QString &tableName,
 
 void PblSqlRelationalTableModel::setDirtyRow(int dirtyRow , int dirtyCol)
 {
+
+    qDebug() << "setDirtyRow() " << dirtyRow;
+
     // 0 - undefined because of insertRow
 
-    lastDirtyRowId  = getRowPriValue( dirtyRow , primaryIndex);
-
-    lastDirtyCol    = dirtyCol;
+    lastDirtyRowId  = getRowPriValue( dirtyRow );
 
     isDirtyRow      = dirtyRow;
 
-    //isSelectedLine  = dirtyRow;
+    lastDirtyCol    = dirtyCol;
 
-    qDebug() << "PblSqlRelationalTableModel::setDirtyRow ";
+    isSelectedLine  = dirtyRow;
+
     qDebug() << "        lastDirtyRowId " <<lastDirtyRowId ;
-    qDebug() << "        lastDirtyCol   " <<lastDirtyCol ;
+    //qDebug() << "        lastDirtyCol   " <<lastDirtyCol ;
     qDebug() << "        isDirtyRow     " <<isDirtyRow ;
     qDebug() << "        isSelectedLine " <<isSelectedLine ;
 
@@ -567,16 +753,18 @@ void PblSqlRelationalTableModel::clear()
 }
 
 /*void PblSqlRelationalTableModel::fetchMore(const QModelIndex &parent)
-{
-    qDebug() << "PblSqlRelationalTableModel::fetchMore( " << tableName();
-    QSqlQueryModel::fetchMore(parent);
+                  {
+                      qDebug() << "PblSqlRelationalTableModel::fetchMore( " << tableName();
+                      QSqlQueryModel::fetchMore(parent);
 
-}*/
+                  }*/
 
 bool PblSqlRelationalTableModel::canFetchMore(const QModelIndex &parent) const
 {
-    qDebug() << "PblSqlRelationalTableModel::canFetchMore( " << tableName();
-    return QSqlQueryModel::canFetchMore(parent);
+    bool bbb = QSqlQueryModel::canFetchMore(parent);
+    qDebug() << "PblSqlRelationalTableModel::canFetchMore  " << bbb <<  tableName();
+
+    return bbb;
 
 }
 
@@ -587,6 +775,7 @@ bool PblSqlRelationalTableModel::select()
              << lastDirtyRowId << " isDirtyRow" << isDirtyRow << " lastDirtyCol " << lastDirtyCol
              << " isSelectedLine" << isSelectedLine;
 
+
     if(editStrategy() <= QSqlTableModel::OnRowChange)
     {
         clearDirtyRow();
@@ -595,12 +784,19 @@ bool PblSqlRelationalTableModel::select()
     if ( ! QSqlTableModel::select()) // here occures PblTableView::reset()
         return false;
 
+    emit sig_showSubmit( false);
+
     lastDirtyRowId = -1;
     lastDirtyCol = -1;
+    isDirtyRow = -1;
+    isInsertRow = -1;
 
-    qDebug() << " after PblSqlRelationalTableModel::select() : "
-             << tableName()<< " lastDirtyRowId " << lastDirtyRowId << " isDirtyRow"
-             << isDirtyRow << " lastDirtyCol " << lastDirtyCol << " isSelectedLine" << isSelectedLine;
+
+    qDebug() << " after PblSqlRelationalTableModel::select() : " << tableName()
+             << " lastDirtyRowId " << lastDirtyRowId
+             << " isDirtyRow"  << isDirtyRow
+             << " lastDirtyCol " << lastDirtyCol
+             << " isSelectedLine" << isSelectedLine;
 
 
 
@@ -628,7 +824,9 @@ bool PblSqlRelationalTableModel::set_Table(const QString &tableName)
 
     if(! db.isValid() )
     {
-        QMessageBox::critical(0 , mySql::error_ , tr("database is not valid!"));
+        QMessageBox::critical(0 ,
+                              mySql::error_ ,
+                              tr("database is not valid!"));
         return false;
     }
 
@@ -701,30 +899,96 @@ bool PblSqlRelationalTableModel::set_Table(const QString &tableName)
 void PblSqlRelationalTableModel::translateFieldNames(
         int row,
         QSqlRecord &rec,
-        QSqlTableModel::EditStrategy editStrategy) const
+        PblSqlRelationalTableModel::MODE mode
+        ) const
 {
     // Эта функция возвращает наименования полей к оригинальным
     // в SELECT наименование полей через as могут быть изменены
     // например для INSERT ROW нужны оригинальные поля
+
+    int count = baseRec.count();
+
+    for( int col=0; col < rec.count(); col++)
+    {
+
+        if( col >= count) // all ext columns must be generic false!
+        {
+            if ( rec.isGenerated( col ) )
+
+                rec.setGenerated(col , false );
+
+            continue;
+        }
+
+        if( ! rec.isGenerated(col))
+            continue;
+
+
+        if ( isRelationColumn(col))
+        {
+
+            int exCol = getRelIdColumn( col);
+
+            QString name = baseRec.field( col ).name(); // заменяем наименования полей на базовые
+
+            QVariant val;
+
+            if ( editStrategy() == QSqlTableModel::OnFieldChange && mode == UPDATE)
+                // will be submit /select
+
+                val = rec.value(col); //  (int id)
+
+            else
+
+                val = rec.value(exCol); // подмена текста поля на int id
+
+
+            QSqlField ff = rec.field( col );
+
+            ff.setName(name);
+            ff.setValue(val);
+            ff.setGenerated(true);
+
+            rec.replace( col , ff );
+
+            if(rec.field( exCol ).isGenerated())
+            {
+                rec.setGenerated(exCol , false );
+            }
+
+        }
+        else if(isCalcColumn(col))
+        {
+
+        }
+
+    }
+
+
+/*
+
 
     for( QHash<int,int>::const_iterator ii = relations.begin(); ii!=relations.end(); ++ii)
     {
         int col = ii.key();
         int exCol = ii.value();
 
-        //qDebug() << " rec \n\n" << rec;
-        //qDebug() << " rec.field(col) \n" << rec.field(col);
         bool gen = rec.field(col).isGenerated();
 
         if(gen)
         {
-            // if QSqlTableModel::OnFieldChange than in col place int id
 
             QString name = baseRec.field( col ).name(); // заменяем наименования полей на базовые
 
             QVariant val;
-            if ( editStrategy == QSqlTableModel::OnFieldChange)
-                val = rec.value(col); // оставляем значение поля как есть (int id)
+
+            if ( editStrategy() == QSqlTableModel::OnFieldChange && mode == UPDATE)
+            {
+                // will be submit /select
+
+                val = rec.value(col); //  (int id)
+
+            }
             else
                 val = rec.value(exCol); // подмена текста поля на int id
 
@@ -741,9 +1005,8 @@ void PblSqlRelationalTableModel::translateFieldNames(
         if(rec.field( exCol ).isGenerated())
         {
             rec.setGenerated(exCol , false );
-            //rec.setValue(col , rec.value(exCol));
         }
-    }
+    }*/
 }
 
 bool PblSqlRelationalTableModel::updateRowInTable(int row, const QSqlRecord &values)
@@ -759,7 +1022,7 @@ bool PblSqlRelationalTableModel::updateRowInTable(int row, const QSqlRecord &val
 
     // replace to original table field names
     // set generated no to relational id fields
-    translateFieldNames(row, rec, editStrategy());
+    translateFieldNames(row, rec, UPDATE);
 
     qDebug() << "PblSqlRelationalTableModel::updateRowInTable " << rec;
 
@@ -772,7 +1035,7 @@ bool PblSqlRelationalTableModel::insertRowIntoTable(const QSqlRecord &values)
 
     // replace to original table field names
     // set generated no to relational id fields
-    translateFieldNames(0, rec, editStrategy());
+    translateFieldNames(0, rec, INSERT);
 
     //qDebug() << "PblSqlRelationalTableModel::insertRowIntoTable rec " << rec;
 
@@ -780,36 +1043,40 @@ bool PblSqlRelationalTableModel::insertRowIntoTable(const QSqlRecord &values)
 
     if( res )
     {
-        QSqlQuery qq;
-
-        if( qq.exec("SELECT last_insert_rowid()") )
-        {
-
-            if(qq.next())
-            {
-                bool ok = false;
-
-                int lastIsertId = qq.value(0).toInt(&ok);
-
-                if(ok)
-                {
-                    lastDirtyRowId = lastIsertId;
-                }
-                else
-                {
-                    lastDirtyRowId = -1;
-
-                }
-
-                qDebug() << "lastInsertId " <<  lastIsertId;
-            }
-        }
+        lastDirtyRowId = getLastInsertId();
     }
 
     return res;
-
 }
 
+int PblSqlRelationalTableModel::getLastInsertId()
+{
+    QSqlQuery qq;
+
+    if( qq.exec("SELECT last_insert_rowid()") )
+    {
+
+        if(qq.next())
+        {
+            bool ok = false;
+
+            int lastIsertId = qq.value(0).toInt(&ok);
+
+            if(ok)
+            {
+                return lastIsertId;
+            }
+            else
+            {
+                return -1;
+
+            }
+
+            qDebug() << "lastInsertId " <<  lastIsertId;
+        }
+    }
+    return -1;
+}
 
 QString PblSqlRelationalTableModel::orderByClause() const
 {
@@ -870,7 +1137,7 @@ QString PblSqlRelationalTableModel::orderByClause() const
 
                 s.append( QString::fromLatin1("relTblAl_%1.").arg(exColData.origCol));
 
-                s.append( exColData.idField1);
+                s.append( baseRec.fieldName(exColData.idField1));
 
                 s += sortOrder == Qt::AscendingOrder ? QLatin1String(" ASC") : QLatin1String(" DESC");
 
@@ -929,7 +1196,7 @@ QString PblSqlRelationalTableModel::selectStatement() const
 
                     name = QString(relationField(relTableAlias , exCol.destField)).
                             append(QString::fromLatin1(" AS %1_%2_%3").
-                                   arg(exCol.idField1).
+                                   arg(baseRec.fieldName(exCol.idField1)).
                                    arg(col).
                                    arg(exCol.destField));
 
@@ -974,7 +1241,7 @@ QString PblSqlRelationalTableModel::selectStatement() const
             sAddFields.append(QString::fromLatin1(",\n %1.%2 AS %3_%4_%5").
                               arg(relTableAlias).
                               arg(exCol.idField2).
-                              arg(exCol.table).
+                              arg(exCol.ext_table).
                               arg(exCol.idField2).
                               arg(exCol.origCol)
                               );
@@ -996,7 +1263,7 @@ QString PblSqlRelationalTableModel::selectStatement() const
             {
 
                 sExtFieldNameAdds.
-                        append(exCol.table).
+                        append(exCol.ext_table).
                         append(QLatin1String(".")).
                         append(lst.at(ii));
 
@@ -1014,7 +1281,7 @@ QString PblSqlRelationalTableModel::selectStatement() const
             sExtFieldNameAdds.append(QLatin1String(") as "));
 
             if(exCol.renamedField_As.isNull())
-                sExtFieldNameAdds.append(exCol.table).append(QLatin1String("_")).append(fields);
+                sExtFieldNameAdds.append(exCol.ext_table).append(QLatin1String("_")).append(fields);
             else
                 sExtFieldNameAdds.append(exCol.renamedField_As);
 
@@ -1036,48 +1303,48 @@ QString PblSqlRelationalTableModel::selectStatement() const
         if( addCol.type == PblColumn::COLUMN_TYPE_RELATION_ID)
         {
 
-            if( ! joinedTables.contains(addCol.table))
+            if( ! joinedTables.contains(addCol.ext_table))
             {
 
                 QString relTableAlias = QString::fromLatin1("relTblAl_%1").arg(addCol.origCol);
 
                 sExtLeftJoins.append(QLatin1String(" \nLEFT JOIN ")).
-                        append(addCol.table).
+                        append(addCol.ext_table).
                         append(QLatin1String(" ")).
                         append(relTableAlias).
 
                         append(QLatin1String(" ON ")).
 
                         append(tableName()).append(QLatin1String(".")).
-                        append(addCol.idField1).
+                        append(baseRec.fieldName( addCol.idField1 )).
 
                         append(QLatin1String("=")).
 
                         append(relTableAlias).append(QLatin1String(".")).
                         append(addCol.idField2);
 
-                joinedTables.append(addCol.table);
+                joinedTables.append(addCol.ext_table);
             }
         }
         else  if( addCol.type == PblColumn::COLUMN_TYPE_CALCULATION)
         {
-            if( ! joinedTables.contains(addCol.table))
+            if( ! joinedTables.contains(addCol.ext_table))
             {
                 sExtLeftJoins.append(QLatin1String(" \nLEFT JOIN ")).
-                        append(addCol.table).
+                        append(addCol.ext_table).
                         append(QLatin1String(" ")).
 
                         append(QLatin1String(" ON ")).
 
                         append(tableName()).append(QLatin1String(".")).
-                        append(addCol.idField1).
+                        append(baseRec.fieldName(addCol.idField1)).
 
                         append(QLatin1String("=")).
 
-                        append(addCol.table).append(QLatin1String(".")).
+                        append(addCol.ext_table).append(QLatin1String(".")).
                         append(addCol.idField2);
 
-                joinedTables.append(addCol.table);
+                joinedTables.append(addCol.ext_table);
             }
         }
     }
@@ -1193,7 +1460,7 @@ PblColumn PblSqlRelationalTableModel::getRelationInfoForColumn(int col)
     return PblColumn();
 }
 
-bool PblSqlRelationalTableModel::isRelationColumn(int col)
+bool PblSqlRelationalTableModel::isRelationColumn(int col) const
 {
     if( ! relations.contains(col))
         return false;
@@ -1201,7 +1468,7 @@ bool PblSqlRelationalTableModel::isRelationColumn(int col)
     return true;
 }
 
-bool PblSqlRelationalTableModel::isCalcColumn(int col)
+bool PblSqlRelationalTableModel::isCalcColumn(int col) const
 {
 
     if(col < baseRec.count())
@@ -1212,7 +1479,10 @@ bool PblSqlRelationalTableModel::isCalcColumn(int col)
     if( exCol >= ex_columns.count() )
         return false;
 
-    return true;
+    if(ex_columns.value(exCol).type == PblColumn::COLUMN_TYPE_CALCULATION)
+        return true;
+
+    return false;
 }
 
 bool PblSqlRelationalTableModel::isRelationalColumn(int col)
@@ -1223,7 +1493,7 @@ bool PblSqlRelationalTableModel::isRelationalColumn(int col)
     return false;
 }
 
-int PblSqlRelationalTableModel::getRelIdColumn(int relCol)
+int PblSqlRelationalTableModel::getRelIdColumn(int relCol) const
 {
     if(relations.contains(relCol))
         return relations.value(relCol);
