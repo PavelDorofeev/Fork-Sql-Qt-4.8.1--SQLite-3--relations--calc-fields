@@ -1,9 +1,9 @@
-This is Beta version 4.0. 
+This is Beta version 7.0. 
 Fork QSqlTableModel and QTableView based on Qt 4.8.1
 
-There is test application, that is working with SQLite3.
+There is test application, that is working with SQLite3. 
 
-Main idea is realize wrapper above QSqlTableModel and QTableView, that have convenient relations fields, calculated fields and more ...!
+Main idea is realize wrapper above QSqlTableModel and QTableView, that has a convenient relations fields, calculated fields and more ...!
 
 This is free and opensource project (GPL license).
 
