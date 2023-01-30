@@ -16,6 +16,7 @@
 #include "logging_system/logging_system.h"
 #include <QDateTime>
 #include "version.h"
+#include <QSqlQuery>
 
 DialogTest::DialogTest(QString langId,
                        QSqlDatabase &db_,
@@ -46,14 +47,7 @@ DialogTest::DialogTest(QString langId,
 
     mdl = new PblSqlRelationalTableModel_Purchases(db , this);
 
-    view = new PblTableView(mdl ,
-                            ui->tableViewLO,
-                            db,
-                            this,
-                            true,
-                            false);
-
-    if ( ! view->prepare(tableName))
+    if( ! mdl->prepare(tableName))
     {
         QMessageBox::warning(this,
                              mySql::error_,
@@ -63,7 +57,25 @@ DialogTest::DialogTest(QString langId,
         return ;
     }
 
+    view = new PblTableView(this,
+                            true,
+                            false);
+
+
+    if ( ! view->prepare( mdl ))
+    {
+        QMessageBox::warning(this,
+                             mySql::error_,
+                             tr("opening table '%1' is unsuccefully").arg(tableName)
+                             +tr("\n\nerror: : %2").arg(mdl->lastError().text()));
+
+        return ;
+    }
+
+    view->setToLayout(ui->tableViewLO);
+
     view->setEditStrategyVisible(true);
+
     setSizeGripEnabled(true);
 
     adjustSize();
@@ -93,86 +105,41 @@ void DialogTest::on_btn_save_clicked()
         return;
     }
 
-    PblSqlRelationalTableModel mdl_checks( db , this);
+    QSqlQuery qq;
 
-    mdl_checks.setEditStrategy(QSqlTableModel::OnManualSubmit);
+    int dat =  QDateTime::currentDateTime().toTime_t() ;
 
-    QString tableName = "checks";
+    int productName = mdl->baseRec.indexOf("productName");
 
-    if( ! mdl_checks.set_Table(tableName) )
-        return;
+    int exCol = mdl->getRelIdColumn(productName);
 
     for(int row=0; row < mdl->rowCount(); row++)
     {
-        if ( ! mdl_checks.insertRow(0))
+        QString str = QString( "INSERT INTO checks (productName,sum,date_ )VALUES("\
+                "%1, %2,"+QString::number(dat)+
+                ")").
+                arg(mdl->record(row).value(exCol).toInt()  ).
+                arg(mdl->record(row).value("sum").toDouble() , 0 , 'f' , 2 );
+
+
+        qDebug() << str;
+
+        if( ! qq.exec(str))
         {
-            QMessageBox::critical(this , mySql::error_ , tr("inserting row in table '%1' returns false %2").arg(tableName).arg(mdl->lastError().text()));
-            return;
-        }
 
-        // -----------------------------------------------------------------
 
-        int sumCol1 =  mdl->record().indexOf("sum");
-
-        QVariant sumValue = mdl->data(mdl->index(row , sumCol1));
-
-        if ( ! mdl_checks.setData(mdl_checks.index(0 , mdl_checks.fieldIndex("sum")), sumValue) )
-        {
             QMessageBox::critical(this ,
                                   mySql::error_ ,
-                                  tr("setData return false,\n table '%1',\n field %2").
-                                  arg(mdl_checks.tableName()).
-                                  arg(", field : sum"));
-            return;
-        }
+                                  tr("query exec wrong \n\n"\
+                                     "%1\n\n"\
+                                     "%2").
+                                  arg(qq.lastError().text()).
+                                  arg(str));
 
-        // -----------------------------------------------------------------
-
-        //int da =  mdl->record().indexOf("sum");
-
-        //QVariant sumValue = mdl->data(mdl->index(row , sumCol1));
-
-        int dat =  QDateTime::currentDateTime().toTime_t() ;
-
-        if ( ! mdl_checks.setData(mdl_checks.index(0 , mdl_checks.fieldIndex("date_")), dat) )
-        {
-            QMessageBox::critical(this ,
-                                  mySql::error_ ,
-                                  tr("setData return false,\n table '%1',\n field %2").
-                                  arg(mdl_checks.tableName()).
-                                  arg(", field : date_"));
-            return;
-        }
-
-        // -----------------------------------------------------------------
-
-
-        int productNameCol1 = mdl->baseRecord().indexOf("productName");
-
-        int productNameCol2 = mdl_checks.record().indexOf("productName");
-
-        if( mdl->getRelIdColumn(productNameCol1) == -1 )
-        {
-            QMessageBox::critical(this , mySql::error_ , tr("productName field is not with relation"));
-            return;
-        }
-
-        int productNameCol2Ex = mdl->getRelIdColumn(productNameCol1);
-
-        QVariant productName_id_Value = mdl->data(mdl->index(row , productNameCol2Ex ));
-
-        if ( ! mdl_checks.setData(mdl_checks.index(0 , productNameCol2), productName_id_Value) )
-        {
-            QMessageBox::critical(this , mySql::error_ , tr("setData return false, table").append(mdl_checks.tableName()).append(", field : productName"));
             return;
         }
     }
 
-    if ( ! mdl_checks.submitAll())
-    {
-        QMessageBox::critical(this , mySql::error_ , tr("submit returns false, table ").append(mdl_checks.tableName()).append(" sql: ").append(mdl_checks.lastError().text()));
-        return;
-    }
 
     if( ! mdl->removeRows(0,  mdl->rowCount()))
     {
@@ -189,43 +156,23 @@ void DialogTest::on_btn_save_clicked()
 
 void DialogTest::openTable(const QString & tableName)
 {
+    PblTableDlg dlg(tableName , db , this, true);
+
+    dlg.view->setEditStrategyVisible(true);
+
+    dlg.exec();
+
 }
 
 void DialogTest::on_btn_goods_clicked()
 {
-    QString tableName = "goods";
+    openTable("goods");
 
-    PblTableDlg dlg(db , this, true);
-
-    if ( ! dlg.view->prepare(tableName))
-    {
-        QMessageBox::critical(this , tr("Error") , tr("set_Table '%1' return false").arg("goods"));
-        return;
-    }
-
-    dlg.view->setEditStrategyVisible(true);
-
-    dlg.exec();
 }
 
 void DialogTest::on_btn_checks_clicked()
 {
-    PblTableDlg dlg( db, this, true);
-
-    QString tableName = "checks";
-
-    if ( ! dlg.view->prepare(tableName))
-    {
-
-        QMessageBox::critical(this ,
-                              mySql::error_,
-                              tr("set_Table '%1' return false").arg(tableName));
-        return;
-    }
-
-    dlg.view->setEditStrategyVisible(true);
-
-    dlg.exec();
+    openTable("checks");
 
 }
 

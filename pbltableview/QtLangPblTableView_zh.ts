@@ -48,7 +48,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:7.5pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#ffaa00;&quot;&gt;копировать строку [F9]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
-        <translation type="unfinished">复制行</translation>
+        <translation>复制行</translation>
     </message>
     <message>
         <location filename="btn_toolbox.ui" line="85"/>
@@ -62,7 +62,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:7.5pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#0000ff;&quot;&gt;редактировать строку [F4]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
-        <translation type="unfinished">编辑一行</translation>
+        <translation>编辑一行</translation>
     </message>
     <message>
         <location filename="btn_toolbox.ui" line="103"/>
@@ -76,7 +76,16 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:7.5pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000;&quot;&gt;удалить строку [DEL]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
-        <translation type="unfinished">删除一行</translation>
+        <translation>删除一行</translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.ui" line="130"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:7.5pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#93c400;&quot;&gt;view [F3]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>查看</translation>
     </message>
     <message>
         <location filename="btn_toolbox.ui" line="148"/>
@@ -95,7 +104,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="btn_toolbox.ui" line="239"/>
         <source>select edit strategy</source>
-        <translation type="unfinished"></translation>
+        <translation>选择编辑策略</translation>
     </message>
     <message>
         <location filename="btn_toolbox.ui" line="243"/>
@@ -113,24 +122,35 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="261"/>
+        <location filename="btn_toolbox.ui" line="264"/>
         <source>submitAll</source>
-        <translation type="unfinished"></translation>
+        <translation>记录一切</translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="268"/>
+        <location filename="btn_toolbox.ui" line="271"/>
         <source>edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="275"/>
+        <location filename="btn_toolbox.ui" line="278"/>
         <source>show rel id columns</source>
         <translation>显示列的rel id</translation>
     </message>
     <message>
-        <location filename="btn_toolbox.cpp" line="49"/>
         <source>submitAll wrong : </source>
-        <translation>submitAll函数失败</translation>
+        <translation type="obsolete">submitAll函数失败</translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.cpp" line="53"/>
+        <source>submitAll was wrong,
+ error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.cpp" line="65"/>
+        <source>submit was wrong,
+ error: %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -210,56 +230,63 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DialogTest</name>
     <message>
-        <location filename="../pbltableview_test/dialog.cpp" line="57"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="60"/>
         <source>opening table &apos;%1&apos; is unsuccefully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.cpp" line="58"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="61"/>
         <source>
 
 error: : %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.cpp" line="89"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="92"/>
         <source>you should fill the table &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.cpp" line="106"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="109"/>
         <source>inserting row in table &apos;%1&apos; returns false %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.cpp" line="120"/>
-        <location filename="../pbltableview_test/dialog.cpp" line="142"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="123"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="141"/>
+        <source>setData return false,
+ table &apos;%1&apos;,
+ field %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pbltableview_test/dialog.cpp" line="166"/>
         <source>setData return false, table</source>
         <translation type="unfinished">setData函数失败</translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.cpp" line="132"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="156"/>
         <source>productName field is not with relation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.cpp" line="149"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="173"/>
         <source>submit returns false, table </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.cpp" line="155"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="179"/>
         <source>removeRows returns false, table &apos;%1&apos; </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.cpp" line="178"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="202"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.cpp" line="178"/>
-        <location filename="../pbltableview_test/dialog.cpp" line="198"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="202"/>
+        <location filename="../pbltableview_test/dialog.cpp" line="222"/>
         <source>set_Table &apos;%1&apos; return false</source>
         <translation type="unfinished"></translation>
     </message>
@@ -271,57 +298,93 @@ error: : %2</source>
         <translation type="obsolete">错误</translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="78"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="120"/>
+        <source>874584584 inserting row:
+ set_newInsertedRowParameters returns false, table name &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="152"/>
         <source>The data of row %1 are not saved fully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="130"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="214"/>
         <source>Before you set new edit strategy you have to call submitAll and it returns false</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="292"/>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="303"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="373"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="388"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="408"/>
+        <source>setData returns false
+ table %1
+ field %2
+
+error: %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="424"/>
+        <source>OnFieldChange: update mode
+it is strange
+idxEx.isValid 
+ table %1
+ field %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="461"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="472"/>
         <source>setData works uncorrect
  table %1
  field %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="321"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="490"/>
         <source>setData returns false
  table %1
  field %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="415"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="560"/>
+        <source>OnRowChange: needs to submit dirty row %1 (id : %2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="575"/>
+        <source>OnRowChange: lost focus on row %1 (id : %2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="656"/>
         <source>PblSqlRelationalTableModel::setRelation This is a second trying setRelation for column number : %1 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="513"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="829"/>
         <source>database is not valid!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="521"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="837"/>
         <source>database is not opened!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="527"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="843"/>
         <source>database is not opened! %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="559"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="875"/>
         <source>table &apos;%1&apos; is not valid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="941"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="1358"/>
         <source>PblSqlRelationalTableModel::selectStatement() field list is empty</source>
         <translation type="unfinished"></translation>
     </message>
@@ -329,7 +392,13 @@ error: : %2</source>
 <context>
     <name>PblSqlRelationalTableModel_Purchases</name>
     <message>
-        <location filename="../pbltableview_test/pblsqlrelationaltablemodel_purchases.cpp" line="36"/>
+        <location filename="../pbltableview_test/pblsqlrelationaltablemodel_purchases.cpp" line="74"/>
+        <source>after setData ! idx.isValid().
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pbltableview_test/pblsqlrelationaltablemodel_purchases.cpp" line="89"/>
         <source>setData for sum field is wrong.
 %1</source>
         <translation type="unfinished"></translation>
@@ -379,49 +448,44 @@ error: : %2</source>
         <translation type="obsolete">按值选择</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1011"/>
+        <location filename="pbltableview.cpp" line="1107"/>
         <source>create row</source>
-        <translation type="unfinished"></translation>
+        <translation>创建一条线</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1085"/>
+        <location filename="pbltableview.cpp" line="1181"/>
         <source>copy row</source>
-        <translation type="unfinished"></translation>
+        <translation>复制行</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1047"/>
+        <location filename="pbltableview.cpp" line="1143"/>
         <source>edit row</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑一行</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="516"/>
-        <source>You are already editing or inserting some row, that you should saved before insert new</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="pbltableview.cpp" line="773"/>
+        <location filename="pbltableview.cpp" line="866"/>
         <source>table &apos;%1&apos; is not opened</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="806"/>
+        <location filename="pbltableview.cpp" line="901"/>
         <source>setData returns  false
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="959"/>
+        <location filename="pbltableview.cpp" line="1055"/>
         <source>table &apos;%1&apos; not exists in database
  error : %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="970"/>
+        <location filename="pbltableview.cpp" line="1066"/>
         <source>error in setting_mdl</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="978"/>
+        <location filename="pbltableview.cpp" line="1074"/>
         <source>error in select query:
 
 %1
@@ -431,62 +495,121 @@ error: : %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="988"/>
+        <location filename="pbltableview.cpp" line="1084"/>
         <source>error in setting_view
  table :%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1123"/>
+        <location filename="pbltableview.cpp" line="1219"/>
         <source>remove row</source>
-        <translation type="unfinished"></translation>
+        <translation>删除一行</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1161"/>
+        <location filename="pbltableview.cpp" line="1257"/>
         <source>view</source>
-        <translation type="unfinished"></translation>
+        <translation>查看</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1202"/>
+        <location filename="pbltableview.cpp" line="1298"/>
         <source>search</source>
+        <translation>搜索</translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="1428"/>
+        <source>show rel extented columns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1429"/>
-        <location filename="pbltableview.cpp" line="1451"/>
-        <location filename="pbltableview.cpp" line="1480"/>
+        <location filename="pbltableview.cpp" line="1549"/>
+        <location filename="pbltableview.cpp" line="1571"/>
+        <location filename="pbltableview.cpp" line="1600"/>
         <source>column is out of range , field : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1435"/>
+        <location filename="pbltableview.cpp" line="1555"/>
         <source>second attempting adding QCheckBox to field : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1457"/>
+        <location filename="pbltableview.cpp" line="1577"/>
         <source>second attempting adding QComboBox to field : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1486"/>
+        <location filename="pbltableview.cpp" line="1606"/>
         <source>second attempting add a date_Delegate to field : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1657"/>
+        <location filename="pbltableview.cpp" line="1777"/>
         <source>You are trying to set wrong edit strategy number %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1239"/>
+        <location filename="pbltableview.cpp" line="1335"/>
         <source>clear field</source>
+        <translation>清除字段</translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="545"/>
+        <source>You should realize this code yourself</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1271"/>
-        <source>select by field value</source>
+        <location filename="pbltableview.cpp" line="565"/>
+        <source>You should implement this code yourself</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="617"/>
+        <source>copying row,
+needs submit, after submit lost row focus,
+table %1, error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="682"/>
+        <source>copying row,
+relational field %3,
+ setData returns false,
+table %1, error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="704"/>
+        <source>copying row:
+ setData returns false,
+table %1, error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="718"/>
+        <source>copying row:
+ setData returns true,
+but submit/select occures
+table %1, error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="746"/>
+        <source>before copying a line you should select it
+table &apos;%1&apos;
+error:%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="773"/>
+        <source>before removing a line you should submit dirty row %2 (id : %3)
+table &apos;%1&apos;
+error:%4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="1367"/>
+        <source>select by field value</source>
+        <translation>按值选择</translation>
     </message>
     <message>
         <source>error</source>
@@ -497,8 +620,8 @@ error: : %2</source>
         <translation type="obsolete">备注</translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="788"/>
-        <location filename="pbltableview.cpp" line="800"/>
+        <location filename="pbltableview.cpp" line="881"/>
+        <location filename="pbltableview.cpp" line="893"/>
         <source>the choise is not defined</source>
         <translation>选择不成功</translation>
     </message>
@@ -514,24 +637,37 @@ error: : %2</source>
         <translation type="obsolete">无法打开数据库文件</translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/main.cpp" line="58"/>
+        <location filename="../pbltableview_test/main.cpp" line="59"/>
         <source>addDatabase returns false:
  error: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/main.cpp" line="70"/>
+        <location filename="../pbltableview_test/main.cpp" line="71"/>
         <source>database file is not opened:
  %1,
  error: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/main.cpp" line="79"/>
+        <location filename="../pbltableview_test/main.cpp" line="83"/>
         <source>database is empty?
+
  %1:
- %2,
+
  error: %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pbltableview_test/main.cpp" line="171"/>
+        <source>Не удается создать таблицу базы данных %1:
+
+%2 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pbltableview_test/main.cpp" line="180"/>
+        <source>succefully created table %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -564,28 +700,54 @@ error: : %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="535"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="851"/>
         <source>database is empty?
  %1:
  error: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="546"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="862"/>
         <source>database is not contains table &apos;%1&apos; ?
 
  error: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/config.cpp" line="49"/>
-        <source>sold</source>
-        <translation type="unfinished">已售出</translation>
+        <location filename="../pbltableview_test/config.cpp" line="52"/>
+        <source>table &apos;%1&apos;
+
+index row %2x%3 
+
+%4</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/config.cpp" line="88"/>
+        <location filename="../pbltableview_test/config.cpp" line="65"/>
+        <source>setData returns false , table &apos;%1&apos;
+
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pbltableview_test/config.cpp" line="153"/>
+        <source>sold</source>
+        <translation>已售出</translation>
+    </message>
+    <message>
+        <location filename="../pbltableview_test/config.cpp" line="202"/>
         <source>setRelation returns false</source>
         <translation type="unfinished">setRelation函数失败</translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="51"/>
+        <source>submit</source>
+        <translation>记录</translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="52"/>
+        <source>submit All</source>
+        <translation>记录一切</translation>
     </message>
 </context>
 <context>

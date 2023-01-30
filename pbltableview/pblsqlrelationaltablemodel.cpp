@@ -44,6 +44,8 @@
 #include <QApplication>
 #include <QSqlQuery>
 #include "config.h"
+#include <QMessageBox>
+#include "pbltableview/my_sql.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -322,14 +324,39 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
     if(role != Qt::EditRole)
         return QSqlTableModel::setData(idx, value, role);
 
-    if(value.type() != QVariant::List) //  txt + id
-    {
-        qCritical() << "setData for relation field have to be QList type,  " << value ;
-        return false;
-    }
-
     int col = idx.column();
     int row = idx.row();
+
+    QVariant val;
+
+    QVariant txt;
+    QVariant id;
+
+    QModelIndex idx2 = idx;
+
+    int str = QSqlTableModel::editStrategy();
+
+    id = data(index( row , getRelIdColumn( col)));
+
+    txt = value.toString();
+
+    if(value.type() == QVariant::List) //  txt + id
+    {
+
+        QMessageBox::warning( 0,
+                              mySql::error_,
+                              tr("QVariant::List not support more as relation value (for setData)"));
+
+    }
+
+    int exCol = getRelIdColumn(col);
+
+    //qDebug() <<
+    QModelIndex idxEx = index(row , exCol);
+
+    if( ! idxEx.isValid())
+        return false;
+
 
     int oldPriValue;
 
@@ -340,25 +367,7 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
         //qDebug() << "priIdx : "  <<priIdx;
     }
 
-    QModelIndex idx2 = idx;
-
-    // --------------------------------------------------------------
-    //  In is nesasary QVaiant type is List
-    // --------------------------------------------------------------
-
-    QList<QVariant> lst = value.toList();
-
-    QVariant txt = lst.at(0);
-
-    QVariant id = lst.at(1);
-
-    int exCol = getRelIdColumn(col);
-
-    QModelIndex idxEx = index(row , exCol);
-
-    if( ! idxEx.isValid())
-        return false;
-
+    qDebug() << "txt : "  << txt << "  id " << id;
 
     switch (editStrategy())
     {
@@ -437,53 +446,7 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
     case OnRowChange:
     {
 
-        if ( ! QSqlTableModel::setData( idxEx, id , role ))
-        {
-            qCritical() << "error setData расширенное поле %" << exCol << lastError().text();
-
-            return false;
-        }
-
-        if( ! idx.isValid())
-        {
-            // idx clear sometimes because of (in setData) submit function calls for other row that is in edit mode and is dirty
-            // i.e. if we jump to other row we have saved current dirty row
-            // in this case we have select query that renews our table
-
-            if(editStrategy() <= QSqlTableModel::OnRowChange)
-            {
-                int newPriValue = getRowPriValue(row);
-
-                if(newPriValue == -1)
-                {
-                    QMessageBox::warning(0,
-                                         mySql::error_,
-                                         tr("setData works uncorrect\n table %1\n field %2").
-                                         arg(tableName().arg(record().fieldName(idx2.column())))
-                                         );
-
-                    return false;
-                }
-
-                if(newPriValue != oldPriValue) // other row will occures after select at such index
-                {
-                    QMessageBox::warning(0,
-                                         mySql::error_,
-                                         tr("setData works uncorrect\n table %1\n field %2").
-                                         arg(tableName().arg(record().fieldName(idx2.column())))
-                                         );
-
-                    qCritical() << "after renews table currentIndex will uncorrect";
-
-                    return false;
-                }
-            }
-
-
-        }
-        else // if was select it not needs setData, only if select was not been executes
-        {
-            if ( ! QSqlTableModel::setData( idx2, txt, role )) // text
+           if ( ! QSqlTableModel::setData( idx2, txt, role )) // text
             {
                 QMessageBox::warning(0,
                                      mySql::error_,
@@ -496,7 +459,7 @@ bool PblSqlRelationalTableModel::setDataForRelationField(const QModelIndex &idx,
                 return false;
             }
 
-        }
+
 
         return true;
     }
@@ -593,9 +556,23 @@ bool PblSqlRelationalTableModel::setData(const QModelIndex &idx,
 
     bool bSetData = false;
 
-    if(relations.contains(col))
+    if( isRelationColumn( col) )
     {
         bSetData = setDataForRelationField(idx2 , value, role);
+
+    }
+    else if( isExtRelationColumn( col )  && isInsertRow != row)
+    {
+        int origCol = getOrigRelationColumn(col);
+
+        if(editStrategy() == QSqlTableModel::OnFieldChange)
+        {
+            // needs set orig column because of submit will be
+
+            bSetData = QSqlTableModel::setData(index( row , origCol), value, role);
+        }
+        else
+            bSetData = QSqlTableModel::setData(index( row , col), value, role);
 
     }
     else
@@ -619,22 +596,6 @@ bool PblSqlRelationalTableModel::setData(const QModelIndex &idx,
                                   mySql::error_ ,
                                   tr("It is strange with OnFieldChange strategy,\n table"));*/
         }
-
-        // -------------------------------------------------
-        //          sig_showSubmit
-        // ------------------------------------------------
-        bool en = true;
-
-        if( editStrategy() == QSqlTableModel::OnFieldChange )
-        {
-            if ( rowMode( row ) == UPDATE )
-                en = false;
-        }
-
-        emit sig_showSubmit( en );
-
-
-        // ---------------------------------------------------
 
         // following unsaved fields
 
@@ -716,7 +677,7 @@ QString PblSqlRelationalTableModel::relationField(const QString &tableName,
 void PblSqlRelationalTableModel::setDirtyRow(int dirtyRow , int dirtyCol)
 {
 
-    qDebug() << "setDirtyRow() " << dirtyRow;
+    //qDebug() << "setDirtyRow() " << dirtyRow;
 
     // 0 - undefined because of insertRow
 
@@ -728,10 +689,10 @@ void PblSqlRelationalTableModel::setDirtyRow(int dirtyRow , int dirtyCol)
 
     isSelectedLine  = dirtyRow;
 
-    qDebug() << "        lastDirtyRowId " <<lastDirtyRowId ;
+    //qDebug() << "        lastDirtyRowId " <<lastDirtyRowId ;
     //qDebug() << "        lastDirtyCol   " <<lastDirtyCol ;
-    qDebug() << "        isDirtyRow     " <<isDirtyRow ;
-    qDebug() << "        isSelectedLine " <<isSelectedLine ;
+    //qDebug() << "        isDirtyRow     " <<isDirtyRow ;
+    //qDebug() << "        isSelectedLine " <<isSelectedLine ;
 
 }
 
@@ -762,7 +723,8 @@ void PblSqlRelationalTableModel::clear()
 bool PblSqlRelationalTableModel::canFetchMore(const QModelIndex &parent) const
 {
     bool bbb = QSqlQueryModel::canFetchMore(parent);
-    qDebug() << "PblSqlRelationalTableModel::canFetchMore  " << bbb <<  tableName();
+
+    //qDebug() << "PblSqlRelationalTableModel::canFetchMore  " << bbb <<  tableName();
 
     return bbb;
 
@@ -781,10 +743,12 @@ bool PblSqlRelationalTableModel::select()
         clearDirtyRow();
     }
 
-    if ( ! QSqlTableModel::select()) // here occures PblTableView::reset()
-        return false;
+    bool bbb = QSqlTableModel::select();
 
-    emit sig_showSubmit( false);
+    emit sig_afterSelect(bbb);
+
+    if ( ! bbb) // here occures PblTableView::reset()
+        return false;
 
     lastDirtyRowId = -1;
     lastDirtyCol = -1;
@@ -819,7 +783,7 @@ bool PblSqlRelationalTableModel::select()
     return true;
 }
 
-bool PblSqlRelationalTableModel::set_Table(const QString &tableName)
+bool PblSqlRelationalTableModel::prepare(const QString &tableName)
 {
 
     if(! db.isValid() )
@@ -893,10 +857,66 @@ bool PblSqlRelationalTableModel::set_Table(const QString &tableName)
         priCol = fieldIndex(field);
     }
 
+    if ( ! config::setting_mdl( this ) )
+    {
+        QMessageBox::warning(0,
+                             mySql::error_,
+                             tr("error in setting_mdl"),
+                             "");
+        return false;
+    }
+
+
+    return true;
+
+}
+
+bool PblSqlRelationalTableModel::prepareRecord(QSqlRecord &rec, MODE mode)
+{
+    // far setRecord will calls setData
+    // that is required relation replace with QList value
+
+   /* for( int col=0; col < rec.count(); col++)
+    {
+
+        if ( isRelationColumn(col))
+        {
+            int exCol = getRelIdColumn( col);
+
+            if(rec.field( exCol ).isGenerated())
+            {
+                rec.setGenerated(exCol , false );
+            }
+
+        }
+    }*/
+
+    if( priCol >=0 && priCol < rec.count() )
+        //rec.setGenerated( priCol , false);
+        rec.remove(priCol);
+
+    return true;
+
+}
+
+bool PblSqlRelationalTableModel::setRecord_withoutPriCol(int row,
+                                                        QSqlRecord &rec,
+                                                        MODE mode)
+{
+
+    //qDebug() << "set_Record " << rec;
+
+    QSqlRecord rec2 =rec;
+
+    prepareRecord( rec2, mode);
+
+    //qDebug() << "set_Record rec2 " << rec2;
+
+    return QSqlTableModel::setRecord( row , rec2);
 }
 
 
-void PblSqlRelationalTableModel::translateFieldNames(
+bool PblSqlRelationalTableModel::translateFieldNames(
         int row,
         QSqlRecord &rec,
         PblSqlRelationalTableModel::MODE mode
@@ -908,11 +928,14 @@ void PblSqlRelationalTableModel::translateFieldNames(
 
     int count = baseRec.count();
 
+    int isGeneratedCount = 0;
+
     for( int col=0; col < rec.count(); col++)
     {
 
         if( col >= count) // all ext columns must be generic false!
         {
+            //rec.remove(col);
             if ( rec.isGenerated( col ) )
 
                 rec.setGenerated(col , false );
@@ -923,6 +946,7 @@ void PblSqlRelationalTableModel::translateFieldNames(
         if( ! rec.isGenerated(col))
             continue;
 
+        isGeneratedCount++;
 
         if ( isRelationColumn(col))
         {
@@ -933,14 +957,15 @@ void PblSqlRelationalTableModel::translateFieldNames(
 
             QVariant val;
 
-            if ( editStrategy() == QSqlTableModel::OnFieldChange && mode == UPDATE)
+            if ( editStrategy() == QSqlTableModel::OnFieldChange
+                 && mode == UPDATE)
                 // will be submit /select
 
                 val = rec.value(col); //  (int id)
 
             else
 
-                val = rec.value(exCol); // подмена текста поля на int id
+                val = rec.value(exCol).toInt(); // подмена текста поля на int id
 
 
             QSqlField ff = rec.field( col );
@@ -957,56 +982,14 @@ void PblSqlRelationalTableModel::translateFieldNames(
             }
 
         }
-        else if(isCalcColumn(col))
-        {
-
-        }
 
     }
 
+    if(isGeneratedCount>0)
+        return true;
+    else
+        return false;
 
-/*
-
-
-    for( QHash<int,int>::const_iterator ii = relations.begin(); ii!=relations.end(); ++ii)
-    {
-        int col = ii.key();
-        int exCol = ii.value();
-
-        bool gen = rec.field(col).isGenerated();
-
-        if(gen)
-        {
-
-            QString name = baseRec.field( col ).name(); // заменяем наименования полей на базовые
-
-            QVariant val;
-
-            if ( editStrategy() == QSqlTableModel::OnFieldChange && mode == UPDATE)
-            {
-                // will be submit /select
-
-                val = rec.value(col); //  (int id)
-
-            }
-            else
-                val = rec.value(exCol); // подмена текста поля на int id
-
-            QSqlField ff = rec.field( col );
-
-            ff.setName(name);
-            ff.setValue(val);
-            ff.setGenerated(gen);
-
-            rec.replace( col , ff );
-
-        }
-
-        if(rec.field( exCol ).isGenerated())
-        {
-            rec.setGenerated(exCol , false );
-        }
-    }*/
 }
 
 bool PblSqlRelationalTableModel::updateRowInTable(int row, const QSqlRecord &values)
@@ -1022,11 +1005,16 @@ bool PblSqlRelationalTableModel::updateRowInTable(int row, const QSqlRecord &val
 
     // replace to original table field names
     // set generated no to relational id fields
-    translateFieldNames(row, rec, UPDATE);
+    if( translateFieldNames(row, rec, UPDATE) )
+    {
 
-    qDebug() << "PblSqlRelationalTableModel::updateRowInTable " << rec;
+        //qDebug() << "PblSqlRelationalTableModel::updateRowInTable " << rec;
 
-    return QSqlTableModel::updateRowInTable(row, rec);
+            return QSqlTableModel::updateRowInTable(row, rec);
+    }
+
+    return true;
+
 }
 
 bool PblSqlRelationalTableModel::insertRowIntoTable(const QSqlRecord &values)
@@ -1499,6 +1487,30 @@ int PblSqlRelationalTableModel::getRelIdColumn(int relCol) const
         return relations.value(relCol);
     else
         return -1;
+}
+
+bool PblSqlRelationalTableModel::isExtRelationColumn(int col) const
+{
+    if(col < baseRec.count())
+        return false;
+
+    int extCol = col - baseRec.count();
+
+    if(ex_columns.value( extCol).type == PblColumn::COLUMN_TYPE_RELATION_ID)
+        return true;
+
+    return false;
+}
+
+int PblSqlRelationalTableModel::getOrigRelationColumn(int col) const
+{
+    if(isExtRelationColumn( col))
+    {
+        return ex_columns.value( col - baseRec.count() ).origCol;
+
+    }
+
+    return -1;
 }
 
 PblColumn::COLUMN_TYPE PblSqlRelationalTableModel::columnType(int col)

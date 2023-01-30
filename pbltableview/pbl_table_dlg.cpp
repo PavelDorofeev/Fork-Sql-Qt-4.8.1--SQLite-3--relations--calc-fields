@@ -35,10 +35,13 @@
 #include <QSqlError>
 
 PblTableDlg::PblTableDlg(
-        QSqlDatabase &db_,
+        const QString & tableName,
+        QSqlDatabase &Db,
         QWidget *parent,
         bool editable,
-        bool selectable)
+        bool selectable,
+        QSqlTableModel::EditStrategy edt
+        )
     :
       QDialog(parent),
       ui(new Ui::PblTableDlg),
@@ -50,16 +53,105 @@ PblTableDlg::PblTableDlg(
 {
     ui->setupUi(this);
 
-    setSizeGripEnabled(true);
+    mdl = new PblSqlRelationalTableModel( Db , this);
 
-    if( ! db_.isOpen())
+    if( ! mdl->prepare(tableName))
+    {
+        QMessageBox::critical(this ,
+                              mySql::error_ ,
+                              tr(
+                                  "prepare table model is wrong\n"\
+                                  "sql error: %3").
+                              arg(mdl->lastError().text())
+                              );
+        return;
+    }
+
+    mdl->setEditStrategy(edt);
+
+    view = new PblTableView (
+                //ui->for_table_lo ,
+                //Db,
+                this,
+                editable ,
+                selectable);
+
+    if( ! view->prepare(mdl))
+    {
+        QMessageBox::critical(this ,
+                              mySql::error_ ,
+                              tr(
+                                  "prepare table view is wrong\n"\
+                                  "sql error: 13").
+                              arg(mdl->lastError().text())
+                              );
+    }
+
+    init( Db, editable, selectable);
+
+
+
+}
+
+PblTableDlg::PblTableDlg( const QString &tableName,
+                          PblSqlRelationalTableModel *Mdl,
+                          PblTableView *View,
+                          QSqlDatabase &Db,
+                          QWidget *parent,
+                          bool editable,
+                          bool selectable,
+                          QSqlTableModel::EditStrategy edt)
+    :
+      QDialog(parent),
+      ui(new Ui::PblTableDlg),
+      chosenRec(QSqlRecord()),
+      chosenRow(-1),
+      view(0),
+      mdl(0)
+{
+    // -------------------------------------------------------
+    //                  protected ctor
+    // -------------------------------------------------------
+
+    ui->setupUi(this);
+
+    mdl = Mdl;//new PblSqlRelationalTableModel( Db , this);
+
+    if( ! mdl->prepare(tableName))
+    {
+        QMessageBox::critical(this,
+                              mySql::error_,
+                              tr("wrong table name : '%1").
+                              arg(tableName)
+                              );
         return;
 
-    db = db_;
+    }
+    view = View;
 
-    mdl = new PblSqlRelationalTableModel( db , this);
+    if( ! view->prepare( mdl))
+    {
+        QMessageBox::critical(this,
+                              mySql::error_,
+                              tr("wrong table view init\t"\
+                                 "table name : '%1").
+                              arg(tableName)
+                              );
+        return;
+    }
+    view->setModel(mdl);
 
-    view = new PblTableView ( mdl , ui->for_table_lo , db, this, editable , selectable);
+    init( Db, editable, selectable);
+
+}
+
+
+bool PblTableDlg::init( QSqlDatabase &Db, bool editable, bool selectable)
+{
+    if( ! Db.isOpen())
+        return false;
+
+    db = Db;
 
     if(selectable)
     {
@@ -82,16 +174,17 @@ PblTableDlg::PblTableDlg(
 
     }
 
+    setSizeGripEnabled(true);
+
+
+    view->setToLayout(ui->for_table_lo); // impotant
+
+
     adjustSize();
+
+    return true;
+
 }
-
-/*bool PblTableDlg::set_Table(const QString &tableName)
-{
-
-    setWindowTitle("table : "+tableName);
-
-    return mdl->set_Table(tableName);
-}*/
 
 bool PblTableDlg::select()
 {
@@ -100,6 +193,21 @@ bool PblTableDlg::select()
 
 PblTableDlg::~PblTableDlg()
 {
+    if(view !=0)
+    {
+        qDebug() << "~PblTableDlgEx() delete view";
+        delete view;
+        view =0;
+    }
+
+
+    if(mdl !=0)
+    {
+        qDebug() << "~PblTableDlgEx() delete mdl";
+        delete mdl;
+        mdl =0;
+    }
+
     delete ui;
 }
 
@@ -140,13 +248,6 @@ void PblTableDlg::slot_accepted()
 
 }
 
-bool PblTableDlg::slot_doubleClicked(QString tableName)
-{
-    qDebug() << "PblTableDlg::slot_doubleClicked";
-    return true;
-
-}
-
 bool PblTableDlg::setCalcField(CALC_COLUMN &calc)
 {
     return mdl->setCalcField(calc);
@@ -165,5 +266,8 @@ bool PblTableDlg::setRelations()
     return true;
 }
 
-
+QVBoxLayout * PblTableDlg::getUi()
+{
+    return ui->for_table_lo;
+}
 

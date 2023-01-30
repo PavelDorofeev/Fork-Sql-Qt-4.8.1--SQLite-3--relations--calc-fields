@@ -21,8 +21,8 @@ class Btn_ToolBox : public QWidget
     Q_OBJECT
     
 public:
-    explicit Btn_ToolBox(PblTableView *view,
-                        PblSqlRelationalTableModel *mdl);
+    explicit Btn_ToolBox(PblTableView *view);
+
     ~Btn_ToolBox();
 
     PblTableView *view;
@@ -67,7 +67,7 @@ private slots:
 private:
 
 
-    PblSqlRelationalTableModel * mdl;
+    //PblSqlRelationalTableModel * mdl;
 
 };
 

@@ -43,6 +43,7 @@
 class PblSqlRelationalTableModel;
 class Btn_ToolBox;
 class ComboBoxDelegate;
+class PblTableDlg;
 
 class PblTableView : public QTableView
 {
@@ -97,14 +98,18 @@ public:
     };
     Q_DECLARE_FLAGS(ACTIONS, ACTION)
 
-    explicit PblTableView(PblSqlRelationalTableModel *mdl,
-                          QVBoxLayout * lo,
-                          QSqlDatabase &db,
+
+
+    explicit PblTableView( //QSqlDatabase &db,
                           QWidget *parent = 0,
                           bool editable = false,
                           bool selectable = false);
 
+
+
     virtual ~PblTableView();
+
+    void setModel(PblSqlRelationalTableModel *model);
 
     void reset();
 
@@ -147,12 +152,17 @@ public:
     void setEditState(bool);
     int priCol;
 
-    virtual bool insertRow(int row);
-    virtual bool editRow(int row);
-    virtual bool copyRow(int row);
-    virtual bool removeRow(int row);
+    virtual bool vrt_insertRow(int row);
+
+    virtual bool vrt_editRowDlg(int row);
+
+    virtual bool vrt_copyRow(int row);
+
+    virtual bool vrt_removeRow(int row);
 
     virtual bool viewRow(int row);
+
+    virtual void vrt_doubleClicked(const QModelIndex & index);
 
     void setSelectAndClose();
 
@@ -169,7 +179,7 @@ public:
 
     void setEditStrategyVisible(bool on);
 
-    bool prepare(const QString & tableName );
+    virtual bool prepare( PblSqlRelationalTableModel * Mdl );
 
     Search_Settings_Dlg::FIND_SETTINGS find_settings;
 
@@ -181,16 +191,20 @@ public:
 
     QHash<int , QStyledItemDelegate*> dlgts;
 
-    PblSqlRelationalTableModel * mdl;
+    //PblSqlRelationalTableModel * mdl;
 
     int restoreCurrentRowPositionAfterSubmit(int srcRow);
 
-    QSqlDatabase db;
+    //QSqlDatabase db;
 
     void show_view_Btn();
 
+    virtual bool vrt_afterEditRecordDlg(int col, int row, const PblTableDlg *);
+
     bool selectable;
     bool editable;
+
+    void setToLayout(QVBoxLayout * lo);
 
 
 protected:
@@ -204,6 +218,8 @@ signals:
     bool sig_editRow(int);
 
     bool sig_viewRow(int row);
+
+    void sig_showSubmitBtn(bool);
 
 
 public Q_SLOTS:
@@ -242,6 +258,8 @@ public Q_SLOTS:
 
     void slot_rowIsDirty(int);
 
+    void slot_afterSelect( bool );
+
 protected Q_SLOTS:
     virtual void rowsInserted(const QModelIndex &parent, int start, int end);
     virtual void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
@@ -269,6 +287,8 @@ private:
     QString filter;
 
     bool selectAndClose;
+
+
 
 
 };

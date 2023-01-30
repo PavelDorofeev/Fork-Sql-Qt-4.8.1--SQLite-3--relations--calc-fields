@@ -103,7 +103,7 @@ void ComboBoxDelegate::paint(QPainter *painter,
         {
             int ii=mdl->data(mdl->index(row,col)).toInt();
 
-            if( ii >=0)
+            if( ii >=0 && ii < lst.count())
                 text = lst.at(ii);
             else
                 text="";

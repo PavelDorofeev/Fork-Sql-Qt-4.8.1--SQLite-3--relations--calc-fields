@@ -32,7 +32,7 @@
 #include <QModelIndex>
 #include "pbltableview/pblsqlrelationaltablemodel.h"
 #include <QSqlDatabase>
-
+#include <QVBoxLayout>
 
 namespace Ui {
 class PblTableDlg;
@@ -46,14 +46,17 @@ class PblTableDlg : public QDialog
     Q_OBJECT
     
 public:
-    explicit PblTableDlg(//const QString & tableName,
-                          QSqlDatabase &db,
-                          QWidget *parent = 0,
-                          bool editable=false,
-                          bool selectable=false);
+    explicit PblTableDlg(const QString & tableName,
+            QSqlDatabase &db,
+            QWidget *parent = 0,
+            bool editable=false,
+            bool selectable=false,
+            QSqlTableModel::EditStrategy edt = QSqlTableModel::OnRowChange);
 
     virtual ~PblTableDlg();
     
+    bool init(QSqlDatabase &Db , bool editable, bool selectable);
+
     QSqlRecord chosenRec;
     int chosenRow;
     int chosenId;
@@ -71,19 +74,32 @@ public:
     virtual bool setRelation(PblSqlRelation &rel);
     virtual bool setRelations();
 
+    QVBoxLayout * getUi();
+
+protected:
+    explicit PblTableDlg(
+            const QString &tableName,
+            PblSqlRelationalTableModel *mdl,
+            PblTableView *view,
+            QSqlDatabase &db,
+            QWidget *parent = 0,
+            bool editable=false,
+            bool selectable=false,
+            QSqlTableModel::EditStrategy edt = QSqlTableModel::OnRowChange);
 
 public slots:
-    //void slot_selectCurrentRecord();
 
     void slot_accepted();
 
-    bool slot_doubleClicked(QString tableName);
 
 private slots:
 
 
 private:
     Ui::PblTableDlg *ui;
+
+    bool editable;
+    bool selectable;
 
 };
 

@@ -74,6 +74,7 @@ public:
 public:
     
     PblSqlRelationalTableModel(); //??
+
     explicit PblSqlRelationalTableModel(QSqlDatabase &db ,
                                         QObject *parent = 0
 
@@ -137,7 +138,7 @@ public:
 
     QSqlRecord baseRec; // the original table record without extended fields (relations id, calc functions,..)
 
-    void translateFieldNames(int row, QSqlRecord &values, PblSqlRelationalTableModel::MODE rowMode ) const;
+    bool translateFieldNames(int row, QSqlRecord &values, PblSqlRelationalTableModel::MODE rowMode ) const;
 
     
     virtual QString selectStatement() const;
@@ -150,6 +151,9 @@ public:
                                  const QVariant &value,
                                  int role);
 
+    bool setRecord_withoutPriCol(int row, QSqlRecord &record, MODE mode);
+
+    bool prepareRecord(QSqlRecord &rec, MODE mode);
 
     virtual Qt::ItemFlags flags(const QModelIndex &idx) const;
 
@@ -172,7 +176,7 @@ public:
     virtual void setSort(int column, Qt::SortOrder order);
     
     
-    bool set_Table(const QString &tableName);
+    bool prepare(const QString &tableName);
 
 
     void setAlignment(int col , Qt::Alignment align);
@@ -187,7 +191,12 @@ public:
     PblColumn  getRelationInfoForColumn(int col);
 
     bool isCalcColumn(int col) const;
+
     bool isRelationColumn(int col) const;
+
+    bool isExtRelationColumn(int col) const;
+
+    int getOrigRelationColumn(int extCol) const;
 
     int getRelIdColumn(int relCol) const;
     bool isRelationalColumn(int col);
@@ -206,7 +215,7 @@ signals:
 
     void sig_rowIsDirty(int row);
 
-    void sig_showSubmit(bool);
+    void sig_afterSelect( bool);
 
 public Q_SLOTS:
 

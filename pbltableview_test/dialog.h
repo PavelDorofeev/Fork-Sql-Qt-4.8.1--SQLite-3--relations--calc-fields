@@ -28,7 +28,7 @@ public:
     PblTableView * view;
     QPushButton * btn;
 
-    Tlb_Btns *tlbx;
+    //Tlb_Btns *tlbx;
     QSqlDatabase db;
 
 signals:

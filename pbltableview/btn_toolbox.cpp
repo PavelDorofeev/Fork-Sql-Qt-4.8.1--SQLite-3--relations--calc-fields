@@ -10,14 +10,13 @@
 #include "config.h"
 
 
-Btn_ToolBox::Btn_ToolBox(PblTableView *view_,
-                         PblSqlRelationalTableModel *mdl_) :
+Btn_ToolBox::Btn_ToolBox(PblTableView *view_ ) :
     QWidget((QWidget*)view_),
     ui(new Ui::Btn_ToolBox)
 {
     ui->setupUi(this);
 
-    mdl = mdl_;
+//    /mdl = mdl_;
 
     view = view_;
 
@@ -46,24 +45,24 @@ void Btn_ToolBox::on_btn_submitAll_clicked()
 {
     if(ui->cmb_Strategy->currentIndex() == QSqlTableModel::OnManualSubmit)
     {
-        if( ! mdl->submitAll())
+        if( ! view->model()->submitAll())
         {
             QMessageBox::warning(this,
                                  mySql::error_ ,
                                  tr("submitAll was wrong,\n error: %1").
-                                 arg(mdl->lastError().text()));
+                                 arg(view->model()->lastError().text()));
 
             qCritical(" ! submitAll 578695987496");
         }
     }
     else
     {
-        if( ! mdl->submit())
+        if( ! view->model()->submit())
         {
             QMessageBox::warning(this,
                                  mySql::error_ ,
                                  tr("submit was wrong,\n error: %1").
-                                 arg(mdl->lastError().text()));
+                                 arg(view->model()->lastError().text()));
 
             qCritical(" ! submitAll 578695987496");
         }
@@ -73,7 +72,7 @@ void Btn_ToolBox::on_btn_submitAll_clicked()
 
 void Btn_ToolBox::on_btn_search_settings_clicked()
 {
-    Search_Settings_Dlg dlg(mdl , view,  this);
+    Search_Settings_Dlg dlg(view->model() , view,  this);
 
     dlg.setSettings(view->find_settings);
 
