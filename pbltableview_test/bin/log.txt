@@ -1,27 +1,21 @@
-16:36:56 331 Debug: "D:/DEVELOPMENT/QT4/_MY__/my_lib/pbltableview_test/bin/test.db" 
-16:36:56 332 Debug:  tables  ("checks", "sqlite_sequence", "goods", "purchases") 
-16:36:56 Warning: sqlite.driverName()  "QSQLITE" 
-16:36:56 Warning: sqlite.databaseName()  "D:/DEVELOPMENT/QT4/_MY__/my_lib/pbltableview_test/bin/test.db" 
-16:36:56 Warning: sqlite.isOpen()  true 
-16:36:56 Warning: sqlite.connectionName()  "qt_sql_default_connection" 
-16:36:56 370 Debug: PblSqlRelationalTableModel editStrategy 1 
-16:36:56 377 Debug: PblTableView::updateGeometries 
-16:36:56 377 Debug: PblTableView::updateGeometries 
-16:36:56 377 Debug: PblTableView::updateEditorGeometries 
-16:36:56 377 Debug: PblTableView::updateGeometries 
-16:36:56 377 Debug: PblTableView::updateEditorGeometries 
-16:36:56 377 Debug: PblTableView::reset() mdl->lastDirtyRowId  4294967295 "" 
-16:36:56 381 Debug: PblTableView::updateGeometries 
-16:36:56 381 Debug: PblTableView::updateEditorGeometries 
-16:36:56 381 Debug: PblTableView::updateGeometries 
-16:36:56 381 Debug: PblTableView::updateEditorGeometries 
-16:36:56 381 Debug: PblTableView headerData :  QVariant(, ) 
-16:36:56 383 Debug: PblSqlRelationalTableModel::clear()  "" 
-16:36:56 384 Debug: PblTableView::updateGeometries 
-16:36:56 424 Debug: PblTableView::updateEditorGeometries 
-16:36:56 425 Debug: editStrategy 0 
-16:36:56 426 Debug: PblSqlRelationalTableModel::select()  "purchases"  lastDirtyRowId 4294967295  isDirtyRow -1  lastDirtyCol  4294967295  isSelectedLine 4294967295 
-16:36:56 427 Debug: 
+19:53:27 514 Debug: "D:/DEVELOPMENT/QT4/_MY__/my_lib/pbltableview_test/bin/test.db" 
+19:53:27 516 Debug:  tables  () 
+19:53:30 433 Debug: "insert into checks (productName,sum) VALUES(1, 123);" 
+19:53:31 017 Debug: "insert into goods (productName,price) VALUES('mango', 123.45);" 
+19:53:31 084 Debug: "insert into goods (productName,price) VALUES('apple', 234.56);" 
+19:53:31 151 Debug: "insert into goods (productName,price) VALUES('banana', 345.67);" 
+19:53:31 715 Debug: "insert into purchases (productName,price,qty,cmb) VALUES(1, 123.4, 1.3 ,0);" 
+19:53:31 784 Debug: "insert into purchases (productName,price,qty,cmb) VALUES(2, 2.5, 2.334 ,1);" 
+19:53:31 851 Debug: "insert into purchases (productName,price,qty,chk) VALUES(3, 345.6, 3.4, 1);" 
+19:53:31 Warning: sqlite.driverName()  "QSQLITE" 
+19:53:31 Warning: sqlite.databaseName()  "D:/DEVELOPMENT/QT4/_MY__/my_lib/pbltableview_test/bin/test.db" 
+19:53:31 Warning: sqlite.isOpen()  true 
+19:53:31 Warning: sqlite.connectionName()  "qt_sql_default_connection" 
+19:53:31 870 Debug: PblSqlRelationalTableModel editStrategy 1 
+19:53:31 871 Debug: PblSqlRelationalTableModel::clear()  "" 
+19:53:31 923 Debug: PblTableView headerData :  QVariant(, ) 
+19:53:31 924 Debug: PblSqlRelationalTableModel::select()  "purchases"  lastDirtyRowId 4294967295  isDirtyRow -1  lastDirtyCol  4294967295  isSelectedLine 4294967295 
+19:53:31 925 Debug: 
 
 QSqlTableModel::select() : 
  "
@@ -38,22 +32,6 @@ purchases.foo,
 FROM purchases 
 LEFT JOIN goods relTblAl_1 ON purchases.productName=relTblAl_1.id" 
  
-16:36:56 428 Debug: PblTableView::updateGeometries 
-16:36:56 429 Debug: PblTableView::updateEditorGeometries 
-16:36:56 429 Debug: PblTableView::reset() mdl->lastDirtyRowId  4294967295 "purchases" 
-16:36:56 429 Debug: PblTableView::rowsInserted start/end  0 2 
-16:36:56 429 Debug:  after PblSqlRelationalTableModel::select() :  "purchases"  lastDirtyRowId  4294967295  isDirtyRow -1  lastDirtyCol  4294967295  isSelectedLine 4294967295 
-16:36:56 498 Debug: PblTableView::updateGeometries 
-16:36:56 500 Debug: PblTableView::updateEditorGeometries 
-16:36:56 501 Debug: PblTableView::updateGeometries 
-16:36:56 502 Debug: PblTableView::updateGeometries 
-16:36:56 502 Debug: PblTableView::updateEditorGeometries 
-16:36:56 503 Debug: PblTableView::updateGeometries 
-16:36:56 503 Debug: PblTableView::updateEditorGeometries 
-16:36:56 526 Debug: PblTableView::updateGeometries 
-16:36:56 526 Debug: PblTableView::updateEditorGeometries 
-16:36:56 675 Debug: PblSqlRelationalTableModel::canFetchMore   false "purchases" 
-16:37:00 780 Debug: PblTableView::updateGeometries 
-16:37:00 781 Debug: PblTableView::updateEditorGeometries 
-16:37:00 784 Debug: ~PblTableView() 
-16:37:00 784 Debug: ~checkBox_Delegate
+19:53:31 926 Debug: PblTableView::rowsInserted start/end  0 2 
+19:53:31 926 Debug:  after PblSqlRelationalTableModel::select() :  "purchases"  lastDirtyRowId  4294967295  isDirtyRow -1  lastDirtyCol  4294967295  isSelectedLine 4294967295 
+19:53:33 519 Debug: ~checkBox_Delegate
