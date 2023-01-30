@@ -1,23 +1,20 @@
-This is Beta version 4.0. 
-Fork QSqlTableModel and QTableView based on Qt 4.8.1
+This is a development of QSqlTableModel and QTableView basedclasses on Qt 4.8.1 . Beta version 8.0. 
 
-There is test application, that is working with SQLite3.
+This is a free and opensource project (GPL license).
 
-Main idea is realize wrapper above QSqlTableModel and QTableView, that have convenient relations fields, calculated fields and more ...!
+Main idea is realize wrapper above QSqlTableModel and QTableView, that has a convenient relations fields, calculated fields and more, combo box, chekbox , date fields,... And all this configure in one config.cpp file.
 
-This is free and opensource project (GPL license).
-
-We are created PblSqlRelationalTableModel class inherited by QSqlTableModel.
-
-sql_pbl directory contains classes of data model.
+We are created PblSqlRelationalTableModel class inherited by QSqlTableModel. Our classes support all three edit strategies.
 
 PblSqlRelationalTableModel overrides QSqlTableModel class functions:
 setTable;
 select;
+flags;
+data;
 setData;
 updateRowInTable;
 insertRowIntoTable;
-selectStatment;
+selectStatement;
 orderByClause;
 
 We add functions like in the QSqlRelationalTableModel class for compatibility:
@@ -50,11 +47,13 @@ You can test it with our windows application (PblTableView.exe).
 
 Our wrapper support three languages en, ru, zh. You can add wanted languages.
 
+There is a test application, that is working with SQLite3. 
+
 ![image](https://user-images.githubusercontent.com/13850002/208140021-5a0527c1-2024-4acd-ac59-29ec62b8a369.png)
 
 ![image](https://user-images.githubusercontent.com/13850002/208140613-5d76a0e8-590a-40e0-ac5c-f9262b415030.png)
 
 PblSqlRelationalTableModel + PblTableView are convinient template (wrapper) for quick creating database table structure.
 
-For russian we have site https://kkmspb.ru/development/Qt/database-sql/Fork-Sql/
+We have a site https://kkmspb.ru/development/Qt/database-sql/Fork-Sql/ (ru)
 
