@@ -18,7 +18,7 @@ bool PblSqlRelationalTableModel_Purchases::updateRowInTable(int row, const QSqlR
 
     qDebug() << "PblSqlRelationalTableModel_Purchases::updateRowInTable "; // << rec;
 
-    if(editStrategy() == QSqlTableModel::OnFieldChange)
+   /* if(editStrategy() == QSqlTableModel::OnFieldChange)
     {
         if( rec.isGenerated("qty") )
         {
@@ -36,7 +36,7 @@ bool PblSqlRelationalTableModel_Purchases::updateRowInTable(int row, const QSqlR
             rec.setValue("sum" , sum);
             rec.setGenerated("sum" , true);
         }
-    }
+    }*/
 
     return PblSqlRelationalTableModel::updateRowInTable(row, rec);
 }

@@ -124,7 +124,7 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
 
     QString tableName = mdl->tableName();
 
-    mdl->setEditStrategy(QSqlTableModel::OnRowChange);
+    //mdl->setEditStrategy(QSqlTableModel::OnRowChange);
 
 
 
@@ -208,7 +208,7 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
         // fields are only read
         mdl->setEditable( mdl->fieldIndex("sum") , false);
 
-        mdl->setEditStrategy(QSqlTableModel::OnFieldChange);
+        //mdl->setEditStrategy(QSqlTableModel::OnFieldChange);
 
         return true;
     }
@@ -224,9 +224,6 @@ bool config::setting_view(PblTableView *view)
 
     if(view->model()->tableName().isNull())
         return false;
-
-    view->initStrategy(view->model()->editStrategy());
-
 
     QString tableName = view->model()->tableName();
 

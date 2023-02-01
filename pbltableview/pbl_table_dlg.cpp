@@ -67,7 +67,7 @@ PblTableDlg::PblTableDlg(
         return;
     }
 
-    mdl->setEditStrategy(edt);
+    //mdl->setEditStrategy(edt);
 
     view = new PblTableView (
                 //ui->for_table_lo ,

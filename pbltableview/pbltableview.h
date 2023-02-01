@@ -147,7 +147,6 @@ public:
 
     DoubleDelegate *dblDlg;
 
-    void initStrategy(QSqlTableModel::EditStrategy);
 
     void setEditState(bool);
     int priCol;
@@ -160,7 +159,7 @@ public:
 
     virtual bool vrt_removeRow(int row);
 
-    virtual bool viewRow(int row);
+    virtual bool vrt_viewRow(int row);
 
     virtual void vrt_doubleClicked(const QModelIndex & index);
 
@@ -175,7 +174,7 @@ public:
 
     void setContextMenuItemsVisibleAfterFieldSelected();
 
-    virtual bool clearField(const QModelIndex &currIdx);
+    virtual bool vrt_clearField(const QModelIndex &currIdx);
 
     void setEditStrategyVisible(bool on);
 
@@ -191,15 +190,11 @@ public:
 
     QHash<int , QStyledItemDelegate*> dlgts;
 
-    //PblSqlRelationalTableModel * mdl;
-
     int restoreCurrentRowPositionAfterSubmit(int srcRow);
-
-    //QSqlDatabase db;
 
     void show_view_Btn();
 
-    virtual bool vrt_afterEditRecordDlg(int col, int row, const PblTableDlg *);
+    virtual bool vrt_afterSelectingValue(int col, int row, const QSqlRecord &rec);
 
     bool selectable;
     bool editable;
@@ -251,8 +246,6 @@ public Q_SLOTS:
     void slot_doubleClicked(const QModelIndex & );
 
     void slot_cmb_Strategy_currentIndexChanged(int index);
-
-    void slot_editStrategyClicked(int);
 
     void slot_showSubmitBtn(bool enabled);
 

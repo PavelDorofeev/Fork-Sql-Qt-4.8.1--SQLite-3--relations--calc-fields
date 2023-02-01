@@ -52,12 +52,10 @@ const QString PblTableView::s_submit= QObject::tr("submit");
 const QString PblTableView::s_submitAll= QObject::tr("submit All");
 
 
-PblTableView::PblTableView(//PblSqlRelationalTableModel * mdl_,
-                           //QVBoxLayout * Lo,
-                           //QSqlDatabase &Db,
-                           QWidget *parent,
-                           bool editable_,
-                           bool selectable_):
+PblTableView::PblTableView(
+        QWidget *parent,
+        bool editable_,
+        bool selectable_):
     QTableView(parent),
     priCol(-1),
     act_InsertRow(0),
@@ -73,15 +71,9 @@ PblTableView::PblTableView(//PblSqlRelationalTableModel * mdl_,
     dblDlg(0),
     selectAndClose(0),
     act_showRelExColumns(0),
-    //db(db_),
     selectable(selectable_),
-    editable(editable_)//,
-    //mdl(0)
+    editable(editable_)
 {
-
-    //db = Db;
-
-    //lo = Lo;
 
     setSelectionMode(QAbstractItemView::SingleSelection);
 
@@ -171,8 +163,8 @@ void PblTableView::setModel(PblSqlRelationalTableModel *newMdl)
     if( ! qobject_cast<PblSqlRelationalTableModel*>( QTableView::model() ))
     {
         QMessageBox::warning( this ,
-                            mySql::error_,
-                            tr("cast object error (43563565)"));
+                              mySql::error_,
+                              tr("cast object error (43563565)"));
         return;
     }
 
@@ -191,7 +183,6 @@ void PblTableView::setModel(PblSqlRelationalTableModel *newMdl)
 
     setEditState(editable);
 
-    tlbx->ui->cmb_Strategy->setCurrentIndex(newMdl->editStrategy());
 
     _CONNECT_(newMdl , SIGNAL(sig_editStrategyChanged(QSqlTableModel::EditStrategy)),
               this, SLOT(slot_editStrategyChanged(QSqlTableModel::EditStrategy)));
@@ -204,6 +195,11 @@ void PblTableView::setModel(PblSqlRelationalTableModel *newMdl)
 
     _CONNECT_(tlbx->ui->cmb_Strategy, SIGNAL(currentIndexChanged(int)),
               this , SLOT(slot_cmb_Strategy_currentIndexChanged(int)));
+
+
+    tlbx->ui->cmb_Strategy->setCurrentIndex(newMdl->editStrategy());
+
+    qDebug() << "newMdl->editStrategy() "<<newMdl->editStrategy();
 
 
     qDebug() << "PblTableView headerData : " << model()->headerData(0 , Qt::Horizontal, Qt::BackgroundRole);
@@ -483,11 +479,11 @@ bool PblTableView::slot_clearFieldClick()
 
 
 
-    return clearField(currIdx);
+    return vrt_clearField(currIdx);
 
 }
 
-bool PblTableView::clearField(const QModelIndex &currIdx)
+bool PblTableView::vrt_clearField(const QModelIndex &currIdx)
 {
     int col=currIdx.column();
 
@@ -501,9 +497,9 @@ bool PblTableView::clearField(const QModelIndex &currIdx)
         return false;
     }
 
-    QModelIndex idx= model()->index(currIdx.row(),currIdx.column());
+    QModelIndex idx = model()->index(currIdx.row(),currIdx.column());
 
-    if(! idx.isValid())
+    if( ! idx.isValid())
     {
         qCritical()<<"!!!! error  PblTableView::slot_clearField ! idx.isValid()";
         return false;
@@ -513,11 +509,17 @@ bool PblTableView::clearField(const QModelIndex &currIdx)
 
     bool resSetData=false;
 
-    if ( model()->columnType(col) == PblColumn::COLUMN_TYPE_RELATION_TEXT)
+    if ( model()->isRelationalColumn( col ) == PblColumn::COLUMN_TYPE_RELATION_TEXT)
     {
-        QList<QVariant> lst;
-        lst << "" << 0;
-        resSetData = model()->setData(currIdx ,lst);
+        int extCol = model()->getRelIdColumn(col);
+
+        QModelIndex exIdx = model()->index( row, extCol);
+
+        resSetData = model()->setData(exIdx , 0 );
+
+        if(currIdx.isValid()) // submit/select
+            resSetData = model()->setData(currIdx ,"");
+
 
     }
     else
@@ -571,7 +573,7 @@ bool PblTableView::slot_insertRowBtnClick()
 
 //-------------------------------------------------
 
-bool PblTableView::viewRow(int row)
+bool PblTableView::vrt_viewRow(int row)
 {
     // this code you implement youself
     QMessageBox::warning(this,
@@ -799,9 +801,9 @@ void PblTableView::setSelectAndClose()
 
 }
 
-void PblTableView::vrt_doubleClicked(const QModelIndex & index)
+void PblTableView::vrt_doubleClicked(const QModelIndex & idx)
 {
-    qDebug() << "slot_doubleClicked" << model()->tableName();
+    qDebug() << "vrt_doubleClicked" << model()->tableName();
 
     if(selectable &&  ! tlbx->ui->chk_editable->isChecked())
     {
@@ -809,8 +811,8 @@ void PblTableView::vrt_doubleClicked(const QModelIndex & index)
         return;
     }
 
-    int col = index.column();
-    int row = index.row();
+    int col = idx.column();
+    int row = idx.row();
 
     if(model()->isRelationalColumn( col) ) // relations
     {
@@ -819,7 +821,6 @@ void PblTableView::vrt_doubleClicked(const QModelIndex & index)
         if( ! inf.isValid())
             return;
 
-        //model()->database()
         PblTableDlg dlg ( inf.ext_table , model()->database(), this, true , true );
 
         dlg.view->setEditState(false);
@@ -827,9 +828,6 @@ void PblTableView::vrt_doubleClicked(const QModelIndex & index)
         dlg.exec();
 
         if(dlg.result() == QDialog::Rejected)
-            return;
-
-        if ( ! vrt_afterEditRecordDlg( col , row, &dlg) )
             return;
 
 
@@ -852,59 +850,131 @@ void PblTableView::vrt_doubleClicked(const QModelIndex & index)
 
         int id = model()->getRowPriValue( row );
 
-        if(! index.isValid()) // submit
+        if(! idx.isValid()) // submit
         {
             qDebug() << " model()->editStrategy() " << model()->editStrategy();
         }
 
         QModelIndex exIdx = model()->index(row, model()->getRelIdColumn(col));
 
-
-
-        if( ! model()->setData( exIdx , dlg.chosenId ,Qt::EditRole))
+        if( model()->editStrategy() <= QSqlTableModel::OnRowChange)
         {
-            QMessageBox::critical(this ,
-                                  "error" ,
-                                  tr(
-                                      "setData returns  false\n"\
-                                      "field : '%1'\n"\
-                                      "value : '%2'\n"\
-                                      "sql error: %3").
-                                  arg(model()->record().fieldName(exIdx.column())).
-                                  arg(dlg.chosenId).
-                                  arg(model()->lastError().text())
-                                  );
-            return;
-        }
+            // will be submit/select
 
-        if(! exIdx.isValid()) // submit
-        {
-            qDebug() << " model()->editStrategy() " << model()->editStrategy();
-        }
+            if( ! model()->setData( exIdx , dlg.chosenId ,Qt::EditRole))
+            {
+                QMessageBox::critical(this ,
+                                      "error" ,
+                                      tr(
+                                          "setData returns  false\n"\
+                                          "field : '%1'\n"\
+                                          "value : '%2'\n"\
+                                          "sql error: %3").
+                                      arg(model()->record().fieldName(exIdx.column())).
+                                      arg(dlg.chosenId).
+                                      arg(model()->lastError().text())
+                                      );
+                return;
+            }
 
+            if( ! exIdx.isValid()) // submit occure, it is OK, nothing more
+            {
+                return;
+            }
 
-        if(! index.isValid()) // submit occure
-        {
-            qDebug() << " model()->editStrategy() " << model()->editStrategy();
+            if( ! idx.isValid()) // submit occure, it is OK
+            {
+                return;
+            }
+
+            // it does't matter what value we write to idx bacause of will be set value from extCol and after submit/select
+            QVariant anyVal;
+
+            if( ! model()->setData( idx , anyVal ,Qt::EditRole))
+            {
+                QMessageBox::critical(this ,
+                                      "error" ,
+                                      tr(
+                                          "setData returns  false\n"\
+                                          "field : '%1'\n"\
+                                          "value : '%2'\n"\
+                                          "sql error: %3").
+                                      arg(model()->record().fieldName(exIdx.column())).
+                                      arg(dlg.chosenId).
+                                      arg(model()->lastError().text())
+                                      );
+                return;
+            }
+
+            if( model()->editStrategy() <= QSqlTableModel::OnRowChange)
+                model()->submit(); // ENTER
+            // i.e. When we set relational field then we call forever a submit/select chain
+
             return ;
+
         }
 
-        if( ! model()->setData(index , txt.toString() ,Qt::EditRole))
+        else if ( model()->editStrategy() == QSqlTableModel::OnManualSubmit)
         {
-            QMessageBox::critical(this ,
-                                  "error" ,
-                                  tr("setData returns  false\n"\
-                                     "field : '%1'\n"\
-                                     "value : '%2'\n"\
-                                     "sql error: %3").
-                                  arg(model()->record().fieldName(index.column())).
-                                  arg(txt.toString()).
-                                  arg(model()->lastError().text())
-                                  );
-            return;
+            if( ! model()->setData( exIdx , dlg.chosenId ,Qt::EditRole))
+            {
+                QMessageBox::critical(this ,
+                                      "error" ,
+                                      tr(
+                                          "setData returns  false\n"\
+                                          "field : '%1'\n"\
+                                          "value : '%2'\n"\
+                                          "sql error: %3").
+                                      arg(model()->record().fieldName(exIdx.column())).
+                                      arg(dlg.chosenId).
+                                      arg(model()->lastError().text())
+                                      );
+                return;
+            }
+
+            if(! exIdx.isValid()) // submit  - Why?
+            {
+                qDebug() << " model()->editStrategy() " << model()->editStrategy();
+            }
+
+            if( ! idx.isValid()) // submit occure
+            {
+                if( model()->editStrategy() == QSqlTableModel::OnFieldChange) // it is ok
+                    ;
+
+                //qDebug() << " model()->editStrategy() " << model()->editStrategy();
+
+                return ;
+            }
+
+            if( ! model()->setData(idx , txt.toString() ,Qt::EditRole))
+            {
+                QMessageBox::critical(this ,
+                                      "error" ,
+                                      tr("setData returns  false\n"\
+                                         "field : '%1'\n"\
+                                         "value : '%2'\n"\
+                                         "sql error: %3").
+                                      arg(model()->record().fieldName(idx.column())).
+                                      arg(txt.toString()).
+                                      arg(model()->lastError().text())
+                                      );
+                return;
+            }
+            // no submit
         }
 
-        qDebug() << " model()->editStrategy() " << model()->editStrategy();
+        bool bbb= vrt_afterSelectingValue( col , row, dlg.chosenRec);
+
+        if ( ! bbb )
+            return;
+
+
+
+        /*if( model()->editStrategy() == QSqlTableModel::OnRowChange)
+            model()->submit(); // ENTER*/
+
+        // qDebug() << " model()->editStrategy() " << model()->editStrategy();
 
     }
     else if(dlgts.contains(col))
@@ -913,9 +983,9 @@ void PblTableView::vrt_doubleClicked(const QModelIndex & index)
         {
             checkBox_Delegate * chk = qobject_cast<checkBox_Delegate *>(dlgts.value(col));
 
-            bool b = model()->data(index).toBool();
+            bool b = model()->data(idx).toBool();
 
-            if ( ! model()->setData(index , (int)! b) )
+            if ( ! model()->setData(idx , (int)! b) )
                 qCritical("error setData checkbox field");
 
             return;
@@ -926,6 +996,8 @@ void PblTableView::vrt_doubleClicked(const QModelIndex & index)
 
 void PblTableView::slot_doubleClicked(const QModelIndex & index)
 {
+    qDebug() << "PblTableView::slot_doubleClicked";
+
     vrt_doubleClicked(index);
 
 }
@@ -1673,7 +1745,7 @@ bool PblTableView::slot_selectByFieldValue(QModelIndex idx)
 
 PblSqlRelationalTableModel* PblTableView::model() const
 {
-   /* PblSqlRelationalTableModel* mdl = qobject_cast<PblSqlRelationalTableModel*>(QTableView::model());
+    /* PblSqlRelationalTableModel* mdl = qobject_cast<PblSqlRelationalTableModel*>(QTableView::model());
 
     //QSqlTableModel* mdl2 = qobject_cast<QSqlTableModel*>(QTableView::model());
 
@@ -1746,46 +1818,21 @@ void PblTableView::slot_setEditable(bool on)
 
 void PblTableView::slot_editStrategyChanged(QSqlTableModel::EditStrategy newStrategy)
 {
-    qDebug() << "editStrategy" << model()->editStrategy();
+    qDebug() << "PblTableView::slot_editStrategyChanged " << model()->editStrategy() << " newStrategy " << newStrategy;
 
-    if(model()->editStrategy() == newStrategy)
-        return;
+    /*if( model()->editStrategy() == newStrategy )
+        return;*/
 
-    if(model()->isDirtyRow != -1)
-        model()->submitAll();
-
-    if(newStrategy >=0 && newStrategy < tlbx->ui->cmb_Strategy->count())
-        tlbx->ui->cmb_Strategy->setCurrentIndex(newStrategy);
-}
+    //setModel(model());
+    //model()->select()
+    //reset();
 
 
-void PblTableView::initStrategy(QSqlTableModel::EditStrategy strat)
-{
-    tlbx->ui->cmb_Strategy->setCurrentIndex( strat);
+    qDebug() << "PblTableView::slot_editStrategyChanged model()->editStrategy" << model()->editStrategy();
 
-    // _CONNECT_ have to be after setCurrentIndex
-
-    _CONNECT_(tlbx->ui->cmb_Strategy , SIGNAL(currentIndexChanged(int)),
-              this, SLOT(slot_editStrategyClicked(int)));
-}
-
-void PblTableView::slot_editStrategyClicked(int newStrategy)
-{
-    if(model()->editStrategy() == newStrategy)
-        return;
-
-    if(newStrategy < QSqlTableModel::OnFieldChange || newStrategy >QSqlTableModel::OnManualSubmit )
-    {
-        QMessageBox::warning(this,
-                             mySql::error_,
-                             tr("You are trying to set wrong edit strategy number %1").
-                             arg(newStrategy));
-        return;
-    }
-
-    model()->setEditStrategy( ( QSqlTableModel::EditStrategy ) newStrategy);
 
 }
+
 
 void PblTableView::commitData(QWidget *editor)
 {
@@ -1951,26 +1998,38 @@ void PblTableView::rowsInserted(const QModelIndex &parent, int start, int end)
     }
 }
 
-void PblTableView::slot_cmb_Strategy_currentIndexChanged(int index)
+void PblTableView::slot_cmb_Strategy_currentIndexChanged(int newStrategy)
 {
     QSqlTableModel::EditStrategy strat = model()->editStrategy();
 
-    if(strat != index)
-        model()->setEditStrategy((QSqlTableModel::EditStrategy)index);
+    if(newStrategy != model()->editStrategy())
+    {
+        model()->submitAll();
 
-    model()->submitAll();
+        model()->setEditStrategy((QSqlTableModel::EditStrategy)newStrategy);
+    }
 
-    if(index == QSqlTableModel::OnFieldChange)
+    if(newStrategy != model()->editStrategy())
+    {
+        QMessageBox::warning( this ,
+                              mySql::error_,
+                              tr("editStrategy dont settable"));
+        //return;
+    }
+
+    qDebug() << "slot_cmb_Strategy_currentIndexChanged model() " << model() << "editStrategy " <<model()->editStrategy() << model()->tableName();
+
+    if(model()->editStrategy() == QSqlTableModel::OnFieldChange)
     {
         tlbx->ui->btn_submitAll->setText(PblTableView::s_submit);
         tlbx->ui->btn_submitAll->setEnabled(false);
     }
-    else if(index == QSqlTableModel::OnRowChange)
+    else if(model()->editStrategy() == QSqlTableModel::OnRowChange)
     {
         tlbx->ui->btn_submitAll->setText(PblTableView::s_submit);
         tlbx->ui->btn_submitAll->setEnabled(false);
     }
-    else if(index == QSqlTableModel::OnManualSubmit)
+    else if(model()->editStrategy() == QSqlTableModel::OnManualSubmit)
     {
         tlbx->ui->btn_submitAll->setText(PblTableView::s_submitAll);
         tlbx->ui->btn_submitAll->setEnabled(false);
@@ -2011,8 +2070,9 @@ void PblTableView::slot_rowIsDirty(int row)
 
 }
 
-bool PblTableView::vrt_afterEditRecordDlg(int col, int row, const PblTableDlg * dlg)
+bool PblTableView::vrt_afterSelectingValue(int col, int row, const QSqlRecord &rec)
 {
+    qDebug() << "PblTableView::vrt_afterSelectingValue";
     return true;
 }
 

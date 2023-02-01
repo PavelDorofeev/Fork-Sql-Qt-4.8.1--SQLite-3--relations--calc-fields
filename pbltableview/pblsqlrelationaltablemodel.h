@@ -135,10 +135,13 @@ public:
 
 
     int getRowPriValue(int row) const;
+    QVariant getRecordPriValue(const QSqlRecord &rec) const;
+
+
 
     QSqlRecord baseRec; // the original table record without extended fields (relations id, calc functions,..)
 
-    bool translateFieldNames(int row, QSqlRecord &values, PblSqlRelationalTableModel::MODE rowMode ) const;
+    bool translateFieldNames(int row, QSqlRecord &values, PblSqlRelationalTableModel::MODE isRowMode ) const;
 
     
     virtual QString selectStatement() const;
@@ -147,9 +150,9 @@ public:
 
     virtual bool setData(const QModelIndex &item, const QVariant &value, int role = Qt::EditRole);
 
-    bool setDataForRelationField(const QModelIndex &idx,
+    /*bool setDataForRelationField(const QModelIndex &idx,
                                  const QVariant &value,
-                                 int role);
+                                 int role);*/
 
     bool setRecord_withoutPriCol(int row, QSqlRecord &record, MODE mode);
 
@@ -167,7 +170,9 @@ public:
 
     virtual  void clear();
 
-    PblSqlRelationalTableModel::MODE rowMode(int row) const;
+    PblSqlRelationalTableModel::MODE isRowMode(int row) const;
+    PblSqlRelationalTableModel::MODE isRecordMode(const QSqlRecord &rec) const;
+    bool isCopyRowMode(int extCol , const QSqlRecord &rec) const;
 
 
     int sortColumn;
@@ -219,7 +224,7 @@ signals:
 
 public Q_SLOTS:
 
-    virtual void setEditStrategy(EditStrategy strategy);
+    void setEditStrategy(EditStrategy strategy);
 
 
     void slot_primeInsert(int row, QSqlRecord &rec);
@@ -229,6 +234,7 @@ protected:
     bool updateRowInTable(int row, const QSqlRecord &values);
     
     bool insertRowIntoTable(const QSqlRecord &values);
+
 
     QString orderByClause() const;
     
