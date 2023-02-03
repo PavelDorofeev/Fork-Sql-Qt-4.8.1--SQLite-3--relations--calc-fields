@@ -1,4 +1,4 @@
-This is a development of QSqlTableModel and QTableView basedclasses on Qt 4.8.1 . Beta version 8.0. 
+This is a development of QSqlTableModel and QTableView basedclasses on Qt 4.8.1 . Beta version 9.0.x.x 
 
 This is a free and opensource project (GPL license).
 
@@ -54,6 +54,10 @@ There is a test application, that is working with SQLite3.
 ![image](https://user-images.githubusercontent.com/13850002/208140613-5d76a0e8-590a-40e0-ac5c-f9262b415030.png)
 
 PblSqlRelationalTableModel + PblTableView are convinient template (wrapper) for quick creating database table structure.
+
+PblTableDlg is universal table dialog with control buttons that contains PblSqlRelationalTableModel and PblTableView.
+
+You can inherit PblTableDlg (with PblSqlRelationalTableModel and PblTableView inside) and than reimplement any virtual functions (PblTableDlg , PblSqlRelationalTableModel and PblTableView) but look at protected constructor which used as PblTableDlg( new ..., new ..., ...). It is important. 
 
 We have a site https://kkmspb.ru/development/Qt/database-sql/Fork-Sql/ (ru)
 
