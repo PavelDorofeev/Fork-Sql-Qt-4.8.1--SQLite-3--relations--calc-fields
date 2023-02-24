@@ -12,6 +12,8 @@ public:
     static const QString warning;
     static const QString submitAllFalse;
     static const QString submitFalse;
+
+    static const char *  roleToStr(int role);
 };
 
 #endif // MY_SQL_CONSTANTS_H

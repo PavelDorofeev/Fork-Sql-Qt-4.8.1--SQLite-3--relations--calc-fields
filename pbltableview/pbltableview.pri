@@ -18,7 +18,8 @@ HEADERS += \
     pbltableview/combobox_delegate.h \
     pbltableview/checkbox_delegate.h \
     pbltableview/empty_delegate.h \
-    pbltableview/date_delegate.h
+    pbltableview/date_delegate.h \
+    pbltableview/pblsqlrelationaltablemodel2.h
 
 SOURCES += \
     pbltableview/btn_toolbox.cpp \
@@ -34,7 +35,8 @@ SOURCES += \
     pbltableview/combobox_delegate.cpp \
     pbltableview/checkbox_delegate.cpp \
     pbltableview/empty_delegate.cpp \
-    pbltableview/date_delegate.cpp
+    pbltableview/date_delegate.cpp \
+    pbltableview/pblsqlrelationaltablemodel2.cpp
 
 FORMS    += \
     pbltableview/btn_toolbox.ui \

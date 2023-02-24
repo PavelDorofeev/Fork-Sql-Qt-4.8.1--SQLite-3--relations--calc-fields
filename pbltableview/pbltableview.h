@@ -58,6 +58,7 @@ public:
 
     enum ACTION
     {
+        ACT_NOTHING =0,
         ACT_INSERT_ROW =1,
         ACT_COPY_ROW = 2,
         ACT_EDIT_ROW = 4,
@@ -77,13 +78,13 @@ public:
 
         ACT_CLEAR_SEARCH_RESULTS = 512,
 
-        ACT_SWITCH_EDIT_ENABLED = 0x0400,
+        //ACT_SWITCH_EDIT_ENABLED = 0x0400,
 
         ACT_SELECT_STRATEGY_ENABLED = 0x0800,
 
         ACT_SHOW_EXTENDED_RELATION_COLUMNS = 0x1000,
 
-        ACT_EDIT_ON = 0x2000,
+        //ACT_EDIT_ON = 0x2000,
 
         ACT_VIEW = 0x4000,
 
@@ -91,8 +92,10 @@ public:
 
         ACT_ALL_SEARCH = ACT_SEARCH | ACT_SELECT_BY_FIELD_VALUE | ACT_SORT | ACT_CLEAR_SEARCH_RESULTS,
 
+        ACT_ALL_PROGER = ACT_SHOW_EXTENDED_RELATION_COLUMNS | ACT_SELECT_STRATEGY_ENABLED,
 
-        ACT_ALL = ACT_ALL_EDIT | ACT_CHOICE_ROW | ACT_CLEAR_FIELD | ACT_SEARCH | ACT_SELECT_BY_FIELD_VALUE | ACT_SORT | ACT_SELECT_STRATEGY_ENABLED | ACT_SHOW_EXTENDED_RELATION_COLUMNS | ACT_SWITCH_EDIT_ENABLED | ACT_CLEAR_SEARCH_RESULTS | ACT_EDIT_ON
+
+        ACT_ALL = ACT_ALL_EDIT | ACT_CHOICE_ROW | ACT_CLEAR_FIELD | ACT_SEARCH | ACT_SELECT_BY_FIELD_VALUE | ACT_SORT | ACT_SELECT_STRATEGY_ENABLED | ACT_SHOW_EXTENDED_RELATION_COLUMNS |  ACT_CLEAR_SEARCH_RESULTS
 
 
     };
@@ -143,12 +146,15 @@ public:
 
     QAction * act_showRelExColumns;
 
+    QAction * act_switch_editable;
+
     QMenu * contextMenu;
 
     DoubleDelegate *dblDlg;
 
 
-    void setEditState(bool);
+    //void set_chkEditable_isVisible(bool);
+
     int priCol;
 
     virtual bool vrt_insertRow(int row);
@@ -161,7 +167,7 @@ public:
 
     virtual bool vrt_viewRow(int row);
 
-    virtual void vrt_doubleClicked(const QModelIndex & index);
+    virtual bool vrt_doubleClicked(const QModelIndex & index);
 
     void setSelectAndClose();
 
@@ -175,8 +181,6 @@ public:
     void setContextMenuItemsVisibleAfterFieldSelected();
 
     virtual bool vrt_clearField(const QModelIndex &currIdx);
-
-    void setEditStrategyVisible(bool on);
 
     virtual bool prepare( PblSqlRelationalTableModel * Mdl );
 
@@ -192,9 +196,10 @@ public:
 
     int restoreCurrentRowPositionAfterSubmit(int srcRow);
 
-    void show_view_Btn();
-
-    virtual bool vrt_afterSelectingValue(int col, int row, const QSqlRecord &rec);
+    virtual bool vrt_afterSelectingValue(int idRow,
+                                         int col,
+                                         const QModelIndex & idx,
+                                         const QSqlRecord &rec);
 
     bool selectable;
     bool editable;
@@ -241,7 +246,9 @@ public Q_SLOTS:
 
     void slot_triggeredSelectByFieldValue(bool on);
 
-    void slot_setEditable(bool on);
+    void slot_setEditEnabled(bool on);
+
+    void slot_setMouseBehavior(bool on);
 
     void slot_doubleClicked(const QModelIndex & );
 

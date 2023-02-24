@@ -70,8 +70,6 @@ PblTableDlg::PblTableDlg(
     //mdl->setEditStrategy(edt);
 
     view = new PblTableView (
-                //ui->for_table_lo ,
-                //Db,
                 this,
                 editable ,
                 selectable);

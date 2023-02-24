@@ -47,7 +47,7 @@ public slots:
 
 private slots:
 
-     void on_ledt_filter_returnPressed();
+    void on_ledt_filter_returnPressed();
 
     void on_btn_search_settings_clicked();
 

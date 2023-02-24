@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql network
 
 TARGET = pbltableview_test
 TEMPLATE = app
@@ -38,16 +38,21 @@ include(../logging_system/logging_system.pri)
 SOURCES +=\
     main.cpp \
     dialog.cpp \
-    pblsqlrelationaltablemodel_purchases.cpp \
-    config.cpp
+    config.cpp \
+    pblsqlrelationaltablemodel2.cpp \
+    ../my_gui/msg.cpp \
+    config2.cpp
 
 HEADERS  += \
     dialog.h \
-    pblsqlrelationaltablemodel_purchases.h \
     config.h \
-    version.h
+    version.h \
+    pblsqlrelationaltablemodel2.h \
+    ../my_gui/msg.h \
+    config2.h
 
-FORMS    += dialog.ui
+FORMS    += dialog.ui \
+    ../my_gui/msg.ui
 
 RESOURCES += \
     pbltableview/resource2.qrc

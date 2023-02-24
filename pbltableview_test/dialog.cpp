@@ -7,7 +7,7 @@
 #include <QSqlError>
 #include "pbltableview/some_tests.h"
 #include "pbltableview/pbl_table_dlg.h"
-#include "pblsqlrelationaltablemodel_purchases.h"
+#include "pblsqlrelationaltablemodel2.h"
 #include "pbltableview/pblapplication.h"
 #include <QDebug>
 #include "pbltableview/my_sql.h"
@@ -45,7 +45,7 @@ DialogTest::DialogTest(QString langId,
     //ui->tableViewLO->addWidget(tbl);
 
 
-    mdl = new PblSqlRelationalTableModel_Purchases(db , this);
+    mdl = new PblSqlRelationalTableModel2(db , this);
 
     if( ! mdl->prepare(tableName))
     {
@@ -56,6 +56,9 @@ DialogTest::DialogTest(QString langId,
 
         return ;
     }
+
+    _CONNECT_(mdl , SIGNAL(sig_column_values_changed(int)),
+              this, SLOT(slot_recalculate_tbl(int)));
 
     view = new PblTableView(this,
                             true,
@@ -74,7 +77,7 @@ DialogTest::DialogTest(QString langId,
 
     view->setToLayout(ui->tableViewLO);
 
-    view->setEditStrategyVisible(true);
+    slot_recalculate_tbl(mdl->fieldIndex("sum"));
 
     setSizeGripEnabled(true);
 
@@ -116,8 +119,8 @@ void DialogTest::on_btn_save_clicked()
     for(int row=0; row < mdl->rowCount(); row++)
     {
         QString str = QString( "INSERT INTO checks (productName,sum,date_ )VALUES("\
-                "%1, %2,"+QString::number(dat)+
-                ")").
+                               "%1, %2,"+QString::number(dat)+
+                               ")").
                 arg(mdl->record(row).value(exCol).toInt()  ).
                 arg(mdl->record(row).value("sum").toDouble() , 0 , 'f' , 2 );
 
@@ -158,7 +161,6 @@ void DialogTest::openTable(const QString & tableName)
 {
     PblTableDlg dlg(tableName , db , this, true);
 
-    dlg.view->setEditStrategyVisible(true);
 
     dlg.exec();
 
@@ -188,4 +190,23 @@ void DialogTest::on_cmb_Language_currentIndexChanged(const QString &countryName)
 
     accept();
 
+}
+
+
+void DialogTest::slot_recalculate_tbl(int col)
+{
+    if( col == mdl->fieldIndex("sum"))
+    {
+        double summ=0;
+
+        for( int row =0 ; row < mdl->rowCount(); row++)
+        {
+            QModelIndex idx = mdl->index( row , mdl->fieldIndex("sum"));
+
+            summ += mdl->data( idx ).toDouble();
+
+        }
+
+        ui->lbl_sum->setText(QString::number(summ , 'f' ,2 ));
+    }
 }

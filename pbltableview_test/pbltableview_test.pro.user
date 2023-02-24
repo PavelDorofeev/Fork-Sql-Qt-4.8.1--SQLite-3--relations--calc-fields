@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by Qt Creator 2.4.1, 2023-02-01T15:30:00. -->
+<!-- Written by Qt Creator 2.4.1, 2023-02-24T16:12:06. -->
 <qtcreator>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -206,7 +206,7 @@
     <value type="bool" key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild">false</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.3">
-    <value type="QString" key="ProjectExplorer.BuildCOnfiguration.ToolChain">INVALID</value>
+    <value type="QString" key="ProjectExplorer.BuildCOnfiguration.ToolChain">ProjectExplorer.ToolChain.Msvc:C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat::C:/Program Files (x86)/Debugging Tools for Windows (x86)/cdb.exe</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">qmake</value>
@@ -252,7 +252,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration">0</value>
     <value type="QString" key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory">D:/DEVELOPMENT/QT4/_MY__/my_lib/pbltableview_test</value>
-    <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId">-1</value>
+    <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId">16</value>
     <value type="bool" key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild">false</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.4">

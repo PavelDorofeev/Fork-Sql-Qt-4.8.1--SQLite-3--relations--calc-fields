@@ -8,7 +8,7 @@
 
 //#include "db/pblsqlrelationaltablemodel_ex.h"
 //#include "db/dll_db_global.h"
-//#include "db1/table_description.h"
+//#include "db/table_description.h"
 
 #include "pbltableview/PblSqlRelationalTableModel.h"
 

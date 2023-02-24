@@ -11,7 +11,7 @@ class Dialog;
 }
 
 class PblTableView;
-class PblSqlRelationalTableModel;
+class PblSqlRelationalTableModel2;
 class Tlb_Btns;
 
 class DialogTest : public QDialog
@@ -24,7 +24,7 @@ public:
                         QWidget *parent = 0);
     ~DialogTest();
 
-    PblSqlRelationalTableModel *mdl;
+    PblSqlRelationalTableModel2 *mdl;
     PblTableView * view;
     QPushButton * btn;
 
@@ -39,7 +39,6 @@ public slots:
 
 private slots:
 
-
     void on_btn_Close_clicked();
 
     void on_btn_save_clicked();
@@ -50,8 +49,9 @@ private slots:
 
     void on_btn_logView_clicked();
 
-
     void on_cmb_Language_currentIndexChanged(const QString &arg1);
+
+    void slot_recalculate_tbl(int);
 
 private:
     Ui::Dialog *ui;

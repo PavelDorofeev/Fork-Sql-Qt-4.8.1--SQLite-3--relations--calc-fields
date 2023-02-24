@@ -17,105 +17,7 @@ config::config()
 {
 }
 
-int config::get_defaultColumn( PblSqlRelationalTableModel * mdl)
-{
-    if(mdl->tableName().isNull())
-        return false;
 
-    QString tableName = mdl->tableName();
-
-
-    if(tableName == "purchases")
-    {
-        return mdl->baseRec.indexOf("productName");
-    }
-    return 0;
-
-}
-
-bool config::set_newInsertedRowParameters_withSetData( PblSqlRelationalTableModel * mdl, int row)
-{
-    if(mdl->tableName().isNull())
-        return false;
-
-    QString tableName = mdl->tableName();
-
-
-    if(tableName == "purchases")
-    {
-        QModelIndex idx = mdl->index( row , mdl->fieldIndex("foo"));
-
-        if( ! idx.isValid())
-        {
-            QMessageBox::warning( 0 ,
-                                  mySql::error_,
-                                  QObject::tr("table '%1'\n\nindex row %2x%3 \n\n%4").
-                                  arg(mdl->tableName()).
-                                  arg(idx.row()).
-                                  arg(idx.column()).
-                                  arg(mdl->lastError().text()));
-            return false;
-
-        }
-
-        if( ! mdl->setData(idx  , (int)1) );
-        {
-            QMessageBox::warning( 0 ,
-                                  mySql::error_,
-                                  QObject::tr("setData returns false , table '%1'\n\n%2").
-                                  arg(mdl->tableName()).arg(mdl->lastError().text()));
-            return false;
-        }
-
-        if(! idx.isValid() ) // submit() was done
-            return false;
-
-        return true;
-    }
-
-    return false;
-
-}
-
-bool config::set_newInsertedRowParameters( PblSqlRelationalTableModel * mdl, QSqlRecord & rec)
-{
-    if(mdl->tableName().isNull())
-        return false;
-
-    // -----------------------------------------------------------
-    //              This is important!
-    // new inserted row has not genereted (yes) flag in editBuffer for any fileds
-    // we have to repare this
-
-    for(int col=0; col < mdl->columnCount(); col++)
-    {
-        if(col == mdl->priCol)
-            continue;
-
-        rec.setGenerated( col , true ); // any col is not priCol will be generateg yes
-        // with insertRow this is forbidden created fully empty row
-
-    }
-    // ------------------------------------------------------------
-
-
-    QString tableName = mdl->tableName();
-
-    if(tableName == "purchases")
-    {
-
-        //rec.setValue( mdl->fieldIndex("foo") , (int)1);
-        //rec.setGenerated( mdl->fieldIndex("foo") , true );
-
-        //rec.setValue(mdl->fieldIndex("cmb") , 0);
-        //rec.setGenerated( mdl->fieldIndex("cmb") , true );
-
-        return true;
-    }
-
-    return true;
-
-}
 
 bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
 {
@@ -225,21 +127,49 @@ bool config::setting_view(PblTableView *view)
     if(view->model()->tableName().isNull())
         return false;
 
+
+    PblTableView::ACTIONS act = PblTableView::ACT_ALL;
+
+
+
+    /*
+    if( editable )
+    {
+        PblTableView::ACTIONS acts = PblTableView::ACT_ALL_EDIT
+                | PblTableView::ACT_SWITCH_EDIT_ENABLED
+                | PblTableView::ACT_ALL_SEARCH;
+
+        set_Actions(acts , editable);
+    }
+
+    PblTableView::ACTIONS acts = PblTableView::ACT_VIEW;
+
+    set_Actions(acts , true);
+
+    setEditState(editable);
+    */
+
     QString tableName = view->model()->tableName();
 
     if(tableName == "purchases")
     {
+        view->set_Actions( PblTableView::ACT_ALL , true);
+
         view->setComboBoxDelegate( 5 , QStringList() << "big" << "medium" << "small");
 
         view->setCheckBoxDelegate( 6 );
 
     }
-    else
+    else if(tableName == "goods")
     {
-        if(tableName == "checks")
-        {
-            view->setDateTimeDelegate( view->model()->fieldIndex("date_") );
-        }
+        view->set_Actions( PblTableView::ACT_ALL , true);
+
+    }
+    else if(tableName == "checks")
+    {
+        view->set_Actions( PblTableView::ACT_ALL_SEARCH , true);
+
+        view->setDateTimeDelegate( view->model()->fieldIndex("date_") );
 
         view->parentWidget()->setWindowTitle(tableName);
     }
@@ -250,4 +180,105 @@ bool config::setting_view(PblTableView *view)
     view->resizeColumnsToContents();
 
     view->resizeRowsToContents();
+}
+
+
+int config::get_defaultColumn( PblSqlRelationalTableModel * mdl)
+{
+    if(mdl->tableName().isNull())
+        return false;
+
+    QString tableName = mdl->tableName();
+
+
+    if(tableName == "purchases")
+    {
+        return mdl->baseRec.indexOf("productName");
+    }
+    return 0;
+
+}
+
+bool config::set_newInsertedRowParameters_withSetData( PblSqlRelationalTableModel * mdl, int row)
+{
+    if(mdl->tableName().isNull())
+        return false;
+
+    QString tableName = mdl->tableName();
+
+
+    if(tableName == "purchases")
+    {
+        QModelIndex idx = mdl->index( row , mdl->fieldIndex("foo"));
+
+        if( ! idx.isValid())
+        {
+            QMessageBox::warning( 0 ,
+                                  mySql::error_,
+                                  QObject::tr("table '%1'\n\nindex row %2x%3 \n\n%4").
+                                  arg(mdl->tableName()).
+                                  arg(idx.row()).
+                                  arg(idx.column()).
+                                  arg(mdl->lastError().text()));
+            return false;
+
+        }
+
+        if( ! mdl->setData(idx  , (int)1) );
+        {
+            QMessageBox::warning( 0 ,
+                                  mySql::error_,
+                                  QObject::tr("setData returns false , table '%1'\n\n%2").
+                                  arg(mdl->tableName()).arg(mdl->lastError().text()));
+            return false;
+        }
+
+        if(! idx.isValid() ) // submit() was done
+            return false;
+
+        return true;
+    }
+
+    return false;
+
+}
+
+bool config::set_newInsertedRowParameters( PblSqlRelationalTableModel * mdl, QSqlRecord & rec)
+{
+    if(mdl->tableName().isNull())
+        return false;
+
+    // -----------------------------------------------------------
+    //              This is important!
+    // new inserted row has not genereted (yes) flag in editBuffer for any fileds
+    // we have to repare this
+
+    for(int col=0; col < mdl->columnCount(); col++)
+    {
+        if(col == mdl->priCol)
+            continue;
+
+        rec.setGenerated( col , true ); // any col is not priCol will be generateg yes
+        // with insertRow this is forbidden created fully empty row
+
+    }
+    // ------------------------------------------------------------
+
+
+    QString tableName = mdl->tableName();
+
+    if(tableName == "purchases")
+    {
+
+        //rec.setValue( mdl->fieldIndex("foo") , (int)1);
+        //rec.setGenerated( mdl->fieldIndex("foo") , true );
+
+        //rec.setValue(mdl->fieldIndex("cmb") , 0);
+        //rec.setGenerated( mdl->fieldIndex("cmb") , true );
+
+        return true;
+    }
+
+    return true;
+
 }

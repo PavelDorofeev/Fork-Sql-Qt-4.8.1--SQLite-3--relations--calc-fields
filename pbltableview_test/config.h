@@ -26,6 +26,8 @@ public:
 
     static bool visibleRelIdColumns_byDefault;
 
+
+
 };
 
 #endif // CONFIG_H

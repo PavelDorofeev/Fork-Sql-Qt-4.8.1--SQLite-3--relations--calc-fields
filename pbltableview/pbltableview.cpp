@@ -55,24 +55,28 @@ const QString PblTableView::s_submitAll= QObject::tr("submit All");
 PblTableView::PblTableView(
         QWidget *parent,
         bool editable_,
-        bool selectable_):
-    QTableView(parent),
-    priCol(-1),
-    act_InsertRow(0),
-    act_CopyRow(0),
-    act_EditRow(0),
-    act_DeleteRow(0),
-    act_ClearField(0),
-    act_choiceCurrentRecord(0),
-    act_search(0),
-    act_selectByFieldValue(0),
-    act_view(0),
-    act_selectAndClose(0),
-    dblDlg(0),
-    selectAndClose(0),
-    act_showRelExColumns(0),
-    selectable(selectable_),
-    editable(editable_)
+        bool selectable_)
+
+    :
+
+      QTableView(parent),
+      priCol(-1),
+      act_InsertRow(0),
+      act_CopyRow(0),
+      act_EditRow(0),
+      act_DeleteRow(0),
+      act_ClearField(0),
+      act_choiceCurrentRecord(0),
+      act_search(0),
+      act_selectByFieldValue(0),
+      act_view(0),
+      act_selectAndClose(0),
+      dblDlg(0),
+      selectAndClose(0),
+      act_showRelExColumns(0),
+      selectable(selectable_),
+      editable( editable_),
+      act_switch_editable(0)
 {
 
     setSelectionMode(QAbstractItemView::SingleSelection);
@@ -123,11 +127,63 @@ PblTableView::PblTableView(
     verticalHeader()->setVisible(false);
 
 
+
     _CONNECT_( this , SIGNAL(doubleClicked(QModelIndex)),
                this , SLOT(slot_doubleClicked(QModelIndex)));
 
     setSortingEnabled(false);
 
+
+    //------------------------------------------------------------
+
+    act_switch_editable = new QAction( trUtf8("show chk editable"),
+                                       this);
+
+
+    _CONNECT_(act_switch_editable, SIGNAL(triggered(bool)),
+              this, SLOT(slot_setEditEnabled(bool)));
+
+    _CONNECT_(tlbx->ui->chk_editable, SIGNAL(clicked(bool)),
+              act_switch_editable, SIGNAL(triggered(bool)));
+
+    //------------------------------------------------------------
+
+    if( editable)
+    {
+        //set_Actions(PblTableView::ACT_SWITCH_EDIT_ENABLED , true);
+        set_Actions(PblTableView::ACT_ALL_EDIT, true);
+
+        tlbx->ui->chk_editable->setVisible(true);
+        tlbx->ui->chk_editable->setEnabled(true);
+        tlbx->ui->chk_editable->setChecked(true); // slot_setEditable
+
+
+        // if selectable & editable that is default chk_editable is  off
+
+        if( selectable )
+        {
+
+            slot_setEditEnabled( false );
+
+            tlbx->ui->chk_editable->setChecked(false); // slot_setEditable
+        }
+
+        else if( !selectable )
+
+            slot_setEditEnabled( true );
+    }
+    else
+    {
+        slot_setEditEnabled( false );
+
+        tlbx->ui->chk_editable->setVisible(true);
+        tlbx->ui->chk_editable->setEnabled(false);
+        tlbx->ui->chk_editable->setChecked(false); // slot_setEditable
+    }
+
+
+
+    //slot_setMouseBehavior( selectable );
 
 }
 
@@ -140,7 +196,7 @@ PblTableView::~PblTableView()
 void PblTableView::setModel(PblSqlRelationalTableModel *newMdl)
 {
 
-    if(model() !=0 )
+    if( model() !=0 )
     {
         _DISCONNECT_(model(), SIGNAL(sig_editStrategyChanged(QSqlTableModel::EditStrategy)),
                      this, SLOT(slot_editStrategyChanged(QSqlTableModel::EditStrategy)));
@@ -167,21 +223,6 @@ void PblTableView::setModel(PblSqlRelationalTableModel *newMdl)
                               tr("cast object error (43563565)"));
         return;
     }
-
-    if( editable )
-    {
-        PblTableView::ACTIONS acts = PblTableView::ACT_ALL_EDIT
-                | PblTableView::ACT_SWITCH_EDIT_ENABLED
-                | PblTableView::ACT_ALL_SEARCH;
-
-        set_Actions(acts , editable);
-    }
-
-    PblTableView::ACTIONS acts = PblTableView::ACT_VIEW;
-
-    set_Actions(acts , true);
-
-    setEditState(editable);
 
 
     _CONNECT_(newMdl , SIGNAL(sig_editStrategyChanged(QSqlTableModel::EditStrategy)),
@@ -493,7 +534,6 @@ bool PblTableView::vrt_clearField(const QModelIndex &currIdx)
 
     if(! currIdx.isValid())
     {
-        qWarning()<<"!!!! error  PblTableView::slot_clearField ! index.isValid()";
         return false;
     }
 
@@ -505,7 +545,6 @@ bool PblTableView::vrt_clearField(const QModelIndex &currIdx)
         return false;
     }
 
-    //int id = model()->data(model()->index(row,model()->fieldIndex("id"))).toInt();
 
     bool resSetData=false;
 
@@ -524,8 +563,12 @@ bool PblTableView::vrt_clearField(const QModelIndex &currIdx)
     }
     else
     {
-        QVariant defaultVal =  model()->record().field(col).defaultValue();
-        resSetData = model()->setData(currIdx , defaultVal);
+        QVariant def;
+
+        if(model()->defaultVal.contains( col))
+            def = model()->defaultVal.value( col);
+
+        resSetData = model()->setData(currIdx , def);
 
     }
 
@@ -715,8 +758,6 @@ bool PblTableView::slot_copyRowBtnClick()
 
     bool bbb= vrt_copyRow(row);
 
-    //resizeRowsToContents();
-
     return bbb;
 }
 //-------------------------------------------------
@@ -775,8 +816,6 @@ bool PblTableView::slot_removeRowBtnClick()
     {
         slot_showSubmitBtn( true);
 
-        //resizeRowsToContents();
-
         //adjustSize();
     }
 
@@ -784,14 +823,23 @@ bool PblTableView::slot_removeRowBtnClick()
 }
 //-------------------------------------------------
 
-void PblTableView::setEditState(bool editOn)
+/*void PblTableView::set_chkEditable_isVisible(bool editOn)
 {
+    tlbx->ui->chk_editable->setEnabled( editOn );
 
-    tlbx->ui->chk_editable->setChecked(editOn);
 
-    slot_setEditable(editOn);
+    //PblTableView::ACTION act = PblTableView::ACT_SWITCH_EDIT_ENABLED;
 
-}
+    //set_Actions(act , editOn);
+
+
+    //slot_setEditable(editOn);
+
+    // just in case
+    //tlbx->ui->chk_editable->setVisible(true);
+
+    //tlbx->ui->chk_editable->setEnabled(editOn);
+}*/
 
 //-------------------------------------------------
 
@@ -801,42 +849,79 @@ void PblTableView::setSelectAndClose()
 
 }
 
-void PblTableView::vrt_doubleClicked(const QModelIndex & idx)
-{
-    qDebug() << "vrt_doubleClicked" << model()->tableName();
 
-    if(selectable &&  ! tlbx->ui->chk_editable->isChecked())
+bool PblTableView::vrt_doubleClicked(const QModelIndex & idx)
+{
+    //qDebug() << "vrt_doubleClicked" << model()->tableName();
+
+    /*if(selectable &&  ! tlbx->ui->chk_editable->isChecked())
     {
         act_selectAndClose->trigger();
-        return;
-    }
+
+        return true;
+    }*/
 
     int col = idx.column();
     int row = idx.row();
+
+    if( ! editable )
+    {
+        if( selectable) //selecting row and close dlg
+
+            emit act_selectAndClose->trigger();
+
+        else    // only view row
+
+            vrt_viewRow( row);
+
+        return false;
+    }
+    else if( editable )
+    {
+        if( selectable && ! tlbx->ui->chk_editable->isChecked())
+            //selecting row and close dlg
+        {
+            emit act_selectAndClose->trigger();
+
+            return false;
+        }
+        else if( ! selectable && ! tlbx->ui->chk_editable->isChecked())
+        {
+            vrt_viewRow( row);
+
+            return false;
+        }
+
+    }
+
+    // edit row through line
 
     if(model()->isRelationalColumn( col) ) // relations
     {
         PblColumn inf = model()->getRelationInfoForColumn(col);
 
         if( ! inf.isValid())
-            return;
+            return false;
 
         PblTableDlg dlg ( inf.ext_table , model()->database(), this, true , true );
 
-        dlg.view->setEditState(false);
+        //dlg.view->set_chkEditable_isVisible(false);
 
         dlg.exec();
 
         if(dlg.result() == QDialog::Rejected)
-            return;
+            return false;
 
+        // save id just in case
+
+        int idCurrRow = model()->getRowPriValue( row );
 
         if(dlg.chosenRec == QSqlRecord())
         {
             QMessageBox::critical(this ,
                                   mySql::error_ ,
                                   tr("the choice is not defined"));
-            return;
+            return false;
         }
 
         QVariant txt = dlg.chosenRec.value(inf.destField);
@@ -845,7 +930,7 @@ void PblTableView::vrt_doubleClicked(const QModelIndex & idx)
         if(dlg.chosenId == -1)
         {
             QMessageBox::critical(this , "error" , tr("the choise is not defined"));
-            return;
+            return false;
         }
 
         int id = model()->getRowPriValue( row );
@@ -874,43 +959,44 @@ void PblTableView::vrt_doubleClicked(const QModelIndex & idx)
                                       arg(dlg.chosenId).
                                       arg(model()->lastError().text())
                                       );
-                return;
+                return false;
             }
 
             if( ! exIdx.isValid()) // submit occure, it is OK, nothing more
             {
-                return;
+                ;//return true;
             }
 
-            if( ! idx.isValid()) // submit occure, it is OK
+            else if( ! idx.isValid()) // submit occure, it is OK
             {
-                return;
+                ;//return true;
             }
-
-            // it does't matter what value we write to idx bacause of will be set value from extCol and after submit/select
-            QVariant anyVal;
-
-            if( ! model()->setData( idx , anyVal ,Qt::EditRole))
+            else
             {
-                QMessageBox::critical(this ,
-                                      "error" ,
-                                      tr(
-                                          "setData returns  false\n"\
-                                          "field : '%1'\n"\
-                                          "value : '%2'\n"\
-                                          "sql error: %3").
-                                      arg(model()->record().fieldName(exIdx.column())).
-                                      arg(dlg.chosenId).
-                                      arg(model()->lastError().text())
-                                      );
-                return;
+
+                // it does't matter what value we write to idx bacause of will be set value from extCol and after submit/select
+                QVariant anyVal;
+
+                if( ! model()->setData( idx , anyVal ,Qt::EditRole))
+                {
+                    QMessageBox::critical(this ,
+                                          "error" ,
+                                          tr(
+                                              "setData returns  false\n"\
+                                              "field : '%1'\n"\
+                                              "value : '%2'\n"\
+                                              "sql error: %3").
+                                          arg(model()->record().fieldName(exIdx.column())).
+                                          arg(dlg.chosenId).
+                                          arg(model()->lastError().text())
+                                          );
+                    return false;
+                }
+
+                if( model()->editStrategy() <= QSqlTableModel::OnRowChange)
+                    model()->submit(); // ENTER
+                // i.e. When we set relational field then we call forever a submit/select chain
             }
-
-            if( model()->editStrategy() <= QSqlTableModel::OnRowChange)
-                model()->submit(); // ENTER
-            // i.e. When we set relational field then we call forever a submit/select chain
-
-            return ;
 
         }
 
@@ -929,7 +1015,7 @@ void PblTableView::vrt_doubleClicked(const QModelIndex & idx)
                                       arg(dlg.chosenId).
                                       arg(model()->lastError().text())
                                       );
-                return;
+                return false;
             }
 
             if(! exIdx.isValid()) // submit  - Why?
@@ -944,37 +1030,33 @@ void PblTableView::vrt_doubleClicked(const QModelIndex & idx)
 
                 //qDebug() << " model()->editStrategy() " << model()->editStrategy();
 
-                return ;
+                //return true;
+            }
+            else
+            {
+                if( ! model()->setData(idx , txt.toString() ,Qt::EditRole))
+                {
+                    QMessageBox::critical(this ,
+                                          "error" ,
+                                          tr("setData returns  false\n"\
+                                             "field : '%1'\n"\
+                                             "value : '%2'\n"\
+                                             "sql error: %3").
+                                          arg(model()->record().fieldName(idx.column())).
+                                          arg(txt.toString()).
+                                          arg(model()->lastError().text())
+                                          );
+                    return false;
+                }
             }
 
-            if( ! model()->setData(idx , txt.toString() ,Qt::EditRole))
-            {
-                QMessageBox::critical(this ,
-                                      "error" ,
-                                      tr("setData returns  false\n"\
-                                         "field : '%1'\n"\
-                                         "value : '%2'\n"\
-                                         "sql error: %3").
-                                      arg(model()->record().fieldName(idx.column())).
-                                      arg(txt.toString()).
-                                      arg(model()->lastError().text())
-                                      );
-                return;
-            }
-            // no submit
         }
 
-        bool bbb= vrt_afterSelectingValue( col , row, dlg.chosenRec);
+        bool bbb= vrt_afterSelectingValue(idCurrRow, col , idx, dlg.chosenRec);
 
         if ( ! bbb )
-            return;
+            return bbb;
 
-
-
-        /*if( model()->editStrategy() == QSqlTableModel::OnRowChange)
-            model()->submit(); // ENTER*/
-
-        // qDebug() << " model()->editStrategy() " << model()->editStrategy();
 
     }
     else if(dlgts.contains(col))
@@ -986,9 +1068,11 @@ void PblTableView::vrt_doubleClicked(const QModelIndex & idx)
             bool b = model()->data(idx).toBool();
 
             if ( ! model()->setData(idx , (int)! b) )
+            {
                 qCritical("error setData checkbox field");
-
-            return;
+                return false;
+            }
+            return true;
         }
     }
 
@@ -1121,14 +1205,12 @@ bool PblTableView::slot_searchInTable(QString & txt)
     return selectOk;
 }
 
-void PblTableView::setEditStrategyVisible(bool on)
-{
-    set_Actions(PblTableView::ACT_SELECT_STRATEGY_ENABLED , on);
-
-}
 
 bool PblTableView::prepare( PblSqlRelationalTableModel * Mdl )
 {
+    //qWarning() << "PblTableView::prepare Mdl " << Mdl;
+
+    //qWarning() << " PblTableView::prepare  setModel " ;
 
     setModel(Mdl);
 
@@ -1142,6 +1224,7 @@ bool PblTableView::prepare( PblSqlRelationalTableModel * Mdl )
         return false;
     }
 
+    //qWarning() << " PblTableView::prepare setting_view " ;
 
     if ( ! config::setting_view( this ) )
     {
@@ -1191,7 +1274,7 @@ void PblTableView::set_Actions(PblTableView::ACTIONS act, bool On)
 
         }
         tlbx->ui->btn_insert->setVisible(On);
-        tlbx->ui->btn_insert->setEnabled(On);
+        //tlbx->ui->btn_insert->setEnabled(On);
     }
 
     // ----------------------------------------------------------
@@ -1210,8 +1293,7 @@ void PblTableView::set_Actions(PblTableView::ACTIONS act, bool On)
 
                 _CONNECT_(act_EditRow, SIGNAL(triggered()), this, SLOT(slot_editRowBtnClick()));
 
-                _CONNECT_(tlbx->ui->btn_edit, SIGNAL(clicked()),
-                          act_EditRow, SLOT( trigger() ));
+                _CONNECT_(tlbx->ui->btn_edit, SIGNAL(clicked()), act_EditRow, SLOT( trigger() ));
 
                 contextMenu->addAction(act_EditRow);
 
@@ -1223,12 +1305,13 @@ void PblTableView::set_Actions(PblTableView::ACTIONS act, bool On)
             if(act_EditRow  != 0)
             {
                 act_EditRow->setVisible(On);
+
             }
 
 
         }
         tlbx->ui->btn_edit->setVisible(On);
-        tlbx->ui->btn_edit->setEnabled(On);
+        //tlbx->ui->btn_edit->setEnabled(On);
     }
 
     // ----------------------------------------------------------
@@ -1266,7 +1349,7 @@ void PblTableView::set_Actions(PblTableView::ACTIONS act, bool On)
 
         }
         tlbx->ui->btn_copy->setVisible(On);
-        tlbx->ui->btn_copy->setEnabled(On);
+        //tlbx->ui->btn_copy->setEnabled(On);
     }
 
     // ----------------------------------------------------------
@@ -1303,7 +1386,7 @@ void PblTableView::set_Actions(PblTableView::ACTIONS act, bool On)
 
         }
         tlbx->ui->btn_delete->setVisible(On);
-        tlbx->ui->btn_delete->setEnabled(On);
+        //tlbx->ui->btn_delete->setEnabled(On);
     }
 
     // ----------------------------------------------------------
@@ -1524,57 +1607,27 @@ void PblTableView::set_Actions(PblTableView::ACTIONS act, bool On)
     //                       SWITCH_EDIT_ENABLED
     // ----------------------------------------------------------
 
-    if(act & ACT_SWITCH_EDIT_ENABLED)
+    /*if(act & ACT_SWITCH_EDIT_ENABLED)
     {
-        if(On)
-        {
-            _CONNECT_(tlbx->ui->chk_editable, SIGNAL(clicked(bool)),
-                      this, SLOT( slot_setEditable(bool)));
-        }
-        else
-        {
-            _DISCONNECT_(tlbx->ui->chk_editable, SIGNAL(clicked(bool)),
-                         this, SLOT( slot_setEditable(bool)));
-        }
 
-        tlbx->ui->chk_editable->setVisible(On);
 
-    }
+    }*/
 
     // ----------------------------------------------------------
     //
     // ----------------------------------------------------------
 
-    if(act & ACT_EDIT_ON)
+    /*if(act & ACT_EDIT_ON)
     {
         //tlbx->ui->chk_editable->setVisible(visible);
 
-        setEditState(On);
+        //set_chkEditable_isVisible(On);
 
-        if(On)
-        {
 
-            /*_CONNECT_(tlbx->ui->chk_editable, SIGNAL(clicked(bool)),
-                      this, SLOT( slot_setEditable(bool)));*/
-        }
-        else
-        {
-            /*_DISCONNECT_(tlbx->ui->chk_editable, SIGNAL(clicked(bool)),
-                      this, SLOT( slot_setEditable(bool)));*/
-        }
-    }
+    }*/
 
 }
 
-void PblTableView::show_view_Btn()
-{
-    if(tlbx->ui->chk_editable->isChecked())
-    {
-        set_Actions(PblTableView::ACT_VIEW , false);
-    }
-    else
-        set_Actions(PblTableView::ACT_VIEW, true);
-}
 
 void PblTableView::slot_triggeredSelectByFieldValue(bool on)
 {
@@ -1654,6 +1707,8 @@ void PblTableView::setComboBoxDelegate(int col, QStringList &lst)
     QStyledItemDelegate * cmbDeleg = dlgts.value(col);
 
     setItemDelegateForColumn(col, cmbDeleg);
+
+    model()->defaultVal.insert( col , -1);
 
 }
 
@@ -1745,56 +1800,67 @@ bool PblTableView::slot_selectByFieldValue(QModelIndex idx)
 
 PblSqlRelationalTableModel* PblTableView::model() const
 {
-    /* PblSqlRelationalTableModel* mdl = qobject_cast<PblSqlRelationalTableModel*>(QTableView::model());
+    /*PblSqlRelationalTableModel * mdl = qobject_cast<PblSqlRelationalTableModel*>(QTableView::model());
 
-    //QSqlTableModel* mdl2 = qobject_cast<QSqlTableModel*>(QTableView::model());
 
-    if(mdl)
+    if( ! mdl )
     {
         QMessageBox::warning( 0,
                               mySql::error_,
-                              tr("cast PblSqlRelationalTableModel* wrong (5746)"),
+                              tr("qobject_cast PblSqlRelationalTableModel* wrong (5746)"),
                               "");
         return 0;
+
+        sometimes occures  mdl == 0
     }*/
 
     return qobject_cast<PblSqlRelationalTableModel*>(QTableView::model());
 }
 
-void PblTableView::slot_setEditable(bool on)
+void PblTableView::slot_setMouseBehavior(bool editOn)
 {
 
-    editable = on;
-
-    if(on)
+    if( editOn)
     {
         setSelectionBehavior(QAbstractItemView::SelectItems);
 
         setEditTriggers(QAbstractItemView::DoubleClicked
                         |QAbstractItemView::AnyKeyPressed); //EditKeyPressed);//AllEditTriggers);
 
-        if(act_DeleteRow != 0)
-            tlbx->ui->btn_delete->setVisible(on);
-
-        if(act_CopyRow != 0)
-            tlbx->ui->btn_copy->setVisible(on);
-
-        if(act_EditRow != 0)
-            tlbx->ui->btn_edit->setVisible(on);
-
-        if(act_InsertRow != 0)
-            tlbx->ui->btn_insert->setVisible(on);
-
-        if(act_view != 0)
-            tlbx->ui->btn_view->setVisible(on);
-
     }
-    else if ( ! on )
+    else if ( ! editOn )
     {
 
         setSelectionBehavior(QAbstractItemView::SelectRows);
 
         setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
+
+}
+
+void PblTableView::slot_setEditEnabled(bool editOn)
+{
+
+    if(editOn)
+    {
+        if(act_DeleteRow != 0)
+            tlbx->ui->btn_delete->setVisible(editOn);
+
+        if(act_CopyRow != 0)
+            tlbx->ui->btn_copy->setVisible(editOn);
+
+        if(act_EditRow != 0)
+            tlbx->ui->btn_edit->setVisible(editOn);
+
+        if(act_InsertRow != 0)
+            tlbx->ui->btn_insert->setVisible(editOn);
+
+        if(act_view != 0)
+            tlbx->ui->btn_view->setVisible(editOn);
+
+    }
+    else if ( ! editOn )
+    {
 
         if(act_view != 0)
             tlbx->ui->btn_view->setVisible(true);
@@ -1802,18 +1868,19 @@ void PblTableView::slot_setEditable(bool on)
 
 
     if(act_DeleteRow != 0)
-        tlbx->ui->btn_delete->setEnabled(on);
+        tlbx->ui->btn_delete->setEnabled(editOn);
 
     if(act_CopyRow != 0)
-        tlbx->ui->btn_copy->setEnabled(on);
+        tlbx->ui->btn_copy->setEnabled(editOn);
 
     if(act_EditRow != 0)
-        tlbx->ui->btn_edit->setEnabled(on);
+        tlbx->ui->btn_edit->setEnabled(editOn);
 
     if(act_InsertRow != 0)
-        tlbx->ui->btn_insert->setEnabled(on);
+        tlbx->ui->btn_insert->setEnabled(editOn);
 
-    //  view->repaint();
+    slot_setMouseBehavior( editOn);
+
 }
 
 void PblTableView::slot_editStrategyChanged(QSqlTableModel::EditStrategy newStrategy)
@@ -2070,7 +2137,10 @@ void PblTableView::slot_rowIsDirty(int row)
 
 }
 
-bool PblTableView::vrt_afterSelectingValue(int col, int row, const QSqlRecord &rec)
+bool PblTableView::vrt_afterSelectingValue(int idRow,
+                                           int col,
+                                           const QModelIndex & idx,
+                                           const QSqlRecord &rec)
 {
     qDebug() << "PblTableView::vrt_afterSelectingValue";
     return true;

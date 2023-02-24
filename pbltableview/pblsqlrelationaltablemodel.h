@@ -37,6 +37,8 @@
 #include <QList>
 #include <QSqlIndex>
 
+#include <QHash>
+
 typedef struct COLUMN_INFO
 {
     COLUMN_INFO():
@@ -138,6 +140,7 @@ public:
     QVariant getRecordPriValue(const QSqlRecord &rec) const;
 
 
+    QHash<int , QVariant> defaultVal;
 
     QSqlRecord baseRec; // the original table record without extended fields (relations id, calc functions,..)
 
@@ -181,7 +184,7 @@ public:
     virtual void setSort(int column, Qt::SortOrder order);
     
     
-    bool prepare(const QString &tableName);
+    virtual bool prepare(const QString &tableName);
 
 
     void setAlignment(int col , Qt::Alignment align);

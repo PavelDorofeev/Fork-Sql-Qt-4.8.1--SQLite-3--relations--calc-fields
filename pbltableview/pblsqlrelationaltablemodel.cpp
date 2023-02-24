@@ -248,6 +248,7 @@ Qt::ItemFlags PblSqlRelationalTableModel::flags(const QModelIndex &index) const
         return flgs;
 
     }
+    return flgs;
 }
 
 const QSqlRecord & PblSqlRelationalTableModel::baseRecord()
@@ -550,7 +551,7 @@ void PblSqlRelationalTableModel::clearDirtyRow()
 
 void PblSqlRelationalTableModel::clear()
 {
-    qDebug() << "PblSqlRelationalTableModel::clear() " <<tableName();
+    //qDebug() << "PblSqlRelationalTableModel::clear() " <<tableName();
 
     QSqlTableModel::clear();
 
@@ -576,10 +577,9 @@ bool PblSqlRelationalTableModel::canFetchMore(const QModelIndex &parent) const
 
 bool PblSqlRelationalTableModel::select()
 {
-    qDebug() << "PblSqlRelationalTableModel::select() " << tableName() << " lastDirtyRowId"
+    /*qDebug() << "PblSqlRelationalTableModel::select() " << tableName() << " lastDirtyRowId"
              << lastDirtyRowId << " isDirtyRow" << isDirtyRow << " lastDirtyCol " << lastDirtyCol
-             << " isSelectedLine" << isSelectedLine;
-
+             << " isSelectedLine" << isSelectedLine;*/
 
     if(editStrategy() <= QSqlTableModel::OnRowChange)
     {
@@ -599,11 +599,11 @@ bool PblSqlRelationalTableModel::select()
     isInsertRow = -1;
 
 
-    qDebug() << " after PblSqlRelationalTableModel::select() : " << tableName()
+    /*qDebug() << " after PblSqlRelationalTableModel::select() : " << tableName()
              << " lastDirtyRowId " << lastDirtyRowId
              << " isDirtyRow"  << isDirtyRow
              << " lastDirtyCol " << lastDirtyCol
-             << " isSelectedLine" << isSelectedLine;
+             << " isSelectedLine" << isSelectedLine;*/
 
 
 
@@ -662,6 +662,16 @@ bool PblSqlRelationalTableModel::prepare(const QString &tableName)
         return false;
     }
 
+    if (tableName.isEmpty())
+    {
+        QMessageBox::critical( 0 ,
+                               mySql::error_,
+                               QObject::tr("empty table name '%1'").
+                               arg(tableName));
+
+        return false;
+    }
+
     if (! db.tables().contains(tableName))
     {
         QMessageBox::critical( 0 ,
@@ -679,7 +689,10 @@ bool PblSqlRelationalTableModel::prepare(const QString &tableName)
 
     if(baseRec.isEmpty())
     {
-        QMessageBox::critical(0 , mySql::error_ , tr("table '%1' is not valid").arg(tableName));
+        QMessageBox::critical(0 ,
+                              mySql::error_ ,
+                              tr("table '%1' is not valid").
+                              arg(tableName));
         return false;
     }
 
