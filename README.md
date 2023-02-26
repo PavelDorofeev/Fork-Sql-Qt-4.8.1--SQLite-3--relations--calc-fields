@@ -1,4 +1,4 @@
-This is a development of QSqlTableModel and QTableView basedclasses on Qt 4.8.1 . Beta version 9.0.x.x 
+This is a development of QSqlTableModel and QTableView classes made on Qt 4.8.1 . Beta version 9.0.x.x 
 
 This is a free and opensource project (GPL license).
 
@@ -60,4 +60,10 @@ PblTableDlg is universal table dialog with control buttons that contains PblSqlR
 You can inherit PblTableDlg (with PblSqlRelationalTableModel and PblTableView inside) and than reimplement any virtual functions (PblTableDlg , PblSqlRelationalTableModel and PblTableView) but look at protected constructor which used as PblTableDlg( new ..., new ..., ...). It is important. 
 
 We have a site https://kkmspb.ru/development/Qt/database-sql/Fork-Sql/ (ru)
+
+Basic idea is in a reimplementation function selectStatement that generated query to db. And second idea id to add new function translateFieldNames that clear and replace some fields name and its value before update or insert into table. 
+![image](https://user-images.githubusercontent.com/13850002/221420422-6b88a03d-884c-45ad-ab08-4c0005a55bac.png)
+
+We add second level of abstration our development - class PblSqlRelationalTableModel2. This is adds internal operations into table with binding fields, i.g. price*qty=price. PblSqlRelationalTableModel2 inherited form PblSqlRelationalTableModel. 
+
 
