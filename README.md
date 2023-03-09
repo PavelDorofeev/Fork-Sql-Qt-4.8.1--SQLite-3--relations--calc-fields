@@ -49,9 +49,13 @@ Our wrapper support three languages en, ru, zh. You can add wanted languages.
 
 There is a test application, that is working with SQLite3. 
 
-![image](https://user-images.githubusercontent.com/13850002/208140021-5a0527c1-2024-4acd-ac59-29ec62b8a369.png)
+![image](https://user-images.githubusercontent.com/13850002/224092105-3db143f7-ac30-4af7-8527-7caaff401d68.png)
 
-![image](https://user-images.githubusercontent.com/13850002/208140613-5d76a0e8-590a-40e0-ac5c-f9262b415030.png)
+
+![image](https://user-images.githubusercontent.com/13850002/224092221-d4ff4ce9-64c0-45b0-a2b1-2388a783ad75.png)
+
+![image](https://user-images.githubusercontent.com/13850002/224092294-0f924a9b-2d12-491f-83c5-017e204cb691.png)
+
 
 PblSqlRelationalTableModel + PblTableView are convinient template (wrapper) for quick creating database table structure.
 
