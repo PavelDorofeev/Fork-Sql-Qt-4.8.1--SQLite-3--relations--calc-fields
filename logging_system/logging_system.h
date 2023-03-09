@@ -4,33 +4,33 @@
 #include <QObject>
 #include <QString>
 #include <QMap>
+#include <QFile>
 #include <QVariant>
 #include <QIODevice>
 #include <QSettings>
 #include <QComboBox>
 #include <QStandardItemModel>
 #include <QListWidget>
-//#include "my_debug.h"
-#include <QFile>
-#include <QSocketNotifier>
-#include <io.h>
+
 #include <QTextStream>
 
 //void myMessageOutput(QtMsgType type, const char *msg);
 
 //DLL_MY_LIB_EXPORT void logCatcher(QtMsgType type, const char *msg);
 
-class logging_System : public QObject
+class logging_System// : public QObject
 {
-    Q_OBJECT
+    //Q_OBJECT
+
 public:
+
     enum LOG_TYPE{
         LOG_WARNING=1,
         LOG_CRITICAL=2,
         LOG_FATAL=4,
         LOG_DEBUG=8
-          };
-     Q_DECLARE_FLAGS(LOG_TYPES, LOG_TYPE)
+    };
+    Q_DECLARE_FLAGS(LOG_TYPES, LOG_TYPE)
 
     static const QString LOGS_DIR;
 
@@ -38,50 +38,58 @@ public:
 
     static const QString LOG_FILE_NAME;
 
-    explicit logging_System(QString &dirName,
-                            QString &fileName,
-                            LOG_TYPES debug = (LOG_TYPES)(LOG_WARNING|LOG_CRITICAL),
-                            bool toStdOut=false,
-                            bool history_ON_ = false,
-                            QObject *parent = 0
-            );
+    explicit logging_System();//QObject *parent = 0 );
 
 
     ~logging_System();
-
-    bool init();
 
     static void logCatcher(QtMsgType type, const char *msg);
 
     static logging_System *logg;
 
     static bool init(QString dirName,
-                                            QString fileName,
-                                            LOG_TYPES debug,
-                                            bool stdOut,
-                                            bool history_ON);
+                     QString fileName,
+                     LOG_TYPES debug,
+                     bool stdOut,
+                     bool history_ON);
+
+    static LOG_TYPES types;
 
 public:
 
-    void mess(QtMsgType type,const QString &);
+    static void mess(QtMsgType type,const QString &);
 
     static QString dirName;
     static QString fileName;
-    bool toStdOut_;
+    static bool toStdOut_;
 
     static QString logFilePath;
+
     static QObject *parent_;
 
     bool initLoggingFiles();
 
     bool initLoggingSystem();
 
-    QFile m_logFile_;
-
-    QSocketNotifier *stdOutNotifier;
-
+    static QFile *logFile;
 
     static bool openLoggingOnToOnNotepad();
+
+    static bool history_ON;
+
+
+    int old_stdout;
+
+    FILE *stdOutFile;
+
+    QTextStream *stream;
+
+    static bool debug_Enabled;
+    static bool warning_Enabled;
+    static bool critical_Enabled;
+    static bool fatal_Enabled;
+
+    static bool testLargeFileAndSave(QString  &file);
 
 signals:
 
@@ -92,18 +100,6 @@ public slots:
 
 private:
 
-    int old_stdout;
-    bool history_ON;
-    FILE *stdOutFile;
-    QTextStream *stream;
-    bool debug_Enabled;
-    bool warning_Enabled;
-    bool critical_Enabled;
-    bool fatal_Enabled;
-    bool testLargeFileAndSave(QString  &file);
-    //explicit logging_System();//QString dirName="", QString fileName="", QObject *parent = 0);
-
-    //logging_System(QObject *parent = 0): QObject(parent){}
     
 };
 

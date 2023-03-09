@@ -33,6 +33,7 @@
 #include "pbltableview/pblsqlrelationaltablemodel.h"
 #include <QSqlDatabase>
 #include <QVBoxLayout>
+#include "pblsqlrecord.h"
 
 namespace Ui {
 class PblTableDlg;
@@ -47,18 +48,22 @@ class PblTableDlg : public QDialog
     
 public:
     explicit PblTableDlg(const QString & tableName,
-            QSqlDatabase &db,
-            QWidget *parent = 0,
-            bool editable=false,
-            bool selectable=false,
-            QSqlTableModel::EditStrategy edt = QSqlTableModel::OnRowChange);
+                         QSqlDatabase &db,
+                         QWidget *parent = 0,
+                         bool editable=false,
+                         bool selectable=false,
+                         const QHash<QString,QVariant> &filter=QHash<QString,QVariant>(),
+                         QSqlTableModel::EditStrategy edt = QSqlTableModel::OnRowChange
+            );
 
     virtual ~PblTableDlg();
     
     bool init(QSqlDatabase &Db , bool editable, bool selectable);
 
-    QSqlRecord chosenRec;
+    PblSqlRecord chosenRec;
+
     int chosenRow;
+
     int chosenId;
 
     PblSqlRelationalTableModel * mdl;
@@ -71,8 +76,8 @@ public:
     virtual bool select();
 
     virtual bool setCalcField(CALC_COLUMN &calc);
+
     virtual bool setRelation(PblSqlRelation &rel);
-    virtual bool setRelations();
 
     QVBoxLayout * getUi();
 
@@ -85,6 +90,7 @@ protected:
             QWidget *parent = 0,
             bool editable=false,
             bool selectable=false,
+            const QHash<QString,QVariant> filter=QHash<QString,QVariant>(),
             QSqlTableModel::EditStrategy edt = QSqlTableModel::OnRowChange);
 
 public slots:

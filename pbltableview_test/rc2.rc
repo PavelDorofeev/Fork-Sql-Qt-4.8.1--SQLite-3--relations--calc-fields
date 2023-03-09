@@ -1,6 +1,6 @@
 #include <winuser.h>
 #include <winnt.h>
-#include "version.h"
+#include "../pbltableview/version_pbl.h"
 
 #define stringify(v1) #v1
 #define quote(v1)  stringify(v1)

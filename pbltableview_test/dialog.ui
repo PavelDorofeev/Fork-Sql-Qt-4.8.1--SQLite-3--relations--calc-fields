@@ -113,7 +113,7 @@
        <property name="title">
         <string>document</string>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0,0">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
         <item>
          <layout class="QVBoxLayout" name="tableViewLO">
           <property name="margin">
@@ -127,35 +127,11 @@
            <number>5</number>
           </property>
           <item>
-           <spacer name="horizontalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
            <layout class="QFormLayout" name="formLayout">
             <property name="margin">
              <number>5</number>
             </property>
             <item row="0" column="0">
-             <widget class="QLabel" name="label">
-              <property name="styleSheet">
-               <string notr="true">font: 75 12pt &quot;MS Shell Dlg 2&quot;;
-color: rgb(165, 183, 238);</string>
-              </property>
-              <property name="text">
-               <string>Sum</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
              <widget class="QLabel" name="lbl_sum">
               <property name="font">
                <font>
@@ -175,17 +151,31 @@ font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
               </property>
              </widget>
             </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label">
+              <property name="styleSheet">
+               <string notr="true">font: 75 12pt &quot;MS Shell Dlg 2&quot;;
+color: rgb(165, 183, 238);</string>
+              </property>
+              <property name="text">
+               <string>Sum</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <property name="margin">
-           <number>10</number>
-          </property>
           <item>
-           <spacer name="horizontalSpacer_2">
+           <widget class="QPushButton" name="btn_save">
+            <property name="text">
+             <string>SAVE DOCUMENT</string>
+            </property>
+            <property name="autoDefault">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_5">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -196,16 +186,6 @@ font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btn_save">
-            <property name="text">
-             <string>SAVE</string>
-            </property>
-            <property name="autoDefault">
-             <bool>false</bool>
-            </property>
-           </widget>
           </item>
          </layout>
         </item>

@@ -48,6 +48,6 @@ QString date_Delegate::displayText(const QVariant &value, const QLocale &locale)
     if(fullDateTime_ == 0 )
         return locale.toString(dt, "yyyy-MM-dd");
     else
-        return locale.toString(dt, "yyyy-MM-dd HH:MM:ss");
+        return locale.toString(dt, "yyyy-MM-dd hh:mm");
 
 }

@@ -31,8 +31,10 @@
 #include <QSqlTableModel>
 #include <QSqlRecord>
 
+#include "pblrelcolumn.h"
+#include "pblcalc_column.h"
 #include "pblsqlrelation.h"
-#include "pblcolumn.h"
+#include "pblsqlrecord.h"
 
 #include <QList>
 #include <QSqlIndex>
@@ -54,7 +56,7 @@ typedef struct COLUMN_INFO
     int precision;
     char cFormat;
     bool editable;
-    PblColumn::COLUMN_TYPE type;
+    //PblRelColumn::COLUMN_TYPE type;
 };
 
 class PblSqlRelationalTableModel: public QSqlTableModel
@@ -103,17 +105,32 @@ public:
 
 public:
 
+    static const QLatin1String prefix;
+
     QSqlDatabase db;
 
     QString relationField(const QString &tableName, const QString &fieldName) const;
 
-
-    //void fetchMore(const QModelIndex &parent);
     bool canFetchMore(const QModelIndex &parent) const;
 
-    QHash<int , int> relations;     // connecting relation text and id fields
+    QHash<int , PblCalcColumn> calc_columns;    // calc columns  [ ]
 
-    QList<PblColumn> ex_columns;    // extended columns info
+    QHash<int , int > relations;     //
+
+    QHash<int , int > addSubAcntOnFlds;     // sub accounting enable fields [1,2 ++]
+
+    QHash<int , PblSqlRelation> rel_clmn;    // extended columns info [0,1,2..]
+
+    QHash<int , const PblSqlRelation * > rel_bindings;           //
+
+    QHash<int , const PblSqlRelation * > rel_subAccounting;           //
+
+    bool isSubAccounting(int col);
+
+    bool isSubAccountingOn_forFld(int row, int col);
+
+    bool isParentBinding(int col);
+
 
     QHash<int, COLUMN_INFO> colInfo;    // extended columns info
 
@@ -135,12 +152,14 @@ public:
 
     uint lastDirtyCol;
 
-
     int getRowPriValue(int row) const;
+
     QVariant getRecordPriValue(const QSqlRecord &rec) const;
 
+    bool addSubAcntOnField ( PblSqlRelation &rel, int col , int col2 , const QString &name);
 
-    QHash<int , QVariant> defaultVal;
+
+    QHash<int , QVariant> defaultVls;
 
     QSqlRecord baseRec; // the original table record without extended fields (relations id, calc functions,..)
 
@@ -167,6 +186,8 @@ public:
 
     bool setRelation(const PblSqlRelation &relation);
 
+    bool setBinding(int col1 , int col2 , QString subAcntOnFld = "");
+
     bool setCalcField(CALC_COLUMN & calcLst);
     
     virtual bool select();
@@ -184,7 +205,8 @@ public:
     virtual void setSort(int column, Qt::SortOrder order);
     
     
-    virtual bool prepare(const QString &tableName);
+    virtual bool prepare(const QString &tableName,
+                         const QHash<QString,QVariant> &filter=QHash<QString,QVariant>());
 
 
     void setAlignment(int col , Qt::Alignment align);
@@ -194,28 +216,38 @@ public:
     
     const QSqlRecord & baseRecord();
 
-    PblColumn::COLUMN_TYPE exColType(int exCol);
+    //PblColumn::COLUMN_TYPE exColType(int exCol);
 
-    PblColumn  getRelationInfoForColumn(int col);
+    PblSqlRelation  getRelationInfoForColumn(int col);
 
     bool isCalcColumn(int col) const;
 
     bool isRelationColumn(int col) const;
 
-    bool isExtRelationColumn(int col) const;
+    bool isRelationExtIdColumn(int col) const;
 
     int getOrigRelationColumn(int extCol) const;
 
     int getRelIdColumn(int relCol) const;
+
+    int getRelIdAcntOnColumn(int relCol) const;
+
     bool isRelationalColumn(int col);
 
 
-    PblColumn::COLUMN_TYPE columnType(int col);
+    //PblColumn::COLUMN_TYPE columnType(int col);
 
     Filter filterDone;
 
     int getLastInsertId();
 
+    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
+
+    PblSqlRecord getPblSqlRecord(const QSqlRecord & rec);
+
+    QHash<QString,QVariant> subAccountingFilter;
+
+    bool setSubAccountingFields( QSqlRecord &rec);
 
 signals:
 

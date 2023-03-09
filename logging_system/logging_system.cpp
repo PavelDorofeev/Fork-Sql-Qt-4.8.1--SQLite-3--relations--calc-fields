@@ -1,66 +1,62 @@
 #include "logging_system.h"
+
 #include <QDesktopServices>
 
 #include <QDateTime>
 #include <QDir>
 #include <QDebug>
-#include <QFile>
-//#include "my_gui/my_gui.h"
+#include <QMessageBox>
 #include <io.h>
 #include <stdio.h>
-#include <QUrl>
 #include <iostream>
+
+
+
+#include <QUrl>
 
 /* Необходима инициализация статических переменных */
 
 logging_System * logging_System::logg = NULL;
 
 QString logging_System::logFilePath     = QString();
-QString logging_System::dirName     = QString();
-QString logging_System::fileName     = QString();
+QString logging_System::dirName         = QString();
+QString logging_System::fileName        = QString();
 
+QFile *logging_System::logFile = 0;
 
-
-//DLL_MY_LIB_EXPORT QString logging_System::dirName_=0;
-//DLL_MY_LIB_EXPORT QString logging_System::fileName_=0;
-//DLL_MY_LIB_EXPORT bool logging_System::toStdOut_ = false;
-
-/* ------------------------- add just its to main.c-----------------------------
-
-    static logging_System *logSystem = logging_System::pStatic_instance(                            QDesktopServices::storageLocation(QDesktopServices::DataLocation)+"\\"+PROG_DATA_DIR,
-                                                                "log.txt" ,
-                                                               logging_System::LOG_TYPES(logging_System::LOG_DEBUG
-                                                                                         |logging_System::LOG_WARNING) ,
-                                                                false  );
-
-    qInstallMsgHandler(logCatcher);
-
-
-----------------------------------------------------------*/
-
-// при первом вызове qDebug вызовется конструктор logging_System!
-
-#include <cstdio>
+#include <stdio.h>
 
 const QString logging_System::LOGS_DIR              = "log";
 const QString logging_System::LOGS_HYSTORY_DIR      = "logs";
 const QString logging_System::LOG_FILE_NAME         = "log.txt";
 
-logging_System::logging_System(QString &dirName_,
-                               QString &fileName_,
-                               LOG_TYPES types,
-                               bool toStdOut,
-                               bool history_ON_,
-                               QObject *parent) :
-    QObject(parent),
-    stdOutNotifier(NULL),
-    debug_Enabled(false),
-    warning_Enabled(false),
-    critical_Enabled(true),
-    fatal_Enabled(true)
+bool logging_System::debug_Enabled =false;
+bool logging_System::warning_Enabled =false;
+bool logging_System::critical_Enabled =false;
+bool logging_System::fatal_Enabled =false;
+
+bool logging_System::toStdOut_ = true;
+bool logging_System::history_ON = true;
+
+logging_System::LOG_TYPES logging_System::types = 0;
+
+
+logging_System::logging_System()//QObject *parent) //:    QObject(parent)
 {
 
+
+}
+
+
+bool logging_System::init(QString dirName_,
+                          QString fileName_,
+                          LOG_TYPES debug_types,
+                          bool stdOut_,
+                          bool history_ON_)
+{
     history_ON = history_ON_;
+
+    types = debug_types;
 
     if(types & LOG_DEBUG)
         debug_Enabled = true;
@@ -79,9 +75,9 @@ logging_System::logging_System(QString &dirName_,
 
     qDebug() << " logging : "<< dirName << fileName;
 
-    if( ! toStdOut)
+    if( ! stdOut_)
     {
-        toStdOut_ = toStdOut;
+        toStdOut_ = stdOut_;
 
         if(! QDir(dirName).exists())
         {
@@ -89,7 +85,14 @@ logging_System::logging_System(QString &dirName_,
             {
                 qCritical()  << "can't create folder  (for log file) :  " << dirName;
 
-                return ;
+                QMessageBox::critical( 0,
+                          QObject::tr("Ошибка"),
+                          QObject::tr("Не удалось создать каталог для логирования программы :\n\n %1").
+                          arg(dirName),
+                          QObject::tr("Возможно не хватает прав администратора.")
+                          );
+
+                return false;
             }
 
             qWarning()  << "create folder (for log file) :  " << dirName;
@@ -100,7 +103,15 @@ logging_System::logging_System(QString &dirName_,
             if( ! QDir().mkdir(dirName +"\\"+LOGS_HYSTORY_DIR))
             {
                 qCritical()  << "can't create folder  (for log file) :  " << dirName+"\\"+LOGS_HYSTORY_DIR;
-                return ;
+
+                QMessageBox::critical( 0,
+                          QObject::tr("Ошибка"),
+                          QObject::tr("Не удалось создать каталог для хранения логов работы программы :\n\n %1").
+                          arg(dirName),
+                          QObject::tr("Возможно не хватает прав администратора.")
+                          );
+
+                return false;
             }
             qWarning()  << "create folder  (for old log files) :  " << dirName+"\\"+LOGS_HYSTORY_DIR;
         }
@@ -109,29 +120,28 @@ logging_System::logging_System(QString &dirName_,
 
         qDebug() << " logFilePath : " << logFilePath;
 
-        m_logFile_.setFileName(logFilePath);
-        //m_logFile_.setPermissions()
+        logFile  = new QFile(logFilePath);
 
 
         if( ! testLargeFileAndSave(logFilePath) )
             ;
 
-        if( ! m_logFile_.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Unbuffered))
+        if( ! logFile->open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Unbuffered))
         {
-            /* myGui::message(0,
-                        QObject::tr("Сбой запуска программы"),
-                        QObject::tr("К сожалению не удается создать лог файл  : ")+logFilePath);*/
+            QMessageBox::critical(0,
+                     QObject::tr("Сбой запуска программы"),
+                     QObject::tr("К сожалению не удается открыть лог файл  : \n%1").
+                     arg(logFilePath));
 
             qCritical()  << "can't open log file :  " << logFilePath;
-            return ;
+
+            return false;
         }
 
         FILE *loggingStreamStdout;
         FILE *loggingStreamStderr;
-        //QFile loggingFile("app.log");
 
-        //loggingFile.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Unbuffered);
-        int fd = m_logFile_.handle();
+        int fd = logFile->handle();
 
         freopen_s ( &loggingStreamStdout, "\\\\.\\NUL", "w", stdout);
         setvbuf ( loggingStreamStdout, NULL, _IONBF, 0);
@@ -143,10 +153,10 @@ logging_System::logging_System(QString &dirName_,
         _dup2 (fd, _fileno(stderr));
 
         //freopen(m_logFile_.fileName().toLocal8Bit().data(), "w", stdout); // в начало stdout потом qDebug()
-
-
     }
 
+    /*
+*/
     /*   old_stdout = _dup( 1 );   // "old" now refers to "stdout"
     // Note:  file descriptor 1 == "stdout"
     if( old_stdout == -1 )
@@ -186,23 +196,6 @@ logging_System::logging_System(QString &dirName_,
     _flushall();
     system( "type data" );*/
 
-}
-
-
-bool logging_System::init(QString dirName,
-                          QString fileName,
-                          LOG_TYPES debug,
-                          bool stdOut,
-                          bool history_ON)
-{
-    if( logging_System::logg == NULL)
-
-        logging_System::logg = new logging_System(dirName ,
-                                                  fileName,
-                                                  debug,
-                                                  stdOut,
-                                                  history_ON);
-
     return true;
 }
 
@@ -210,14 +203,18 @@ logging_System::~logging_System()
 {
     if( logg != NULL)
         logg = NULL;
+
+    if(logFile != 0)
+        delete logFile;
+    logFile =0;
 }
 
 void logging_System::logCatcher(QtMsgType type, const char *msg)
 {
 
-    if( logging_System::logg != NULL)
+    //if( logging_System::logg != NULL)
 
-        logging_System::logg->mess(type , msg);
+        logging_System::mess(type , msg);
 
 }
 
@@ -225,6 +222,9 @@ void logging_System::mess ( QtMsgType type,const QString & msg)
 {
 
     QString format="hh:mm:ss zzz";
+
+    if(logFile ==0)
+        return;
 
     switch (type)
     {
@@ -240,12 +240,12 @@ void logging_System::mess ( QtMsgType type,const QString & msg)
             }
             else
             {
-                m_logFile_.write(QDateTime::currentDateTime().toString(format).toUtf8());
+                logFile->write(QDateTime::currentDateTime().toString(format).toUtf8());
                 if(msg != "\n" && msg != "\n\n")
-                    m_logFile_.write(QString(" Debug: ").toUtf8());
+                    logFile->write(QString(" Debug: ").toUtf8());
 
-                m_logFile_.write( QString(msg).toUtf8() +"\n");
-                m_logFile_.flush();
+                logFile->write( QString(msg).toUtf8() +"\n");
+                logFile->flush();
             }
         }
 
@@ -262,9 +262,9 @@ void logging_System::mess ( QtMsgType type,const QString & msg)
             }
             else
             {
-                m_logFile_.write(QDateTime::currentDateTime().toString("hh:mm:ss ").toUtf8());
-                m_logFile_.write("Warning: "+ QString(msg).toUtf8()+"\n");
-                m_logFile_.flush();
+                logFile->write(QDateTime::currentDateTime().toString("hh:mm:ss ").toUtf8());
+                logFile->write("Warning: "+ QString(msg).toUtf8()+"\n");
+                logFile->flush();
             }
         }
         break;
@@ -282,11 +282,11 @@ void logging_System::mess ( QtMsgType type,const QString & msg)
             }
             else
             {
-                m_logFile_.write(QDateTime::currentDateTime().toString("hh:mm:ss ").toUtf8());
-                m_logFile_.write(QString("\n---------------- Critical: --------------------\n").toUtf8());
-                m_logFile_.write("Critical: "+ QString(msg).toUtf8());
-                m_logFile_.write(QString("\n---------------- Critical: --------------------\n").toUtf8());
-                m_logFile_.flush();
+                logFile->write(QDateTime::currentDateTime().toString("hh:mm:ss ").toUtf8());
+                logFile->write(QString("\n---------------- Critical: --------------------\n").toUtf8());
+                logFile->write("Critical: "+ QString(msg).toUtf8());
+                logFile->write(QString("\n---------------- Critical: --------------------\n").toUtf8());
+                logFile->flush();
             }
         }
         break;
@@ -304,10 +304,10 @@ void logging_System::mess ( QtMsgType type,const QString & msg)
             else
             {
 
-                m_logFile_.write(QString("---------------- Critical: --------------------\n").toUtf8());
-                m_logFile_.write("Fatal: "+ QString(msg).toUtf8());
-                m_logFile_.write(QString("---------------- Critical: --------------------\n").toUtf8());
-                m_logFile_.flush();
+                logFile->write(QString("---------------- Critical: --------------------\n").toUtf8());
+                logFile->write("Fatal: "+ QString(msg).toUtf8());
+                logFile->write(QString("---------------- Critical: --------------------\n").toUtf8());
+                logFile->flush();
             }
         }
 
@@ -324,7 +324,7 @@ void logging_System::stdOutDataAvailable(int ii)
 }
 
 
-bool logging_System::init()
+/*bool logging_System::init()
 {
     if ( ! initLoggingFiles())
         return false;
@@ -335,12 +335,12 @@ bool logging_System::init()
 
 
     return true;
-}
+}*/
 
 bool logging_System::initLoggingFiles()
 {
-    if(! m_logFile_.isOpen())
-        return false;
+    /*if(! logFile->isOpen())
+        return false;*/
 
     return true;
 }
@@ -396,8 +396,8 @@ bool logging_System::testLargeFileAndSave(QString &logFilePath)
 
 bool logging_System::openLoggingOnToOnNotepad()
 {
-    if(logg == NULL)
-        return false;
+/*    if(logg == NULL)
+        return false;*/
 
     if ( ! QDesktopServices::openUrl( QUrl::fromLocalFile(logFilePath)))
     {

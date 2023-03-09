@@ -40,6 +40,7 @@ PblTableDlg::PblTableDlg(
         QWidget *parent,
         bool editable,
         bool selectable,
+        const QHash<QString,QVariant> &Filter,
         QSqlTableModel::EditStrategy edt
         )
     :
@@ -53,9 +54,13 @@ PblTableDlg::PblTableDlg(
 {
     ui->setupUi(this);
 
+    setWindowTitle(tableName);
+
     mdl = new PblSqlRelationalTableModel( Db , this);
 
-    if( ! mdl->prepare(tableName))
+    //qDebug() << " Filter " << Filter;
+
+    if( ! mdl->prepare(tableName , Filter))
     {
         QMessageBox::critical(this ,
                               mySql::error_ ,
@@ -87,6 +92,9 @@ PblTableDlg::PblTableDlg(
 
     init( Db, editable, selectable);
 
+    _CONNECT_(view->act_selectAndClose, SIGNAL(triggered()),
+              this, SLOT(slot_accepted()));
+
 
 
 }
@@ -98,6 +106,7 @@ PblTableDlg::PblTableDlg( const QString &tableName,
                           QWidget *parent,
                           bool editable,
                           bool selectable,
+                          const QHash<QString,QVariant> Filter,
                           QSqlTableModel::EditStrategy edt)
     :
       QDialog(parent),
@@ -115,7 +124,8 @@ PblTableDlg::PblTableDlg( const QString &tableName,
 
     mdl = Mdl;//new PblSqlRelationalTableModel( Db , this);
 
-    if( ! mdl->prepare(tableName))
+    qDebug() << "PblTableDlg Filter " <<Filter;
+    if( ! mdl->prepare(tableName , Filter ))
     {
         QMessageBox::critical(this,
                               mySql::error_,
@@ -151,26 +161,6 @@ bool PblTableDlg::init( QSqlDatabase &Db, bool editable, bool selectable)
 
     db = Db;
 
-    if(selectable)
-    {
-        // ----------------------------------------------------------
-        //                       SELECT_AND_CLOSE
-        // ----------------------------------------------------------
-
-        view->act_selectAndClose = new QAction( PblTableView::getActIcon(PblTableView::ACT_SELECT_AND_CLOSE), trUtf8("select and close window"), this);
-
-        view->act_selectAndClose->setShortcut(Qt::Key_F7);
-
-        view->contextMenu->addAction(view->act_selectAndClose);
-
-        view->addAction(view->act_selectAndClose);
-
-        view->act_selectAndClose->setVisible(true);
-
-        _CONNECT_(view->act_selectAndClose, SIGNAL(triggered()),
-                  this, SLOT(slot_accepted()));
-
-    }
 
     setSizeGripEnabled(true);
 
@@ -209,6 +199,7 @@ PblTableDlg::~PblTableDlg()
     delete ui;
 }
 
+
 void PblTableDlg::slot_accepted()
 {
     if(view == 0 | ! view->currentIndex().isValid())
@@ -217,7 +208,7 @@ void PblTableDlg::slot_accepted()
 
     chosenRow = view->currentIndex().row();
 
-    chosenRec = mdl->record(chosenRow);
+    chosenRec = mdl->getPblSqlRecord( mdl->record(chosenRow) );
 
     QSqlIndex pk = mdl->primaryKey();
 
@@ -231,19 +222,9 @@ void PblTableDlg::slot_accepted()
         return;
     }
 
-    //qDebug() << "    pk.name() " << pk.name() << pk.cursorName() << pk.fieldName(0);
-    //qDebug("    pk.value(0) %i" , pk.value(pk.fieldName(0)) );
-
-    //qDebug() << " chosenRec " <<chosenRec;
-
     chosenId = chosenRec.value(pk.fieldName(0)).toInt();
 
-    //chosenName = mdl_.data(mdl_.index(chosenRow , tDescr_->defaultNameCol)).toString();
-
-    //qDebug() << "my_table_Dlg::the_choice_is_made    " << objectName()<< " chosenId : " << chosenId << " chosenName" << chosenName;
-
     accept();
-
 }
 
 bool PblTableDlg::setCalcField(CALC_COLUMN &calc)
@@ -256,12 +237,6 @@ bool PblTableDlg::setRelation(PblSqlRelation &rel)
 {
 
     return mdl->setRelation(rel);
-}
-
-bool PblTableDlg::setRelations()
-{
-
-    return true;
 }
 
 QVBoxLayout * PblTableDlg::getUi()

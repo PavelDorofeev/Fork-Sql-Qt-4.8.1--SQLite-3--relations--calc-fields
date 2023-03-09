@@ -40,19 +40,17 @@ SOURCES +=\
     dialog.cpp \
     config.cpp \
     pblsqlrelationaltablemodel2.cpp \
-    ../my_gui/msg.cpp \
     config2.cpp
 
 HEADERS  += \
     dialog.h \
     config.h \
-    version.h \
+    version_app.h \
     pblsqlrelationaltablemodel2.h \
-    ../my_gui/msg.h \
+    my_gui/msg.h \
     config2.h
 
-FORMS    += dialog.ui \
-    ../my_gui/msg.ui
+FORMS    += dialog.ui
 
 RESOURCES += \
     pbltableview/resource2.qrc

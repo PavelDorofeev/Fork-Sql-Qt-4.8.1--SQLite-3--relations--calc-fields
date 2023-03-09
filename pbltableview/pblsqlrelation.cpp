@@ -26,23 +26,69 @@
 ****************************************************************************/
 
 #include "pblsqlrelation.h"
+#include <QDebug>
 
-
-PblSqlRelation::PblSqlRelation(
-        const int col_,
-        int     idField1_,
-        const QString &table_,
-        QString     idField2_,
-        const QString &destField_,
-        JoinMode join_mode_)
+PblSqlRelation::PblSqlRelation()
     :
-      idField1(idField1_),
-      ext_table(table_),
-      idField2(idField2_),
-      destField(destField_),
-      col(col_)
+      extTblName("undefined"),
+      displayType(123)
 {
-    joinMode = join_mode_;
+
+    qDebug() << "ctor DEFAULT PblSqlRelation " << this;
+
 }
 
+PblSqlRelation::PblSqlRelation(
+        //const int col_,
+        int             IdField1,
+        const QString & Table,
+        const QString & IdField2,
+        const QString & DestField,
+        JoinMode Join_mode,
+        const QString & subSrvFld
+        /*,
+                        const QString &SubAccTblName,
+                        int SubAccountingField1,
+                        const QString & SubAccountingField2,
+                        const QString & SubAccountingTextName*/)
+
+    :
+
+      idField1(IdField1),
+      extTblName(Table),
+      idField2Name(IdField2),
+      dstFldName(DestField),
+      col(IdField1),
+      displayType(-1),
+      subAcntColumn(FLD_UNDEFINED),
+      subPrntAcntColumn(FLD_UNDEFINED)
+    //subSrvFld(SubAccountingField2)
+{
+    joinMode = Join_mode;
+
+    //qDebug() << "ctor PblSqlRelation extTblName " << extTblName << this;
+}
+
+PblSqlRelation::~PblSqlRelation()
+{
+    //qDebug() << "~PblSqlRelation extTblName " << extTblName << this;
+}
+
+
+
+PblSqlRelation PblSqlRelation::operator=(const PblSqlRelation &other)
+{
+    //qDebug() << "PblSqlRelation::operator=";
+
+    displayType =234;
+    //relation = other.relation;
+
+    return *this;
+};
+
+
+void PblSqlRelation::setSubAcntOnFld(const QString & SubAcntOnFld)
+{
+    subAcntOnFld = SubAcntOnFld;
+}
 

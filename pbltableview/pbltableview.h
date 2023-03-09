@@ -49,12 +49,6 @@ class PblTableView : public QTableView
 {
     Q_OBJECT
 public:
-    /*enum SETTINGS
-    {
-        FORM_IS_ONLY_READ =1,
-        FM_ROW_WILL_BE_CHOSEN =2,
-        FM_CHK_EDIT_ON = 4
-    };*/
 
     enum ACTION
     {
@@ -104,9 +98,9 @@ public:
 
 
     explicit PblTableView( //QSqlDatabase &db,
-                          QWidget *parent = 0,
-                          bool editable = false,
-                          bool selectable = false);
+                           QWidget *parent = 0,
+                           bool editable = false,
+                           bool selectable = false);
 
 
 
@@ -182,6 +176,8 @@ public:
 
     virtual bool vrt_clearField(const QModelIndex &currIdx);
 
+    virtual bool vrt_clearRelField(const QModelIndex &currIdx);
+
     virtual bool prepare( PblSqlRelationalTableModel * Mdl );
 
     Search_Settings_Dlg::FIND_SETTINGS find_settings;
@@ -196,15 +192,17 @@ public:
 
     int restoreCurrentRowPositionAfterSubmit(int srcRow);
 
-    virtual bool vrt_afterSelectingValue(int idRow,
+    virtual bool vrt_afterSetFldValue(int idRow,
                                          int col,
                                          const QModelIndex & idx,
-                                         const QSqlRecord &rec);
+                                         const PblSqlRecord &rec);
 
     bool selectable;
     bool editable;
 
     void setToLayout(QVBoxLayout * lo);
+
+
 
 
 protected:
@@ -259,6 +257,7 @@ public Q_SLOTS:
     void slot_rowIsDirty(int);
 
     void slot_afterSelect( bool );
+
 
 protected Q_SLOTS:
     virtual void rowsInserted(const QModelIndex &parent, int start, int end);

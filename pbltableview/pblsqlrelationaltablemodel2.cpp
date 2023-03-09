@@ -1,6 +1,6 @@
 #include "pblsqlrelationaltablemodel2.h"
 
-#include "config2.h" // needs in you app
+#include "config2.h" // needs in your app
 
 #include "pbltableview/my_sql.h"
 #include <QDebug>
@@ -19,6 +19,7 @@ bool PblSqlRelationalTableModel2::setDependColumn(int src, int dest, int op, int
 {
 
     dependCol dd;
+
     dd.dst = dest;
     dd.op = op;
     dd.col2 = col2;
@@ -83,9 +84,10 @@ bool PblSqlRelationalTableModel2::setData(const QModelIndex &idx, const QVariant
     return false;
 }
 
-bool PblSqlRelationalTableModel2::prepare(const QString &tableName)
+bool PblSqlRelationalTableModel2::prepare(const QString &tableName,
+                                          const QHash<QString,QVariant> &SubAccountingFilter)
 {
-    if( PblSqlRelationalTableModel::prepare(tableName) )
+    if( PblSqlRelationalTableModel::prepare(tableName , SubAccountingFilter) )
     {
 
         if ( ! config2::setting_mdl2( this ) )

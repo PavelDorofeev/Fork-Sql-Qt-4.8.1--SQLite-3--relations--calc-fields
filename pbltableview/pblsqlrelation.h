@@ -37,16 +37,26 @@ public:
         InnerJoin,
         LeftJoin
     };
+    enum FLD_VALUE{
+        FLD_UNDEFINED = -1
+    };
+
 public:
-    PblSqlRelation() {}
+    PblSqlRelation(); //default
+
+    PblSqlRelation operator=(const PblSqlRelation &other);
+
 
     explicit PblSqlRelation(
-                   const int col,
-                   int idField1,
-                   const QString &ext_table,
-                   QString idField2,
-                   const QString &destField,
-                   JoinMode join_mode = PblSqlRelation::LeftJoin);
+            int idField1,   // id field column in current table // id field in current table
+            const QString &extTblName,                          // external table name
+            const QString & idField2Name,                       // id field name in external table for bindind
+            const QString & dstFldName,                         // text field name in external table for displaing in current table
+            JoinMode join_mode = PblSqlRelation::LeftJoin,
+            const QString & srvSubAcntOnFldName = ""
+);
+
+    ~PblSqlRelation();
 
     int col;
 
@@ -54,11 +64,46 @@ public:
 
     int idField1;
 
-    QString ext_table;
+    QString extTblName;
 
-    QString idField2;
+    QString idField2Name;   // QString (not int) because of in SELECT we dont know field names of ext relational table
 
-    QString destField;
+    QString dstFldName; // QString (not int) because of in SELECT we dont know field names of ext relational table
+
+    int displayType ;
+
+    // ---------------------------------
+    //     for sub accounting
+    // ---------------------------------
+
+    //QString subAccTblName;
+
+    int subAcntColumn;
+
+    int subPrntAcntColumn;
+
+    QString srvSubAcntOnFldName;
+
+    QString srvSubAcntParentFld;
+
+
+    //const QString subAccountingTextName;
+
+    // this creates a filter WHERE subAccountingField1=subAccountingField1
+
+
+
+
+    // ---------------------------------
+    //     parent binding
+    // ---------------------------------
+
+    //QString parentTblName;
+
+    QString subAcntOnFld;
+
+    void setSubAcntOnFld(const QString & SubAcntOnFld);
+
 
 private:
 

@@ -79,10 +79,10 @@ int main(int argc, char *argv[])
          || ( sqlite.tables().count()==1  && sqlite.tables().at(0) == "sqlite_sequence") )
     {
         QMessageBox::critical( 0 ,
-                               mySql::error_,
-                               QObject::tr("database is empty?\n\n %1:\n\n error: %3").
-                               arg(sqlite.databaseName()).
-                               arg(sqlite.lastError().text()));
+                               "Hello!",
+                               QObject::tr("Database is empty"),
+                               QObject::tr("Creating new database!")
+                               );
 
         if( ! createTables())
             return 0;
@@ -192,8 +192,10 @@ bool createTables()
     if( ! createTbl( tableName, "CREATE TABLE "+tableName+" ("\
                      "id	INTEGER UNIQUE,"\
                      "productName	INTEGER NOT NULL,"\
-                     "sum	double DEFAULT 0,"\
-                     "date_ INTEGER DEFAULT 0," \
+                     "sub	INTEGER DEFAULT NULL,"\
+                     "qty	double DEFAULT NULL,"\
+                     "sum	double DEFAULT NULL,"\
+                     "date_ INTEGER DEFAULT NULL," \
                      "PRIMARY KEY(id AUTOINCREMENT))"))
         return false;
 
@@ -206,15 +208,15 @@ bool createTables()
                      "CREATE TABLE "+tableName+"" \
                      "(id	INTEGER UNIQUE, " \
                      "productName	VARCHAR," \
-                     "price	REAL," \
+                     "price	REAL DEFAULT NULL," \
+                     "sub_on INTEGER DEFAULT NULL," \
                      " PRIMARY KEY(id AUTOINCREMENT)"\
                      ")"))
         return false;
 
-    firstInsertInto(tableName , "productName,price" , "'mango', 123.45");
-    firstInsertInto(tableName , "productName,price" , "'apple', 234.56");
+    firstInsertInto(tableName , "productName,price,sub_on" , "'mango', 123.45 , 1");
+    firstInsertInto(tableName , "productName,price,sub_on" , "'apple', 234.56 , 1");
     firstInsertInto(tableName , "productName,price" , "'banana', 345.67");
-
 
 
     tableName = "purchases";
@@ -223,21 +225,40 @@ bool createTables()
     if( ! createTbl( tableName, "CREATE TABLE "+tableName+" "\
                      "(id INTEGER UNIQUE,"\
                      "productName varchar(100),"\
-                     "price double default 0,"\
-                     "qty double default 0,"\
-                     "sum double default 0,"\
+                     "sub INTEGER DEFAULT NULL,"\
+                     "price double default NULL,"\
+                     "qty double default NULL,"\
+                     "sum double default NULL,"\
                      "cmb	INTEGER DEFAULT -1,"\
-                     "chk	INTEGER DEFAULT 0,"\
-                     "foo	INTEGER DEFAULT 0,"\
+                     "chk	INTEGER DEFAULT NULL,"\
+                     "foo	INTEGER DEFAULT NULL,"\
                      "PRIMARY KEY(id AUTOINCREMENT)"\
                      ")"))
         return false;
 
 
-    firstInsertInto(tableName , "productName,price,qty,cmb" , "1, 123.4, 1.3 ,0");
-    firstInsertInto(tableName , "productName,price,qty,cmb" , "2, 2.5, 2.334 ,1");
-    firstInsertInto(tableName , "productName,price,qty,chk" , "3, 345.6, 3.4, 1");
+    firstInsertInto(tableName , "productName,price,qty,sum,cmb" , "1, 123.4, 1.35, 166.59 ,0");
+    firstInsertInto(tableName , "productName,price,qty,sum,cmb" , "2, 2.5, 2.334 ,5.835, 1");
+    firstInsertInto(tableName , "productName,price,qty,sum,chk" , "3, 345.6, 3.4, 1175.04, 1");
 
+
+    tableName = "sub_accounting";
+
+
+    if( ! createTbl( tableName, "CREATE TABLE "+tableName+" "\
+                     "(id INTEGER UNIQUE,"\
+                     "goods_id NOT NULL,"\
+                     "val varchar NOT NULL,"\
+                     "PRIMARY KEY(id AUTOINCREMENT)"\
+                     ")"))
+        return false;
+
+    firstInsertInto(tableName , "goods_id,val" , "1, 'XXL'");
+    firstInsertInto(tableName , "goods_id,val" , "1, 'XL'");
+    firstInsertInto(tableName , "goods_id,val" , "1, 'L'");
+    firstInsertInto(tableName , "goods_id,val" , "2, 'M'");
+    firstInsertInto(tableName , "goods_id,val" , "2, 'L'");
+    firstInsertInto(tableName , "goods_id,val" , "2, 'XX'");
 
 
     return true;

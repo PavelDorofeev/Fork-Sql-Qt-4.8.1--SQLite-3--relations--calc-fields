@@ -27,6 +27,7 @@ bool config2::setting_mdl2(PblSqlRelationalTableModel2 * mdl)
                             );
 
         mdl->setSummaryColumns(mdl->fieldIndex("sum"));
+
     }
 
     return true;

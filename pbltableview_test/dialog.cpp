@@ -12,10 +12,11 @@
 #include <QDebug>
 #include "pbltableview/my_sql.h"
 #include "pbltableview/pbl_table_dlg.h"
+#include "pbltableview/pbltableview2.h"
 #include "config.h"
 #include "logging_system/logging_system.h"
 #include <QDateTime>
-#include "version.h"
+#include "pbltableview/version_pbl.h"
 #include <QSqlQuery>
 
 DialogTest::DialogTest(QString langId,
@@ -60,9 +61,9 @@ DialogTest::DialogTest(QString langId,
     _CONNECT_(mdl , SIGNAL(sig_column_values_changed(int)),
               this, SLOT(slot_recalculate_tbl(int)));
 
-    view = new PblTableView(this,
-                            true,
-                            false);
+    view = new PblTableView2(this,
+                             true,
+                             false);
 
 
     if ( ! view->prepare( mdl ))
@@ -112,17 +113,32 @@ void DialogTest::on_btn_save_clicked()
 
     int dat =  QDateTime::currentDateTime().toTime_t() ;
 
-    int productName = mdl->baseRec.indexOf("productName");
+    int extCol1 = mdl->getRelIdColumn(mdl->baseRec.indexOf("productName"));
 
-    int exCol = mdl->getRelIdColumn(productName);
+    int extCol2 = mdl->getRelIdColumn(mdl->baseRec.indexOf("sub"));
 
     for(int row=0; row < mdl->rowCount(); row++)
     {
-        QString str = QString( "INSERT INTO checks (productName,sum,date_ )VALUES("\
-                               "%1, %2,"+QString::number(dat)+
-                               ")").
-                arg(mdl->record(row).value(exCol).toInt()  ).
-                arg(mdl->record(row).value("sum").toDouble() , 0 , 'f' , 2 );
+
+        QString ff = "productName,qty,sum,date_" ;
+
+        QString vv = QString("%1, %2 , %3 , %4").
+                arg(mdl->record(row).value(extCol1).toInt()  ).
+                arg(mdl->record(row).value("qty").toDouble() , 0 , 'f' , 3 ).
+                arg(mdl->record(row).value("sum").toDouble() , 0 , 'f' , 2 ).
+                arg(QString::number(dat));
+
+        if(mdl->record(row).value(extCol2).toInt() >0)
+        {
+            ff += ", sub";
+
+            vv += QString(", %1").
+                    arg(mdl->record(row).value(extCol2).toInt() );
+        }
+
+        QString str = QString( "INSERT INTO checks ("+ff+") VALUES("+vv+")");
+
+
 
 
         qDebug() << str;
@@ -161,6 +177,7 @@ void DialogTest::openTable(const QString & tableName)
 {
     PblTableDlg dlg(tableName , db , this, true);
 
+    dlg.setWindowTitle(tableName);
 
     dlg.exec();
 
@@ -192,6 +209,26 @@ void DialogTest::on_cmb_Language_currentIndexChanged(const QString &countryName)
 
 }
 
+/*void DialogTest::recalculate_sum(int col)
+{
+    if( col == mdl->fieldIndex("sum"))
+    {
+        double summ=0;
+
+        for( int row =0 ; row < mdl->rowCount(); row++)
+        {
+            QModelIndex idx = mdl->index( row , mdl->fieldIndex("sum"));
+
+            double dblSum = mdl->data( idx ).toDouble();
+
+            summ += dblSum;
+
+        }
+
+        ui->lbl_sum->setText(QString::number(summ , 'f' ,2 ));
+    }
+}*/
+
 
 void DialogTest::slot_recalculate_tbl(int col)
 {
@@ -203,7 +240,9 @@ void DialogTest::slot_recalculate_tbl(int col)
         {
             QModelIndex idx = mdl->index( row , mdl->fieldIndex("sum"));
 
-            summ += mdl->data( idx ).toDouble();
+            double dblSum = mdl->data( idx ).toDouble();
+
+            summ += dblSum;
 
         }
 
