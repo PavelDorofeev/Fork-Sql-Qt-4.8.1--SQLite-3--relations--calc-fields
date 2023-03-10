@@ -1,10 +1,11 @@
 This is a development of QSqlTableModel and QTableView classes made on Qt 4.8.1 . Beta version 9.0.x.x 
 
-This is a free and opensource project (GPL license).
+This project is a free and opensource project (GPL license).
 
-Main idea is realize wrapper above QSqlTableModel and QTableView, that has a convenient relations fields, calculated fields and more, combo box, chekbox , date fields,... And all this configure in one config.cpp file.
+The main idea is to implement a shell over QSqlTableModel and QTableView, which has convenient link fields, calculated fields and much more, a list box, a checkbox, date fields,... And all this is configured in one config.cpp file.
 
-We are created PblSqlRelationalTableModel class inherited by QSqlTableModel. Our classes support all three edit strategies.
+We created the PblSqlRelationalTableModel class inherited from QSqlTableModel. 
+
 
 PblSqlRelationalTableModel overrides QSqlTableModel class functions:
 setTable;
@@ -22,14 +23,12 @@ setRelation;
 translateFieldNames;
 relationField;
 
-In future we dont concern about how to get id relation value because of this forever present into extended hidden field.
+In the future, we don't worry about how to get the value of the id relation, because it is always present in the extended hidden field.
 
-Base idea: class PblSqlRelationalTableModel adds to resulting table new extended fields that are not existing by default in the select sql query from a database. 
-This is id field of relations, calculated fields (any data from other tables).
+The main idea: The PblSqlRelationalTableModel class adds new extended fields to the resulting table, which by default do not exist in the select sql query from the database. 
+This is the link ID field, calculated fields (any data from other tables)
 
 PblSqlRelationalTableModel let us setting field alignments, precisions (for double value). 
-
-We added our own PblColumn class for convenient.
 
 Next we created PblTableView class inherited by QTableView (view model).
 
@@ -46,6 +45,8 @@ PblSqlRelationalTableModel and PblTableView classes support all three Qt edit st
 You can test it with our windows application (PblTableView.exe).
 
 Our wrapper support three languages en, ru, zh. You can add wanted languages.
+
+Our classes support all three editing strategies.
 
 There is a test application, that is working with SQLite3. 
 
@@ -71,4 +72,18 @@ Basic idea is in a reimplementation function selectStatement that generated quer
 We add second level of abstration our development - class PblSqlRelationalTableModel2. This is adds internal operations into table with binding fields, i.g. price*qty=price. PblSqlRelationalTableModel2 inherited form PblSqlRelationalTableModel. 
 
 Demo video on youtube: https://youtu.be/HKrCBZA5eVI
+
+Setting relation is easy and just call one function:
+setRelation( PblSqlRelation( mdl->baseRec.indexOf("productName"),
+							"goods" ,
+							"id" ,
+							"productName") );
+
+Binding tow relation columns for sub accounting needs call one function:
+
+setSubAccount( mdl->fieldIndex("productName") ,
+	mdl->fieldIndex("sub"),
+	"goods_id",
+	"sub_on");
+  
 
