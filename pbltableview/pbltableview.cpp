@@ -1048,11 +1048,12 @@ bool PblTableView::vrt_doubleClicked(const QModelIndex & idx)
         {
             const PblSqlRelation *relation = model()->rel_bindings.value(col);
 
-            if( relation->subPrntAcntColumn != PblSqlRelation::FLD_UNDEFINED)
+            if( relation->subDisplayAcntColumn != PblSqlRelation::FLD_UNDEFINED)
             {
-                int parentCol = relation->subPrntAcntColumn;
+                int parentCol = relation->subDisplayAcntColumn;
 
                 int relPrntIdCol = model()->getRelIdColumn( parentCol );
+
 
                 Q_ASSERT(relPrntIdCol != -1);
 

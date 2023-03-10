@@ -13,12 +13,15 @@
 // 10.0.0.1 
 
 // filter was breaken / repare
-// 10.0.1.1
+// 10.0.1.0
 
-#define PROG_VERSION    "10.0.0.1"
+// setRelation , setBinding make convenient
+// 10.0.2.0
+
+#define PROG_VERSION    "10.0.2.0"
 #define VER1    10
 #define VER2    0
-#define VER3    0
-#define VER4    1
+#define VER3    2
+#define VER4    0
 
 #endif // VERSION_H

@@ -38,19 +38,11 @@ PblSqlRelation::PblSqlRelation()
 
 }
 
-PblSqlRelation::PblSqlRelation(
-        //const int col_,
-        int             IdField1,
-        const QString & Table,
-        const QString & IdField2,
-        const QString & DestField,
-        JoinMode Join_mode,
-        const QString & subSrvFld
-        /*,
-                        const QString &SubAccTblName,
-                        int SubAccountingField1,
-                        const QString & SubAccountingField2,
-                        const QString & SubAccountingTextName*/)
+PblSqlRelation::PblSqlRelation( int IdField1,
+                                const QString & Table,
+                                const QString & IdField2,
+                                const QString & DestField,
+                                JoinMode Join_mode)
 
     :
 
@@ -61,8 +53,8 @@ PblSqlRelation::PblSqlRelation(
       col(IdField1),
       displayType(-1),
       subAcntColumn(FLD_UNDEFINED),
-      subPrntAcntColumn(FLD_UNDEFINED)
-    //subSrvFld(SubAccountingField2)
+      subDisplayAcntColumn(FLD_UNDEFINED)
+
 {
     joinMode = Join_mode;
 

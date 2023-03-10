@@ -41,19 +41,19 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
 
         CALC_COLUMN calcQty;
 
-         calcQty.idField1           = mdl->baseRec.indexOf("id");
-         calcQty.extTblName         = "checks";
-         calcQty.idField2Name       = "productName";
-         calcQty.summaryField       = "qty";
-         calcQty.calcFunc           = "sum";
-         calcQty.calcFuncName_As    = QObject::tr("qty sold");
-         calcQty.col                = mdl->baseRec.indexOf("productName");
+        calcQty.idField1           = mdl->baseRec.indexOf("id");
+        calcQty.extTblName         = "checks";
+        calcQty.idField2Name       = "productName";
+        calcQty.summaryField       = "qty";
+        calcQty.calcFunc           = "sum";
+        calcQty.calcFuncName_As    = QObject::tr("qty sold");
+        calcQty.col                = mdl->baseRec.indexOf("productName");
 
-         mdl->setCalcField(calcQty);
+        mdl->setCalcField(calcQty);
 
-         mdl->setAlignment(4, Qt::AlignRight|Qt::AlignVCenter);
-         mdl->setPrecision(4, 3);
-         mdl->setDblFormat(4, 'f');
+        mdl->setAlignment(4, Qt::AlignRight|Qt::AlignVCenter);
+        mdl->setPrecision(4, 3);
+        mdl->setDblFormat(4, 'f');
 
         CALC_COLUMN calcSum;
 
@@ -99,37 +99,53 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
         mdl->setEditable(mdl->fieldIndex("id"), false);
         mdl->setAlignment(mdl->fieldIndex("id"), Qt::AlignCenter);
 
-        mdl->setRelation(PblSqlRelation( mdl->baseRec.indexOf("productName"),
-                                        "goods" ,
-                                        "id" ,
-                                        "productName"));
 
-       mdl->setHeaderData(mdl->fieldIndex("productName") , Qt::Horizontal, "productName");
+        if( ! mdl->setRelation(
+                    PblSqlRelation( mdl->baseRec.indexOf("productName"),
+                                    "goods" ,
+                                    "id" ,
+                                    "productName")))
+        {
+            QMessageBox::critical(0 ,
+                                  mySql::error_,
+                                  QObject::tr("setRelation returns false"));
+
+        }
+
+
+        mdl->setHeaderData(mdl->fieldIndex("productName") , Qt::Horizontal, "productName");
+        mdl->setAlignment(mdl->fieldIndex("productName"), Qt::AlignLeft);
 
         mdl->setEditable(mdl->fieldIndex("productName"), false);
 
 
-        PblSqlRelation relSubAcnt( mdl->fieldIndex("sub"),
-                                   "sub_accounting" ,
-                                   "id" ,
-                                   "val"
-                                   );
 
-        mdl->setEditable(mdl->fieldIndex("sub"), false);
-        mdl->setHeaderData(mdl->fieldIndex("sub") , Qt::Horizontal, "sub");
 
-        relSubAcnt.srvSubAcntParentFld = QString("goods_id");
-        relSubAcnt.subPrntAcntColumn = mdl->fieldIndex("productName");
 
-        if( ! mdl->setRelation( relSubAcnt))
+        if( ! mdl->setRelation(
+                    PblSqlRelation( mdl->fieldIndex("sub"),
+                                    "sub_accounting" ,
+                                    "id" ,
+                                    "val"
+                                    ) ) )
         {
             QMessageBox::critical(0 ,
                                   mySql::error_,
                                   QObject::tr("setRelation returns false"));
         }
 
+        mdl->setEditable(mdl->fieldIndex("sub"), false);
+        mdl->setAlignment(mdl->fieldIndex("sub"), Qt::AlignCenter);
+        mdl->setHeaderData(mdl->fieldIndex("sub") , Qt::Horizontal, "sub");
 
-        mdl->setBinding( mdl->fieldIndex("productName") , mdl->fieldIndex("sub")); // !!!
+        // ---------------------------------------------------------------------
+
+        mdl->setSubAccount( mdl->fieldIndex("productName") ,
+                         mdl->fieldIndex("sub"),
+                         "goods_id",
+                         "sub_on");
+
+        // ---------------------------------------------------------------------
 
         mdl->setPrecision(mdl->fieldIndex("sum"), 2);
         mdl->setAlignment(mdl->fieldIndex("sum"), Qt::AlignRight|Qt::AlignVCenter);
@@ -163,10 +179,6 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
                             "productName"
                             );
 
-        mdl->addSubAcntOnField( rel ,
-                                mdl->fieldIndex("productName") ,
-                                mdl->fieldIndex("sub") ,
-                                "sub_on" );
 
 
         if( ! mdl->setRelation( rel))
@@ -186,8 +198,8 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
                                    "val"
                                    );
 
-        relSubAcnt.srvSubAcntParentFld = QString("goods_id");
-        relSubAcnt.subPrntAcntColumn = mdl->fieldIndex("productName");
+        relSubAcnt.srvSubAcntParentFld = "goods_id";
+        relSubAcnt.subDisplayAcntColumn = mdl->fieldIndex("productName");
 
         if( ! mdl->setRelation( relSubAcnt))
         {
@@ -197,7 +209,10 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
         }
 
 
-        mdl->setBinding( mdl->fieldIndex("productName") , mdl->fieldIndex("sub")); // !!!
+        mdl->setSubAccount( mdl->fieldIndex("productName") ,
+                         mdl->fieldIndex("sub"),
+                         "goods_id",
+                         "sub_on");
 
         // -----------------------------------------------------------------------
 
@@ -261,7 +276,7 @@ bool config::setting_view(PblTableView *view)
 
     if ( mdl->isDefaultSearchingColumn != PblSqlRelationalTableModel::FLD_UNDEFINED )
 
-           view->find_settings.searchedField = mdl->isDefaultSearchingColumn;
+        view->find_settings.searchedField = mdl->isDefaultSearchingColumn;
     else
     {
         for( int col =0; col < view->horizontalHeader()->count(); col++)

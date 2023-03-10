@@ -52,8 +52,7 @@ public:
             const QString &extTblName,                          // external table name
             const QString & idField2Name,                       // id field name in external table for bindind
             const QString & dstFldName,                         // text field name in external table for displaing in current table
-            JoinMode join_mode = PblSqlRelation::LeftJoin,
-            const QString & srvSubAcntOnFldName = ""
+            JoinMode join_mode = PblSqlRelation::LeftJoin
 );
 
     ~PblSqlRelation();
@@ -80,7 +79,7 @@ public:
 
     int subAcntColumn;
 
-    int subPrntAcntColumn;
+    int subDisplayAcntColumn;
 
     QString srvSubAcntOnFldName;
 

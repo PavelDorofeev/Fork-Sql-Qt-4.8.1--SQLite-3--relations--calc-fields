@@ -493,9 +493,11 @@ bool PblSqlRelationalTableModel::setRelation(const PblSqlRelation &relation)
     return true;
 }
 
-bool PblSqlRelationalTableModel::setBinding(int col1 ,
-                                            int col2,
-                                            QString subAcntOnFld)
+bool PblSqlRelationalTableModel::setSubAccount(int col1 ,
+                                               int col2 ,
+                                               const QString & filterColName,
+                                               const QString & sub_on
+                                               )
 {
 
     if( ! relations.contains(col1) || ! relations.contains(col2)
@@ -509,12 +511,26 @@ bool PblSqlRelationalTableModel::setBinding(int col1 ,
         return false;
     }
 
-    //rel_columns.value(col1).relation.subAcntColumn = col2;
+    // ------------------------------------------------------------------------------------------------
+    // dont use value() , this will be a copy and removes with return from this function
+    // ------------------------------------------------------------------------------------------------
+
+
+    addSubAcntOnField( rel_clmn[col1] ,
+                       col1 ,
+                       col2 ,
+                       sub_on );
+
+    rel_clmn[col2].srvSubAcntParentFld = filterColName;
+
+    rel_clmn[col2].subDisplayAcntColumn = col1;
+
+
 
     rel_subAccounting.insert(col1 , & rel_clmn[ col1 ]);
 
-    rel_bindings.insert(col2 , & rel_clmn[ col2 ]); // dont use value() , this will be a copy and removes with return from this function
 
+    rel_bindings.insert(col2 , & rel_clmn[ col2 ]);
 
 
     return true;
@@ -1037,9 +1053,18 @@ bool PblSqlRelationalTableModel::updateRowInTable(int row, const QSqlRecord &val
 
     //setSubAccountingFields(rec);
 
+    //    qDebug() << " values " << values;
+
+    //    qDebug() << " baseRec.count()      " << baseRec.count();
+    //    qDebug() << " calc_columns.count() " << calc_columns.count();
+    //    qDebug() << " relations.count()    " << relations.count();
+
     foreach( int subOnColumn, addSubAcntOnFlds.values())
     {
-        int col = baseRec.count() + calc_columns.count() +relations.count() + subOnColumn - 1;
+        int col = baseRec.count() +
+                calc_columns.count() +
+                relations.count() +
+                subOnColumn - 1;
 
         Q_ASSERT( rec.value(col).isValid() );
 
@@ -1840,12 +1865,14 @@ bool PblSqlRelationalTableModel::isParentBinding(int col)
 
 }
 
-bool PblSqlRelationalTableModel::addSubAcntOnField(PblSqlRelation &rel, int col1 , int col2 ,const QString &name)
+bool PblSqlRelationalTableModel::addSubAcntOnField(PblSqlRelation &rel,
+                                                   int col1 ,
+                                                   int col2 ,
+                                                   const QString &name)
 {
 
     rel.srvSubAcntOnFldName = name;
 
-    //rel.srvSubAcntOnFldName = QString("sub_on");
     rel.subAcntColumn = col2;
 
     addSubAcntOnFlds.insert( col1 , addSubAcntOnFlds.count() + 1) ;

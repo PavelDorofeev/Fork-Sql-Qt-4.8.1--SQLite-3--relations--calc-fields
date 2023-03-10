@@ -191,7 +191,11 @@ public:
 
     bool setRelation(const PblSqlRelation &relation);
 
-    bool setBinding(int col1 , int col2 , QString subAcntOnFld = "");
+    bool setSubAccount(int col1 ,
+                    int col2 ,
+                    const QString & filterColName,
+                    const QString & sub_on
+                    );
 
     bool setCalcField(CALC_COLUMN & calcLst);
     
