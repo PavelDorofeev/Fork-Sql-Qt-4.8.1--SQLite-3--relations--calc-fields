@@ -7,6 +7,7 @@
 #include "pbltableview/some_tests.h"
 #include <QObject>
 #include <QSqlError>
+#include <QHeaderView>
 
 bool config::visibleRelIdColumns_byDefault = true;
 
@@ -254,6 +255,25 @@ bool config::setting_view(PblTableView *view)
         view->parentWidget()->setWindowTitle(tableName);
     }
 
+    // ----------------------------------------------------------
+    //                      SEARCHING
+    // ----------------------------------------------------------
+
+    if ( mdl->isDefaultSearchingColumn != PblSqlRelationalTableModel::FLD_UNDEFINED )
+
+           view->find_settings.searchedField = mdl->isDefaultSearchingColumn;
+    else
+    {
+        for( int col =0; col < view->horizontalHeader()->count(); col++)
+        {
+            if(view->horizontalHeader()->isSectionHidden(col))
+                continue;
+
+            view->find_settings.searchedField = col; // first visible column
+
+            break;
+        }
+    }
 
     view->set_Actions(PblTableView::ACT_SHOW_EXTENDED_RELATION_COLUMNS , config::visibleRelIdColumns_byDefault);
 

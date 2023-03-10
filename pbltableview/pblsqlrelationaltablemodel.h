@@ -70,6 +70,11 @@ public:
         FILTER_TYPE_SEARCH_BY_FIELD_VALUE,
     };
 
+    enum SOME_FIELDS_VALUES
+    {
+        FLD_UNDEFINED = -1,
+    };
+
     enum MODE{
         UPDATE=1,
         INSERT
@@ -235,7 +240,7 @@ public:
     bool isRelationalColumn(int col);
 
 
-    //PblColumn::COLUMN_TYPE columnType(int col);
+    QString getsubAccountingFilter();
 
     Filter filterDone;
 
@@ -246,6 +251,8 @@ public:
     PblSqlRecord getPblSqlRecord(const QSqlRecord & rec);
 
     QHash<QString,QVariant> subAccountingFilter;
+
+    int isDefaultSearchingColumn;
 
     bool setSubAccountingFields( QSqlRecord &rec);
 

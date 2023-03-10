@@ -76,19 +76,26 @@ void Btn_ToolBox::on_btn_search_settings_clicked()
 
     dlg.setSettings(view->find_settings);
 
-    dlg.exec();
+    if( dlg.exec() ==QDialog::Rejected )
+        return;
 
 
     if(view->find_settings != dlg.find_settings)
     {
         view->find_settings = dlg.find_settings;
+
         on_ledt_filter_returnPressed();
     }
 }
 
 void Btn_ToolBox::on_ledt_filter_returnPressed()
 {
-    if ( view->slot_searchInTable(ui->ledt_filter->text().trimmed()))
+    QString txt = ui->ledt_filter->text().trimmed();
+
+//    if(txt.isEmpty())
+//        return;
+
+    if ( view->slot_searchInTable( txt) )
     {
         if(ui->ledt_filter->text().isEmpty())
             ui->btn_searchInTable->setEnabled(false);
@@ -150,4 +157,5 @@ void Btn_ToolBox::on_btn_view_clicked()
     view->slot_viewRowBtnClick();
 
 }
+
 

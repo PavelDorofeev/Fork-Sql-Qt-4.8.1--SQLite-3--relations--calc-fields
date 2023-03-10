@@ -46,11 +46,29 @@
 #include "config.h"
 #include "pbltableview/checkbox_delegate.h"
 #include "pbltableview/pblrelcolumn.h"
+#include "pbltableview/pblsqlrelationaltablemodel.h"
+
 #include "ui_btn_toolbox.h"
 #include "date_delegate.h"
 
 const QString PblTableView::s_submit= QObject::tr("submit");
 const QString PblTableView::s_submitAll= QObject::tr("submit All");
+
+const QString PblTableView::styleSheet1 = QString("QTableView{\n"\
+        "padding:10px;\n"\
+         "border: 0px;\n"\
+        "}"\
+        "QTableView:item{\n"\
+        "padding:10px;\n"\
+         "border: 1px solid #f6f7fa;\n"\
+        "}"\
+        "QHeaderView::section {\n"\
+        "color: white;\n"\
+        "padding:10px;\n"\
+        "background-color: rgb(150,150,150);\n"\
+        "border: 1px solid #f6f7fa;\n"\
+        "}\n"\
+        );
 
 
 PblTableView::PblTableView(
@@ -119,8 +137,7 @@ PblTableView::PblTableView(
     tlbx->ui->btn_selectByValue->setVisible(false);
 
 
-    find_settings.caseSensitive = false;
-    find_settings.exactly = false;
+    //setStyleSheet(PblTableView::styleSheet1);
 
 
     setSizePolicy(QSizePolicy::Expanding , QSizePolicy::Expanding);
@@ -181,6 +198,14 @@ PblTableView::PblTableView(
         tlbx->ui->chk_editable->setEnabled(false);
         tlbx->ui->chk_editable->setChecked(false); // slot_setEditable
     }
+
+    // ----------------------------------------------------------
+    //                      SEARCHING
+    // ----------------------------------------------------------
+
+    find_settings.caseSensitive = false;
+    find_settings.exactly = false;
+
 
 
     // ----------------------------------------------------------
@@ -360,6 +385,9 @@ void PblTableView::slot_setVisibleExRelIdColumns(bool visible)
 
     }
 
+    setColumnHidden(model()->priCol , ! visible);
+
+
     foreach( int col , model()->addSubAcntOnFlds.keys())
     {
         int acntOnCol = model()->getRelIdAcntOnColumn( col );
@@ -369,7 +397,35 @@ void PblTableView::slot_setVisibleExRelIdColumns(bool visible)
         setColumnHidden(acntOnCol , ! visible);
     }
 
+    foreach( int col , model()->addSubAcntOnFlds.keys())
+    {
+        int acntOnCol = model()->getRelIdAcntOnColumn( col );
 
+        Q_ASSERT( acntOnCol != -1);
+
+        setColumnHidden(acntOnCol , ! visible);
+    }
+
+    foreach( QString col , model()->subAccountingFilter.keys())
+    {
+
+        setColumnHidden(model()->baseRec.indexOf(col) , ! visible);
+    }
+
+
+
+    resizeColumnsToContents();
+
+}
+
+void PblTableView::resizeColumnsToContents()
+{
+
+    qDebug() << "PblTableView::resizeColumnsToContents " ;
+
+    //adjustSize();
+
+    QTableView::resizeColumnsToContents();
 
 }
 
@@ -1240,7 +1296,7 @@ bool PblTableView::slot_searchInTable(QString & txt)
 
     if( find_settings.searchedField == -1) //еще не понятно по какому полю искать
     {
-        QMessageBox::warning(this , "error" , "please select a field than searched in it");
+        QMessageBox::warning(this , "error" , "please select a field than searched in table");
 
         return false;
     }
@@ -1255,18 +1311,78 @@ bool PblTableView::slot_searchInTable(QString & txt)
         return false;
     }
 
-    if (model()->getRelIdColumn(find_settings.searchedField) >=0 )
+    Q_ASSERT(find_settings.searchedField != PblSqlRelationalTableModel::FLD_UNDEFINED);
 
+    QVariant::Type type = model()->record().field((int)find_settings.searchedField).type();
+
+    qDebug() << "QVariant::Type type : " << type;
+
+    if (model()->getRelIdColumn(find_settings.searchedField) != PblSqlRelationalTableModel::FLD_UNDEFINED )
+    {
         find_settings.seachType = Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT;
-
-    else if (model()->record().field((int)find_settings.searchedField).type() == QVariant::String )
+    }
+    else if (type == QVariant::String )
+    {
+        if( ! txt.isEmpty() &&  ! txt.isSimpleText() )
+        {
+            QMessageBox::warning( this ,
+                                  tr("Error"),
+                                  tr("searching value ['%1'] has not string type").
+                                  arg(txt));
+            return false;
+        }
 
         find_settings.seachType = Search_Settings_Dlg::FIND_SETTINGS::SEARCH_TEXT;
+    }
+    else if (
+             type == QVariant::Int
+             || type == QVariant::UInt
+             || type == QVariant::Char
+             || type == QVariant::LongLong
+             || type == QVariant::ULongLong
+             )
+    {
+        bool ok = false;
+        int foo = txt.toInt( &ok );
 
-    else
+        if( ! txt.isEmpty() && ! ok)
+        {
+            QMessageBox::warning( this ,
+                                  tr("Error"),
+                                  tr("searching value ['%1'] has not integer type").
+                                  arg(txt));
+            return false;
+        }
+
         find_settings.seachType = Search_Settings_Dlg::FIND_SETTINGS::SEARCH_NUMBER;
+    }
+    else if (type == QVariant::Double )
+    {
+        bool ok = false;
+        double foo = txt.toDouble( &ok );
 
-    QString filter("");
+        if( ! txt.isEmpty() && ! ok)
+        {
+            QMessageBox::warning( this ,
+                                  tr("Error"),
+                                  tr("searching value ['%1'] has not double type").
+                                  arg(txt));
+            return false;
+        }
+
+        find_settings.seachType = Search_Settings_Dlg::FIND_SETTINGS::SEARCH_NUMBER;
+    }
+    else
+    {
+        QMessageBox::warning( this ,
+                              tr("Error"),
+                              tr("unknown searching value type ['%1'] ").
+                              arg(txt));
+        return false;
+
+    }
+
+    QString flt("");
 
     if( ! txt.isEmpty())
     {
@@ -1276,21 +1392,23 @@ bool PblTableView::slot_searchInTable(QString & txt)
         {
             QString str = model()->getRelationInfoForColumn(find_settings.searchedField).dstFldName;
 
-            filter.append(QString::fromLatin1(" relTblAl_%1.%2 ").
+            flt.append(QString::fromLatin1(" %3_%1.%2 ").
                           arg(col).
-                          arg(str));
+                          arg(str).
+                          arg(model()->prefix)
+                          );
         }
         else
         {
-            filter.append(model()->tableName()+"."+fieldName);
+            flt.append(model()->tableName()+"."+fieldName);
         }
 
         if( ! find_settings.caseSensitive )
         {
-            if(find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT
-                    ||find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_TEXT)
+            if( find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT
+                    || find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_TEXT)
             {
-                filter.prepend(" lower(").append(") ");
+                flt.prepend(" lower(").append(") ");
             }
         }
 
@@ -1302,55 +1420,62 @@ bool PblTableView::slot_searchInTable(QString & txt)
             if ( find_settings.exactly)
             {
                 if( ! find_settings.caseSensitive)
-                    filter.append(" LIKE '"+ txt.trimmed().toLower()+"'");
+                    flt.append(" LIKE '"+ txt.trimmed().toLower()+"'");
                 else
-                    filter.append(" LIKE '"+ txt.trimmed()+"'");
+                    flt.append(" LIKE '"+ txt.trimmed()+"'");
 
             }
             else
             {
                 if( ! find_settings.caseSensitive)
-                    filter.append(" LIKE '%"+ txt.trimmed().toLower()+"%'");
+                    flt.append(" LIKE '%"+ txt.trimmed().toLower()+"%'");
                 else
-                    filter.append(" LIKE '%"+ txt.trimmed()+"%'");
+                    flt.append(" LIKE '%"+ txt.trimmed()+"%'");
 
             }
         }
         else if(find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_NUMBER)
         {
-            filter.append(" = "+ txt.trimmed()+" ");
+            flt.append(" = "+ txt.trimmed()+" ");
         }
 
     }
 
-    model()->setFilter(filter);
 
-    bool selectOk = model()->select();
+    QString subAccountingFilter = model()->getsubAccountingFilter();
 
-    if(! filter.isEmpty() )
+    if ( ! subAccountingFilter.isEmpty() )
+    {
+        if( ! flt.isEmpty())
+            flt.append(" AND ");
+
+        flt.append(subAccountingFilter) ;
+    }
+
+    model()->setFilter(flt); // select is into
+
+
+    if(! flt.isEmpty() )
     {
         if( ! model()->setHeaderData(col , Qt::Horizontal, getActIcon(ACT_CLEAR_SEARCH_RESULTS), Qt::DecorationRole))
             QMessageBox::critical(this , "error" , "setHeaderData return false 6575637657");
 
-        if(selectOk)
-        {
-            tlbx->ui->btn_searchInTable->setVisible(true);
-            tlbx->ui->btn_searchInTable->setEnabled(true);
 
-        }
+        tlbx->ui->btn_searchInTable->setVisible(true);
+        tlbx->ui->btn_searchInTable->setEnabled(true);
+
     }
     else
     {
         model()->setHeaderData(col , Qt::Horizontal, QVariant(), Qt::DecorationRole);
-        if(selectOk)
-        {
-            tlbx->ui->btn_searchInTable->setVisible(true);
-            tlbx->ui->btn_searchInTable->setEnabled(false);
 
-        }
+        tlbx->ui->btn_searchInTable->setVisible(true);
+        tlbx->ui->btn_searchInTable->setEnabled(false);
+
+
     }
 
-    return selectOk;
+    return true;
 }
 
 
@@ -1948,20 +2073,6 @@ bool PblTableView::slot_selectByFieldValue(QModelIndex idx)
 
 PblSqlRelationalTableModel* PblTableView::model() const
 {
-    /*PblSqlRelationalTableModel * mdl = qobject_cast<PblSqlRelationalTableModel*>(QTableView::model());
-
-
-            if( ! mdl )
-            {
-                QMessageBox::warning( 0,
-                                      mySql::error_,
-                                      tr("qobject_cast PblSqlRelationalTableModel* wrong (5746)"),
-                                      "");
-                return 0;
-
-                sometimes occures  mdl == 0
-            }*/
-
     return qobject_cast<PblSqlRelationalTableModel*>(QTableView::model());
 }
 

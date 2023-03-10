@@ -114,12 +114,16 @@ public:
 
     static QIcon PblTableView::getIcon(int nn);
 
+    static const QString styleSheet1;
+
+    static const QString s_submit;
+
+    static const QString s_submitAll;
+
     QHBoxLayout *topLO;
 
     Btn_ToolBox *tlbx;
 
-    static const QString s_submit;
-    static const QString s_submitAll;
 
 
     QSize sizeHint() const;
@@ -162,6 +166,8 @@ public:
     virtual bool vrt_viewRow(int row);
 
     virtual bool vrt_doubleClicked(const QModelIndex & index);
+
+    void resizeColumnsToContents();
 
     void setSelectAndClose();
 

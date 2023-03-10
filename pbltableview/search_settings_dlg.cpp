@@ -7,8 +7,8 @@
 
 
 Search_Settings_Dlg::Search_Settings_Dlg(PblSqlRelationalTableModel * mdl_,
-                   PblTableView * view_,
-                   QWidget *parent) :
+                                         PblTableView * view_,
+                                         QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Search_Settings_Dlg),
     tableName(QString())
@@ -25,11 +25,16 @@ Search_Settings_Dlg::Search_Settings_Dlg(PblSqlRelationalTableModel * mdl_,
     for(int col =0 ; col < baseRec.count(); col++)
     {
         if(col == view->priCol)
+
             continue;
 
-        QString name = baseRec.field(col).name();
+        if( ! view->horizontalHeader()->isSectionHidden( col ) )
 
-        ui->cmb_Fields->insertItem(col , name, col);
+        {
+            QString name = baseRec.field(col).name();
+
+            ui->cmb_Fields->insertItem(col , name, col);
+        }
     }
 }
 
@@ -49,7 +54,12 @@ void Search_Settings_Dlg::accept()
 
     find_settings.searchedField =  mdl->data(mdl->index(row,0),Qt::UserRole).toInt();
 
-    done(0);
+    QDialog::accept();
+}
+
+void Search_Settings_Dlg::reject()
+{
+    QDialog::reject();
 }
 
 void Search_Settings_Dlg::cmb_Fields_currentIndexChanged(int row)
@@ -76,3 +86,8 @@ void Search_Settings_Dlg::setSettings(FIND_SETTINGS find_settings_)
     }
 }
 
+
+void Search_Settings_Dlg::on_buttonBox_accepted()
+{
+
+}

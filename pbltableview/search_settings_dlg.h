@@ -51,14 +51,12 @@ public:
     };
 
     explicit Search_Settings_Dlg(PblSqlRelationalTableModel * mdl_,
-                      PblTableView * view,
-                      QWidget *parent = 0);
+                                 PblTableView * view,
+                                 QWidget *parent = 0);
     ~Search_Settings_Dlg();
     
     void accept();
-    //int searchedField;
-    //bool caseSensitive;
-    //bool exactly;
+    void reject();
 
     FIND_SETTINGS find_settings;
 
@@ -72,6 +70,8 @@ public slots:
 
 private slots:
 
+
+    void on_buttonBox_accepted();
 
 private:
     Ui::Search_Settings_Dlg *ui;

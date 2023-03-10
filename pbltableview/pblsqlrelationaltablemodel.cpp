@@ -65,15 +65,16 @@ PblSqlRelationalTableModel::PblSqlRelationalTableModel(
         )
     :
       QSqlTableModel( parent, db_),
-      sortColumn(-1),
+      sortColumn(FLD_UNDEFINED),
       sortOrder(Qt::AscendingOrder),
       isDirtyRow(-1),
       isInsertRow(-1),
-      lastDirtyCol(-1),
+      lastDirtyCol(FLD_UNDEFINED),
       lastDirtyRowId(-1),
       isSelectedLine(-1),
       db(db_),
-      priCol(-1)
+      priCol(FLD_UNDEFINED),
+      isDefaultSearchingColumn(FLD_UNDEFINED)
 {
 
     qDebug() << "ctor PblSqlRelationalTableModel editStrategy " << editStrategy();
@@ -673,6 +674,26 @@ bool PblSqlRelationalTableModel::select()
     return true;
 }
 
+QString PblSqlRelationalTableModel::getsubAccountingFilter()
+{
+    QString ff;
+
+    if( subAccountingFilter.count() >0 )
+    {
+
+        foreach ( QString fldName, subAccountingFilter.keys())
+        {
+            QString val= subAccountingFilter.value(fldName).toString();
+
+            if(subAccountingFilter.value(fldName).type() == QVariant::String)
+                val.prepend("'").append("'");
+
+            ff += fldName+"="+val;
+        }
+    }
+
+    return ff;
+}
 bool PblSqlRelationalTableModel::prepare(const QString &tableName,
                                          const QHash<QString,QVariant> &SubCountingFilter)
 {
@@ -754,19 +775,10 @@ bool PblSqlRelationalTableModel::prepare(const QString &tableName,
 
     if( subAccountingFilter.count() >0 )
     {
-        QString ff;
+        QString ff = getsubAccountingFilter();
 
-        foreach ( QString fldName, subAccountingFilter.keys())
-        {
-            QString val= subAccountingFilter.value(fldName).toString();
-
-            if(subAccountingFilter.value(fldName).type() == QVariant::String)
-                val.prepend("'").append("'");
-
-            ff += fldName+"="+val;
-        }
-
-        setFilter(ff);
+        if( ! ff .isEmpty())
+            setFilter(ff);
     }
 
     relations.clear();

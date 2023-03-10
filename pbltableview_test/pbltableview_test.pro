@@ -47,7 +47,6 @@ HEADERS  += \
     config.h \
     version_app.h \
     pblsqlrelationaltablemodel2.h \
-    my_gui/msg.h \
     config2.h
 
 FORMS    += dialog.ui

@@ -17,6 +17,7 @@
 #include "logging_system/logging_system.h"
 #include <QDateTime>
 #include "pbltableview/version_pbl.h"
+#include "pbltableview/pbltableview.h"
 #include <QSqlQuery>
 
 DialogTest::DialogTest(QString langId,
@@ -40,6 +41,7 @@ DialogTest::DialogTest(QString langId,
     title.append(" ").append(PROG_VERSION);
 
     setWindowTitle(title) ;
+
 
     const QString tableName = "purchases";
 
@@ -77,6 +79,7 @@ DialogTest::DialogTest(QString langId,
     }
 
     view->setToLayout(ui->tableViewLO);
+
 
     slot_recalculate_tbl(mdl->fieldIndex("sum"));
 
