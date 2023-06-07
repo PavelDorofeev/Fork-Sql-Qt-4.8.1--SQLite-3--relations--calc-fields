@@ -63,6 +63,7 @@ class PblSqlRelationalTableModel: public QSqlTableModel
 {
     Q_OBJECT
 public:
+
     enum FILTER_TYPE
     {
         FILTER_TYPE_UNKNOWN=-1,
@@ -82,7 +83,7 @@ public:
     
 public:
     
-    PblSqlRelationalTableModel(); //??
+    //PblSqlRelationalTableModel(); //??
 
     explicit PblSqlRelationalTableModel(QSqlDatabase &db ,
                                         QObject *parent = 0
@@ -112,7 +113,9 @@ public:
 
     static const QLatin1String prefix;
 
-    QSqlDatabase db;
+    QSqlDatabase &db;
+
+    void set_editable( bool Editable);
 
     QString relationField(const QString &tableName, const QString &fieldName) const;
 
@@ -192,10 +195,10 @@ public:
     bool setRelation(const PblSqlRelation &relation);
 
     bool setSubAccount(int col1 ,
-                    int col2 ,
-                    const QString & filterColName,
-                    const QString & sub_on
-                    );
+                       int col2 ,
+                       const QString & filterColName,
+                       const QString & sub_on
+                       );
 
     bool setCalcField(CALC_COLUMN & calcLst);
     
@@ -239,7 +242,9 @@ public:
 
     int getRelIdColumn(int relCol) const;
 
-    int getRelIdAcntOnColumn(int relCol) const;
+    int getRelIdColumn2(int relCol) const;
+
+    int getAccountingOnColumn(int relCol) const;
 
     bool isRelationalColumn(int col);
 
@@ -254,6 +259,8 @@ public:
 
     PblSqlRecord getPblSqlRecord(const QSqlRecord & rec);
 
+    PblSqlRecord record2(int row);
+
     QHash<QString,QVariant> subAccountingFilter;
 
     int isDefaultSearchingColumn;
@@ -267,6 +274,8 @@ signals:
     void sig_rowIsDirty(int row);
 
     void sig_afterSelect( bool);
+
+    void sig_select_exec();
 
 public Q_SLOTS:
 
@@ -286,6 +295,7 @@ protected:
     
 private:
 
+    bool editable;
     void clearDirtyRow();
     void setDirtyRow(int dirtyRow, int dirtyCol);
 };

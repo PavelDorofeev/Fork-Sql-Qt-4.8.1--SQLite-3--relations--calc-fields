@@ -1,12 +1,15 @@
 #include "pbltableview2.h"
 #include <QDebug>
+#include "pbltableview/pbl.h"
 
 
 PblTableView2::PblTableView2(QWidget *parent,
-                             bool editable ,
+                             cb_setting_mdl pMdl,
+                             cb_setting_view pView,
                              bool selectable ) :
     PblTableView(parent,
-                 editable ,
+                 pMdl,
+                 pView,
                  selectable)
 {
 
@@ -14,10 +17,16 @@ PblTableView2::PblTableView2(QWidget *parent,
 
 bool PblTableView2::vrt_insertRow(int row)
 {
+    // ------------------------------------------------------
+    // this class must be uniqe for others application
+    // ------------------------------------------------------
+
+    //qDebug() << "editStrategy" << model()->editStrategy();
 
     if ( PblTableView::vrt_insertRow( row) )
     {
         int rr = currentIndex().row();
+
         int col = model()->baseRec.indexOf("productName");
 
         QModelIndex goodIdx = model()->index( rr , col );
@@ -28,6 +37,7 @@ bool PblTableView2::vrt_insertRow(int row)
 
             return true;
         }
+
     }
 
     return false;
@@ -38,23 +48,35 @@ bool PblTableView2::vrt_afterSetFldValue(int idRow,
                                          const QModelIndex & idx,
                                          const PblSqlRecord &rec)
 {
+    int row = idx.row();
 
     if( col == model()->baseRec.indexOf("productName"))
     {
-        if( idx.isValid())
+        if( ! idx.isValid())
         {
-            QVariant price = rec.value("price");
 
-            int col = model()->baseRec.indexOf("price");
+            Q_ASSERT( idRow > 0 );
 
-            model()->setData( model()->index( idx.row() , col) , price );
+            row = model()->findRowById( idRow) ;
+
+            Q_ASSERT( row != pbl::ROW_UNDEFINED );
 
 
-            col = model()->baseRec.indexOf("qty");
-
-            model()->setData( model()->index( idx.row() , col) , 1.00 );
 
         }
+
+        QVariant price = rec.value("price");
+
+        int col = model()->baseRec.indexOf("price");
+
+        model()->setData( model()->index( row , col) , price );
+
+
+        col = model()->baseRec.indexOf("qty");
+
+        model()->setData( model()->index( row , col) , 1.00 );
+
+
         //qDebug() << "rec " << rec;
     }
     else
@@ -64,7 +86,7 @@ bool PblTableView2::vrt_afterSetFldValue(int idRow,
 
     PblTableView::vrt_afterSetFldValue(idRow,
                                        col,
-                                       idx,
+                                       idx, // ?????
                                        rec);
     resizeColumnsToContents();
 

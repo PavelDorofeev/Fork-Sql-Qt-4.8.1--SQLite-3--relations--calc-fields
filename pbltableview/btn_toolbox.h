@@ -65,6 +65,11 @@ private slots:
 
 
 
+    void on_btn_clear_seached_text_clicked();
+
+
+
+
 private:
 
 

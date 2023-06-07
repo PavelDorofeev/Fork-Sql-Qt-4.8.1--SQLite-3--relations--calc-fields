@@ -5,8 +5,10 @@
 #include "pbltableview/my_sql.h"
 #include "pbltableview/btn_toolbox.h"
 #include "pbltableview/some_tests.h"
+#include "pbltableview/defaultstyleditemdelegate.h"
 #include <QObject>
 #include <QSqlError>
+#include <QDebug>
 #include <QHeaderView>
 
 bool config::visibleRelIdColumns_byDefault = true;
@@ -22,6 +24,9 @@ config::config()
 
 bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
 {
+    if(! mdl)
+        return false;
+
     if(mdl->tableName().isNull())
         return false;
 
@@ -33,6 +38,7 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
         mdl->setAlignment(mdl->fieldIndex("id"), Qt::AlignCenter);
         mdl->setEditable(mdl->fieldIndex("id"), false);
 
+        mdl->setAlignment(mdl->fieldIndex("productName"), Qt::AlignLeft|Qt::AlignVCenter);
         mdl->setAlignment(mdl->fieldIndex("price"), Qt::AlignRight|Qt::AlignVCenter);
         mdl->setPrecision(mdl->fieldIndex("price"), 2);
         mdl->setDblFormat(mdl->fieldIndex("price"), 'f');
@@ -85,7 +91,7 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
         mdl->setAlignment(mdl->fieldIndex("goods_id"), Qt::AlignRight|Qt::AlignVCenter);
         mdl->setEditable(mdl->fieldIndex("goods_id") , false );
 
-        mdl->setAlignment(mdl->fieldIndex("val"), Qt::AlignLeft|Qt::AlignVCenter);
+        mdl->setAlignment(mdl->fieldIndex("val"), Qt::AlignCenter|Qt::AlignVCenter);
 
         mdl->setHeaderData(mdl->fieldIndex("val") , Qt::Horizontal, "property");
 
@@ -98,6 +104,8 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
     {
         mdl->setEditable(mdl->fieldIndex("id"), false);
         mdl->setAlignment(mdl->fieldIndex("id"), Qt::AlignCenter);
+
+        mdl->setAlignment(mdl->fieldIndex("productName"), Qt::AlignLeft|Qt::AlignVCenter);
 
 
         if( ! mdl->setRelation(
@@ -114,7 +122,6 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
 
 
         mdl->setHeaderData(mdl->fieldIndex("productName") , Qt::Horizontal, "productName");
-        mdl->setAlignment(mdl->fieldIndex("productName"), Qt::AlignLeft);
 
         mdl->setEditable(mdl->fieldIndex("productName"), false);
 
@@ -141,9 +148,9 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
         // ---------------------------------------------------------------------
 
         mdl->setSubAccount( mdl->fieldIndex("productName") ,
-                         mdl->fieldIndex("sub"),
-                         "goods_id",
-                         "sub_on");
+                            mdl->fieldIndex("sub"),
+                            "goods_id",
+                            "sub_on");
 
         // ---------------------------------------------------------------------
 
@@ -159,6 +166,11 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
     {
         mdl->setAlignment(mdl->fieldIndex("id"), Qt::AlignCenter);
 
+        mdl->setAlignment(mdl->fieldIndex("productName"), Qt::AlignLeft|Qt::AlignVCenter);
+        mdl->setAlignment(mdl->fieldIndex("sub"), Qt::AlignCenter|Qt::AlignVCenter);
+
+        mdl->setHeaderData(mdl->fieldIndex("sub") , Qt::Horizontal, "sub");
+
         mdl->setAlignment(mdl->fieldIndex("price"), Qt::AlignRight|Qt::AlignVCenter);
         mdl->setPrecision(mdl->fieldIndex("price"), 2);
         mdl->setDblFormat(mdl->fieldIndex("price"), 'f');
@@ -170,6 +182,9 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
         mdl->setAlignment(mdl->fieldIndex("sum"), Qt::AlignRight|Qt::AlignVCenter);
         mdl->setPrecision(mdl->fieldIndex("sum"), 2);
         mdl->setDblFormat(mdl->fieldIndex("sum"), 'f');
+
+        mdl->setAlignment(mdl->fieldIndex("cmb"), Qt::AlignCenter|Qt::AlignVCenter);
+
 
         // -----------------------------------------------------------------------
 
@@ -188,8 +203,8 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
                                    QObject::tr("setRelation returns false"));
         }
 
-        mdl->setHeaderData(1 , Qt::Horizontal, "productName");
-        mdl->setAlignment(5, Qt::AlignCenter);
+        mdl->setHeaderData(mdl->fieldIndex("productName") , Qt::Horizontal, "productName");
+
 
 
         PblSqlRelation relSubAcnt( mdl->fieldIndex("sub"),
@@ -210,9 +225,9 @@ bool config::setting_mdl( PblSqlRelationalTableModel * mdl)
 
 
         mdl->setSubAccount( mdl->fieldIndex("productName") ,
-                         mdl->fieldIndex("sub"),
-                         "goods_id",
-                         "sub_on");
+                            mdl->fieldIndex("sub"),
+                            "goods_id",
+                            "sub_on");
 
         // -----------------------------------------------------------------------
 
@@ -231,19 +246,41 @@ bool config::setting_view(PblTableView *view)
     if(view == 0)
         return false;
 
-    if(view->model()->tableName().isNull())
+    if(! view->model())
+
         return false;
 
+    if(view->model()->tableName().isNull())
 
-    PblTableView::ACTIONS act = PblTableView::ACT_ALL;
+        return false;
+
+    //PblTableView::ACTIONS act = PblTableView::ACT_ALL;
 
     PblSqlRelationalTableModel * mdl = view->model();
 
     QString tableName = view->model()->tableName();
 
+
+    view->set_ExtColumnsVisible(false, false);
+
+    view->set_contextMenuEnabled(true); //
+
+    if(view->selectable)
+        view->set_editingEnabled(true , false, false);
+    else
+        view->set_editingEnabled(true , true, false);
+
+
+    view->set_ExtColumnsVisible(true , false);
+
+    view->set_editStrategyEnable(true);
+
+    view->set_sortingEnabled(true);
+
+    view->set_searchingEnabled(true);
+
     if(tableName == "purchases")
     {
-        view->set_Actions( PblTableView::ACT_ALL , true);
 
         view->setComboBoxDelegate( mdl->fieldIndex("cmb") , QStringList() << "big" << "medium" << "small");
 
@@ -252,18 +289,17 @@ bool config::setting_view(PblTableView *view)
     }
     else if(tableName == "sub_accounting")
     {
-        view->set_Actions( PblTableView::ACT_ALL , true);
 
     }
     else if(tableName == "goods")
     {
-        view->set_Actions( PblTableView::ACT_ALL , true);
 
         view->setCheckBoxDelegate( mdl->fieldIndex("sub_on") );
     }
     else if(tableName == "checks")
     {
-        view->set_Actions( PblTableView::ACT_ALL_SEARCH , true);
+
+        view->set_editingEnabled( false );
 
         view->setDateTimeDelegate( mdl->fieldIndex("date_") );
 
@@ -290,11 +326,51 @@ bool config::setting_view(PblTableView *view)
         }
     }
 
-    view->set_Actions(PblTableView::ACT_SHOW_EXTENDED_RELATION_COLUMNS , config::visibleRelIdColumns_byDefault);
+    //view->set_Actions(PblTableView::ACT_SHOW_EXTENDED_RELATION_COLUMNS , config::visibleRelIdColumns_byDefault);
 
-    view->resizeColumnsToContents();
 
-    view->resizeRowsToContents();
+
+    // ----------------------------------------------------------
+    //    for all remain columns set our default Delegate
+    //    important for cell margins
+    // ----------------------------------------------------------
+
+    for(int col =0; col < mdl->columnCount(); col++)
+    {
+        if( ! view->itemDelegateForColumn( col ) && col != mdl->fieldIndex("foo "))
+
+            view->setDefaultDelegate( col );
+
+    }
+
+
+
+
+
+    view->resizeColumnsToContents(); // Inreractive
+
+
+    //view->resizeRowsToContents();
+
+    qDebug() << "verticalHeader()->resizeMode()";
+
+    for(int row=0; row < mdl->rowCount(); row++)
+    {
+        qDebug() << "   row " << row <<  view->verticalHeader()->resizeMode(row);
+    }
+
+    qDebug() << "horizontalHeader()->resizeMode()";
+
+    for(int col=0; col < mdl->columnCount(); col++)
+    {
+        qDebug() << "   col " << col << view->horizontalHeader()->resizeMode(col);
+    }
+
+    qDebug() << "   lineWidth " << view->lineWidth();
+    qDebug() << "   rowHeight(0)" << view->rowHeight(0);
+    qDebug() << "   wordWrap()" << view->wordWrap();
+    qDebug() << "   tabKeyNavigation()" << view->tabKeyNavigation();
+
 }
 
 

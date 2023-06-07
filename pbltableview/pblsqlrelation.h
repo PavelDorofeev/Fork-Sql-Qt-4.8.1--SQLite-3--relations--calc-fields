@@ -38,7 +38,7 @@ public:
         LeftJoin
     };
     enum FLD_VALUE{
-        FLD_UNDEFINED = -1
+        COL_UNDEFINED = -1
     };
 
 public:
@@ -49,7 +49,7 @@ public:
 
     explicit PblSqlRelation(
             int idField1,   // id field column in current table // id field in current table
-            const QString &extTblName,                          // external table name
+            const QString & extTblName,                          // external table name
             const QString & idField2Name,                       // id field name in external table for bindind
             const QString & dstFldName,                         // text field name in external table for displaing in current table
             JoinMode join_mode = PblSqlRelation::LeftJoin
@@ -84,13 +84,6 @@ public:
     QString srvSubAcntOnFldName;
 
     QString srvSubAcntParentFld;
-
-
-    //const QString subAccountingTextName;
-
-    // this creates a filter WHERE subAccountingField1=subAccountingField1
-
-
 
 
     // ---------------------------------

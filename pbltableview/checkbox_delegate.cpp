@@ -4,24 +4,29 @@
 #include <QDebug>
 #include <QPainter>
 #include <QPalette>
+#include <QSvgRenderer>
 
-static QRect CheckBoxRect(const QStyleOptionViewItem &view_item_style_options)
+#include "pbltableview/PblSqlRelationalTableModel.h"
+#include "pbltableview/pbltableview.h"
+
+
+checkBox_Delegate::checkBox_Delegate( QWidget *parent)
+    :
+      QStyledItemDelegate(parent)
 {
-    QStyleOptionButton check_box_style_option;
 
-    QRect check_box_rect = QApplication::style()->subElementRect(QStyle::SE_CheckBoxIndicator,&check_box_style_option);
+    svg_renderer = new QSvgRenderer( QString(":icon/img/checked.svg") , this);
 
-    QPoint check_box_point(view_item_style_options.rect.x() + view_item_style_options.rect.width() / 2 -
-                           check_box_rect.width() / 2,
-                           view_item_style_options.rect.y() +
-                           view_item_style_options.rect.height() / 2 -
-                           check_box_rect.height() / 2);
+    svg_renderer_inv = new QSvgRenderer( QString(":icon/img/unchecked.svg") , this);
 
-    return QRect(check_box_point, check_box_rect.size());
+
 }
 
 checkBox_Delegate::~checkBox_Delegate()
 {
+    delete svg_renderer;
+    delete svg_renderer_inv;
+
     qDebug("~checkBox_Delegate");
 }
 
@@ -32,72 +37,85 @@ QWidget *checkBox_Delegate::createEditor(QWidget *parent,
     return 0;
 }
 
-checkBox_Delegate::checkBox_Delegate(PblSqlRelationalTableModel * Mdl,
-                                     QWidget *parent) :
-    QStyledItemDelegate(parent)
-{
-    mdl = Mdl;
-}
 
 void checkBox_Delegate::paint(QPainter *painter,
                               const QStyleOptionViewItem &option,
                               const QModelIndex &index) const
 {
-    //qDebug() << QString("checkBox_Delegate::paint [%1x%2]").arg(index.row()).arg(index.column());
 
     bool checked = index.model()->data(index, Qt::DisplayRole).toBool();
 
 
-    QStyleOptionButton check_box_style_option;
+    QStyleOptionButton opt;
 
-    check_box_style_option.state |= QStyle::State_Enabled;
-
-    if (checked)
-    {
-        check_box_style_option.state |= QStyle::State_On;
-    }
-    else
-    {
-        check_box_style_option.state |= QStyle::State_Off;
-    }
-
-    check_box_style_option.rect = CheckBoxRect(option);
+    //opt.state |= QStyle::State_Enabled;
 
     painter->save();
 
-    if(mdl->isSelectedLine != -1 && index.row() == mdl->isSelectedLine)
+    QRect rect1 (option.rect.x() + PblTableView::margin_hor,
+                 option.rect.y(),
+                 option.rect.width() - (2 * PblTableView::margin_hor),
+                 option.rect.height());
+
+    //qDebug() <<"painter " <<painter->paintEngine()
+
+    if( rect1.width() > rect1.height())
     {
-
-        QStyleOptionViewItem newOpt = option;
-
-        painter->setPen(QPen(newOpt.palette.color(QPalette::Text))); // Цвет пера
-
-        painter->fillRect( newOpt.rect, QApplication::palette().color(QPalette::AlternateBase));
-
+        int offsetX = (rect1.width() - rect1.height()) / 2;
+        rect1.setX(rect1.x() + offsetX );
+        rect1.setWidth(rect1.height());
     }
     else
     {
-        if (option.state & QStyle::State_Selected)
-        {
-            painter->setPen(QPen(option.palette.color(QPalette::HighlightedText))); // Цвет пера
-            painter->fillRect(option.rect, option.palette.highlight());
-        }
-
+        int offsetY = (rect1.height() - rect1.width()) / 2;
+        rect1.setY(rect1.y() + offsetY );
+        rect1.setHeight(rect1.width());
     }
 
-    QApplication::style()->drawControl(QStyle::CE_CheckBox, &check_box_style_option, painter);
+
+    Q_ASSERT(index.isValid());
+
+    QStyleOptionViewItemV4 opt1 = option;
+
+    initStyleOption(&opt1, index);
+
+    QStyle *style = QApplication::style();
+
+
+    opt1.text=""; //!!
+    style->drawControl(QStyle::CE_ItemViewItem, &opt1, painter);
+
+    if(index.row() ==1 )
+    {
+    }
+
+    //painter->fillRect( option.rect , Qt::SolidPattern);//,  style->CC_ScrollBar);
+
+
+//    if( (option.state & QStyle::State_Enabled)
+//            &&(option.state & QStyle::State_Selected))
+//    {
+//         painter->fillRect( option.rect, option.palette.highlight());
+//    }
+//    else if( (option.state & QStyle::State_Selected) )//            &&  option.state & QStyle::State_Enabled)
+//    {
+//        //painter->fillRect( option.rect, option.palette.light());
+//    }
+//    else
+//    {
+//         painter->fillRect(option.rect, option.palette.base());
+//    }
+
+    if (checked)
+    {
+        svg_renderer->render( painter , rect1);
+    }
+    else
+    {
+        svg_renderer_inv->render(painter, rect1);
+    }
+
 
     painter->restore();
 
 }
-
-
-/*bool checkBox_Delegate::editorEvent(QEvent *event,
-                                    QAbstractItemModel *model,
-                                    const QStyleOptionViewItem &option,
-                                    const QModelIndex &index)
-{
-
-    return QStyledItemDelegate::editorEvent(event, model , option , index);
-}*/
-

@@ -16,7 +16,7 @@ Btn_ToolBox::Btn_ToolBox(PblTableView *view_ ) :
 {
     ui->setupUi(this);
 
-//    /mdl = mdl_;
+    //    /mdl = mdl_;
 
     view = view_;
 
@@ -25,6 +25,9 @@ Btn_ToolBox::Btn_ToolBox(PblTableView *view_ ) :
 
     // setBtn_searchInTable(true, false);
     // setBtn_selectionByValue(true, true);
+
+
+    ui->ledt_filter->setPlaceholderText(tr("search"));
 
 }
 
@@ -92,16 +95,17 @@ void Btn_ToolBox::on_ledt_filter_returnPressed()
 {
     QString txt = ui->ledt_filter->text().trimmed();
 
-//    if(txt.isEmpty())
-//        return;
+    //    if(txt.isEmpty())
+    //        return;
 
     if ( view->slot_searchInTable( txt) )
     {
-        if(ui->ledt_filter->text().isEmpty())
-            ui->btn_searchInTable->setEnabled(false);
-        else
-            ui->btn_searchInTable->setEnabled(true);
     }
+    //    qDebug() << " btn_searchInTable ";
+    //    qDebug() << "isDown " << view->tlbx->ui->btn_searchInTable->isDown();
+    //    qDebug() << "isCheckable " << view->tlbx->ui->btn_searchInTable->isCheckable();
+    //    qDebug() << "isChecked " << view->tlbx->ui->btn_searchInTable->isChecked();
+
 }
 
 
@@ -117,7 +121,13 @@ void Btn_ToolBox::on_btn_searchInTable_clicked(bool checked)
 
 void Btn_ToolBox::on_btn_selectByValue_clicked(bool checked)
 {
-    view->slot_triggeredSelectByFieldValue(checked);
+//    if( view->act_selectByFieldValue->isChecked())
+//    {
+        view->slot_triggeredSelectByFieldValue( false);
+//    }
+//    else
+//        ;
+
 
 }
 
@@ -143,6 +153,17 @@ void Btn_ToolBox::on_btn_sortEnabled_clicked(bool checked)
 {
 
     view->setSortingEnabled(checked);
+    //view->tlbx->ui->btn_sortEnabled->setDown(checked);
+    //view->tlbx->ui->btn_sortEnabled->setIcon();
+    //view->tlbx->ui->btn_sortEnabled->icon()
+
+    if(checked)
+        view->tlbx->ui->btn_sortEnabled->setIcon(QIcon(":icon/img/btn-db/sorting.svg"));
+    else
+        view->tlbx->ui->btn_sortEnabled->setIcon(QIcon(":icon/img/btn-db/sorting_off.svg"));
+
+
+
 
 }
 
@@ -156,6 +177,14 @@ void Btn_ToolBox::on_btn_view_clicked()
 
     view->slot_viewRowBtnClick();
 
+}
+
+
+
+void Btn_ToolBox::on_btn_clear_seached_text_clicked()
+{
+    ui->ledt_filter->clear();
+    on_ledt_filter_returnPressed();
 }
 
 

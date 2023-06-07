@@ -21,15 +21,7 @@ void DoubleDelegate::paint(QPainter *painter,
     QAbstractItemView* item = qobject_cast<QAbstractItemView*>(this->parent());
     //QStyledItemDelegate* tableView = qobject_cast<QStyledItemDelegate*>(this->parent());
 
-    if (item)
-    {
-        //QModelIndex hover = tableView->indexAt(tableView->viewport()->mapFromGlobal(QCursor::pos()));
 
-        //if (hover.row() == index.row())
-        //{
-            //painter->fillRect(option.rect, Qt::green);
-        //}
-    }
 
     QStyledItemDelegate::paint(painter, option, index);
 }

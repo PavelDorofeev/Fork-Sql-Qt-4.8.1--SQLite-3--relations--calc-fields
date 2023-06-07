@@ -46,11 +46,16 @@ public:
 
     QHash<int,int> summaryColumns;
 
+    bool select() override;
+
 signals:
 
     void sig_column_values_changed(int col);
     
 public slots:
+
+protected:
+
 
 private:
 

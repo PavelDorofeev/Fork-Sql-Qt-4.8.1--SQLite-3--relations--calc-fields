@@ -3,14 +3,17 @@
 
 #include <QStyledItemDelegate>
 #include <QCheckBox>
-#include "pbltableview/PblSqlRelationalTableModel.h"
+
+#include <QSvgRenderer>
+
+class PblSqlRelationalTableModel;
+class PblTableView;
 
 class checkBox_Delegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit checkBox_Delegate(PblSqlRelationalTableModel * Mdl,
-                               QWidget *parent = 0);
+    explicit checkBox_Delegate( QWidget *parent = 0);
 
     ~checkBox_Delegate();
     
@@ -19,7 +22,13 @@ public:
                      const QStyleOptionViewItem &option,
                      const QModelIndex &index);*/
 
-    QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+//    QSize sizeHint(const QStyleOptionViewItem &option,
+//                   const QModelIndex &index) const;
+
+
+    QWidget* createEditor(QWidget* parent,
+                          const QStyleOptionViewItem& option,
+                          const QModelIndex& index) const;
 
     void paint(QPainter *painter,
                   const QStyleOptionViewItem &option,
@@ -31,6 +40,14 @@ public slots:
 
 private:
     PblSqlRelationalTableModel * mdl;
+    PblTableView * view;
+
+    QSvgRenderer *svg_renderer;
+    QSvgRenderer *svg_renderer_inv;
+
+    int m_margin;
+
+    int em1H;
 };
 
 #endif // CHECKBOX_DELEGATE_H

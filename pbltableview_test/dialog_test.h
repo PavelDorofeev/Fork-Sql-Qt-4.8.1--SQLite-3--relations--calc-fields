@@ -1,5 +1,5 @@
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef DIALOG_TEST_H
+#define DIALOG_TEST_H
 
 #include <QDialog>
 #include <QBoxLayout>
@@ -24,11 +24,14 @@ public:
                         QWidget *parent = 0);
     ~DialogTest();
 
+    static const QString progName;
+    static const QString fontDir;
+
     PblSqlRelationalTableModel2 *mdl;
     PblTableView * view;
     QPushButton * btn;
 
-    //Tlb_Btns *tlbx;
+
     QSqlDatabase db;
 
 signals:
@@ -53,6 +56,9 @@ private slots:
 
     void slot_recalculate_tbl(int);
 
+    void on_btn_font_clicked();
+
+
 private:
     Ui::Dialog *ui;
 
@@ -65,4 +71,4 @@ private:
 
 };
 
-#endif // DIALOG_H
+#endif // DIALOG_TEST_H

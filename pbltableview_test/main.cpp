@@ -1,5 +1,5 @@
 #include <QtGui/QApplication>
-#include "dialog.h"
+#include "dialog_test.h"
 #include <QDebug>
 
 #include <QSqlDatabase>
@@ -7,17 +7,29 @@
 #include <QSqlError>
 #include <QTextCodec>
 #include <QDesktopServices>
+#include <QStyleFactory>
 #include <QDir>
 #include "pbltableview/some_tests.h"
-#include <QObject>
 
+#include <QObject>
+#include <QToolTip>
+#include <QPalette>
 #include "logging_system/logging_system.h"
 #include "pbltableview/pblapplication.h"
 #include <QIcon>
+
 #include "pbltableview/my_sql.h"
+#include "pbltableview/pbltableview.h"
 
 bool firstInsertInto(const QString &tbl , const QString &nameCol , const QString &nameVal);
+
 bool createTables();
+
+void setStyle( PblApplication &app );
+
+//(*func()){ return 0};
+///int (*)(int);
+
 
 int main(int argc, char *argv[])
 {
@@ -49,6 +61,7 @@ int main(int argc, char *argv[])
                 logging_history_ON );
 
     qInstallMsgHandler(logging_System::logCatcher);
+
 
     QSqlDatabase sqlite;
 
@@ -96,40 +109,20 @@ int main(int argc, char *argv[])
 
     // qDebug() << " sizeOf" << sizeof(QSqlDatabase::database()); = 4
 
-
-    QString st = "QTableView{\n"\
-            "border: 2px solid #3873d9;\n"\
-            "/*padding: 35px;*/\n"\
-            "/*background-color: yellow;*/\n"\
-            "/*selection-background-color: green;*/\n"\
-            "}\n"\
-            "QTableView::item{\n"\
-            "margin: 7px;\n"\
-            "}\n"\
-            "QHeaderView{\n"\
-            "/*margin-right: 25px; влияет отображение строк снизу*/\n"\
-            "/*padding: 0px; влияет отображение строк снизу*/\n"\
-            "}\n"\
-            "QHeaderView::section{\n"\
-            "/*color: blue;*/\n"\
-            "/*background-color: #DDD;*/\n"\
-            "/*text-align:left;*/"\
-            "/*margin-left: 15px;*/\n"\
-            "/*border: this solid #EEE;*/\n"\
-            "}\n";
-
-    //    app.setStyleSheet(st);
-
     app.slot_change_language("en");
 
     int res = 1;
 
     while( res == 1 )
     {
+        setStyle( app );
+
         DialogTest *w = new DialogTest(app.langId , sqlite);
 
         QObject::connect(w, SIGNAL(sig_changeLanguage(QString)),
                          (PblApplication*)(&app), SLOT(slot_change_language(QString)));
+
+        w->showFullScreen();
 
         res = w->exec();
 
@@ -138,6 +131,212 @@ int main(int argc, char *argv[])
 
     return 0;
 
+}
+
+void setStyle( PblApplication &app )
+{
+    //--------------------------------------------------------------------
+
+    QSettings sett( DialogTest::progName , DialogTest::fontDir );
+
+    if(sett.contains( "font" ))
+    {
+        QString ff = sett.value("font").toString();
+
+        qDebug() << "   reestr->value(font) : " << ff;
+
+        QFont font=QFont(ff);
+
+        qDebug() << "       pointSize: " << sett.value("pointSize");
+        qDebug() << "       pointSize: " << sett.value("/font/pointSize");
+
+        if( sett.contains("pointSize") && sett.value("pointSize").toInt() > 6)
+            font.setPointSize( sett.value("pointSize").toInt());
+
+        if( sett.contains("pointSizeF") && sett.value( "pointSizeF").toReal() > 6)
+            font.setPointSizeF(sett.value("pointSizeF").toReal());
+
+        if(sett.contains("pixelSize"))
+        {
+            int pixelSize = sett.value("pixelSize").toInt();
+
+            if(pixelSize >0)
+                font.setPixelSize(pixelSize);
+        }
+
+        if ( sett.contains("weight"))
+            font.setWeight( sett.value("weight").toInt());
+
+        if( sett.contains("bold"))
+            font.setBold( sett.value("bold").toBool());
+
+        if(sett.contains("italic"))
+            font.setItalic( sett.value("italic").toBool());
+
+        if(sett.contains("family"))
+            font.setFamily(sett.value("family").toString());
+
+        int ps = font.pointSize();
+
+        QApplication::setFont(font);
+    }
+
+    // --------------------------------------------------------------
+
+    //QWidget::setWindowTitle()
+//    QPalette  pal = QApplication::palette();
+//    pal.setColor(QPalette::AlternateBase , QColor(Qt::green));
+//    pal.setColor(QPalette::AlternateBase , QColor(Qt::green));
+//    QApplication::setPalette(pal);
+    //QApplication::setStyle(QStyleFactory::create("Fusion"));
+
+    //QApplication::setStyle(sty);
+
+    QFont font = QApplication::font();
+
+    QFontMetrics fm(font);
+
+    int ww = fm.width('w');
+    int hh = fm.height();
+
+    QString em1H = QString::number(hh);
+
+    QString em1 = QString::number(ww);
+    QString em2 = QString::number(ww*2);
+
+    QString em05 = QString::number( floor(hh*0.5));
+    QString em02 = QString::number( floor(hh*0.2));
+
+    PblTableView::margin_hor = ww;
+
+    QString st = "\n"\
+
+            "QPushButton{\n"\
+            "   padding:"+em05+"px;\n"\
+            "   margin:"+em05+"px "+em02+"px;\n"\
+            "   background-color: white;\n"\
+            "   color: green;\n"\
+            "   border-radius:"+em02+"px;\n"\
+            "}\n"\
+
+            "QPushButton:!enabled{\n"\
+            "   background:gray; \n"\
+            "   color:white; \n"\
+            "}\n"\
+
+
+            "QToolTip{\n"\
+            "   font-size:42px;\n"\
+            "   padding:"+em1+"px;\n"\
+            "}\n"
+/*
+
+                    "QComboBox{\n"\
+                    "}\n"\
+
+           "   color: #333;\n"\
+                            "padding:"+em1+"px;\n"\
+            "QLineEdit{\n"\
+            "   padding:"+em1+"px "+em1+"px "+em1+"px "+em1+"px;\n"\
+            "}\n"\
+
+            "QTableView{\n"\
+            "}\n"\
+
+        */
+            "QTableView::item{\n"\
+            "padding:"+em05+"px;\n"\
+            "}\n"\
+
+
+            "QHeaderView#vert::section {\n"\
+            "   color: #333;\n"\
+            "   padding:"+em1+"px "+em1+"px;\n"\
+            "   border: 1px solid #f6f7fa;\n"\
+            "}\n"\
+
+            "QHeaderView#hor::section {\n"\
+            "   color: blue;\n"\
+            "   padding:"+em1+"px "+em1+"px;\n"\
+            "   border: 1px solid #f6f7fa;\n"\
+            "}\n"\
+
+
+            "QCheckBox{\n"\
+            "   spacing: 5px;\n"\
+            "   font-size:"+em1H+"px;\n"\
+            "}\n"\
+
+            "QCheckBox::indicator {\n"\
+            "   width: "+em1H+"px;\n"\
+            "   height: "+em1H+"px;\n"\
+            "}\n"\
+
+            "QCheckBox::indicator:checked{\n"\
+            "   image:url(:icon/img/checked.png);\n"\
+            "}\n"\
+
+            ;
+
+
+    /*
+
+
+
+    "background-color: #EEE;\n"\
+
+                "QToolButton{"\
+                "width: "+sToolBtnSz+"px;\n"\
+                "height: "+sToolBtnSz+"px;\n"\
+                "}"\
+
+     QCheckBox {
+         spacing: 5px;
+     }
+
+     QCheckBox::indicator {
+         width: 13px;
+         height: 13px;
+     }
+
+     QCheckBox::indicator:unchecked {
+         image: url(:/images/checkbox_unchecked.png);
+     }
+
+     QCheckBox::indicator:unchecked:hover {
+         image: url(:/images/checkbox_unchecked_hover.png);
+     }
+
+     QCheckBox::indicator:unchecked:pressed {
+         image: url(:/images/checkbox_unchecked_pressed.png);
+     }
+
+     QCheckBox::indicator:checked {
+         image: url(:/images/checkbox_checked.png);
+     }
+
+     QCheckBox::indicator:checked:hover {
+         image: url(:/images/checkbox_checked_hover.png);
+     }
+
+     QCheckBox::indicator:checked:pressed {
+         image: url(:/images/checkbox_checked_pressed.png);
+     }
+
+     QCheckBox::indicator:indeterminate:hover {
+         image: url(:/images/checkbox_indeterminate_hover.png);
+     }
+
+     QCheckBox::indicator:indeterminate:pressed {
+         image: url(:/images/checkbox_indeterminate_pressed.png);
+     }
+    0
+                */
+    qDebug() << st;
+
+    app.setStyleSheet(st);
+
+    QToolTip::setFont(font);
 }
 
 bool firstInsertInto(const QString &tbl , const QString &nameCol , const QString &nameVal)

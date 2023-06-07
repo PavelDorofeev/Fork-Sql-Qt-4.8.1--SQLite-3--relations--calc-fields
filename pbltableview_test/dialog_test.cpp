@@ -1,4 +1,4 @@
-#include "dialog.h"
+#include "dialog_test.h"
 #include "ui_dialog.h"
 #include "pbltableview/pbltableview.h"
 #include "pbltableview/pblsqlrelationaltablemodel.h"
@@ -14,11 +14,19 @@
 #include "pbltableview/pbl_table_dlg.h"
 #include "pbltableview/pbltableview2.h"
 #include "config.h"
+#include "config2.h"
 #include "logging_system/logging_system.h"
 #include <QDateTime>
 #include "pbltableview/version_pbl.h"
 #include "pbltableview/pbltableview.h"
 #include <QSqlQuery>
+#include <QFontDialog>
+#include "btn_toolbox.h"
+
+
+const QString DialogTest::progName = "QTableDlg test db";
+const QString DialogTest::fontDir= "font";
+
 
 DialogTest::DialogTest(QString langId,
                        QSqlDatabase &db_,
@@ -60,11 +68,32 @@ DialogTest::DialogTest(QString langId,
         return ;
     }
 
+    if( ! config::setting_mdl(mdl))
+    {
+        QMessageBox::warning(this,
+                             mySql::error_,
+                             tr("setting_mdl table '%1' is unsuccefully").arg(tableName)
+                             +tr("\n\nerror: : %2").arg(mdl->lastError().text()));
+
+        return ;
+    }
+
+    if( ! config2::setting_mdl2(mdl)) //second level
+    {
+        QMessageBox::warning(this,
+                             mySql::error_,
+                             tr("setting_mdl table '%1' is unsuccefully").arg(tableName)
+                             +tr("\n\nerror: : %2").arg(mdl->lastError().text()));
+
+        return ;
+    }
+
     _CONNECT_(mdl , SIGNAL(sig_column_values_changed(int)),
               this, SLOT(slot_recalculate_tbl(int)));
 
     view = new PblTableView2(this,
-                             true,
+                             config::setting_mdl,
+                             config::setting_view,
                              false);
 
 
@@ -78,8 +107,38 @@ DialogTest::DialogTest(QString langId,
         return ;
     }
 
+//    view->set_editingEnabled( true , true , false );
+//    view->set_ExtColumnsVisible(true, false);
+
+    if( ! config::setting_view(view))
+    {
+        QMessageBox::warning(this,
+                             mySql::error_,
+                             tr("setting_mdl table '%1' is unsuccefully").arg(tableName)
+                             +tr("\n\nerror: : %2").arg(mdl->lastError().text()));
+
+        return ;
+    }
+
+
+    if ( ! mdl->select() )
+        ;
+
+    view->resizeColumnsToContents();
+
     view->setToLayout(ui->tableViewLO);
 
+    ui->tableViewLO->setStretch( 0 , 1);
+    ui->tableViewLO->setStretch( 1 , 4);
+    ui->tableViewLO->addStrut(2); // !!!!!
+
+    qDebug() << "   stretch(0) " << ui->tableViewLO->stretch(0);
+
+    qDebug() << "   stretch(1) " << ui->tableViewLO->stretch(1);
+
+    qDebug() << "   stretch(2) " << ui->tableViewLO->stretch(2);
+
+    qDebug() << "   stretch(3) " << ui->tableViewLO->stretch(3);
 
     slot_recalculate_tbl(mdl->fieldIndex("sum"));
 
@@ -178,9 +237,26 @@ void DialogTest::on_btn_save_clicked()
 
 void DialogTest::openTable(const QString & tableName)
 {
-    PblTableDlg dlg(tableName , db , this, true);
+    PblTableDlg dlg(tableName ,
+                    &db ,
+                    this,
+                    config::setting_mdl ,
+                    config::setting_view ,
+                    false);
+
+
+//    if ( ! config::setting_mdl( dlg.mdl) )
+//        ;
+
+//    if ( ! config::setting_view( dlg.view ) )
+//        ;
+
+
+    dlg.mdl->select();
 
     dlg.setWindowTitle(tableName);
+
+    dlg.showFullScreen();
 
     dlg.exec();
 
@@ -252,3 +328,50 @@ void DialogTest::slot_recalculate_tbl(int col)
         ui->lbl_sum->setText(QString::number(summ , 'f' ,2 ));
     }
 }
+
+void DialogTest::on_btn_font_clicked()
+{
+    bool bb=false;
+
+    QFont prevFnt=QApplication::font();
+
+    QFontMetrics fm(prevFnt);
+
+    QFont newFont = QFontDialog::getFont(&bb, prevFnt, this);
+
+    if(newFont.pointSize()< 6)
+    {
+        QMessageBox::warning(this,
+                 tr("Недопустимый размер"),
+                 tr("Не допускается выбирать размер меньше 6!"));
+        return;
+    }
+
+    if(newFont.pointSize()>36)
+    {
+        QMessageBox::warning(this,
+                 tr("invalid size (>36)"),
+                 tr("This is impissible to use the size more 36!"));
+        return;
+    }
+
+    QSettings sett( DialogTest::progName , DialogTest::fontDir );
+
+    sett.setValue("font",newFont.toString());
+
+    sett.setValue("pixelSize",newFont.pixelSize());
+    sett.setValue("pointSize",newFont.pointSize());
+    sett.setValue("pointSizeF",newFont.pointSizeF());
+    sett.setValue("weight",newFont.weight());
+    sett.setValue("bold",newFont.bold());
+    sett.setValue("italic",newFont.italic());
+    sett.setValue("family",newFont.family());
+
+    QApplication::setFont(newFont);
+
+    setFont(newFont);
+
+    accept();
+
+}
+

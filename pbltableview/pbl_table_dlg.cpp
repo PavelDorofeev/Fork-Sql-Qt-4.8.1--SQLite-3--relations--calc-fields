@@ -33,12 +33,16 @@
 #include <QDebug>
 #include "config.h"
 #include <QSqlError>
+#include <QSqlDatabase>
+
+#include "btn_toolbox.h"
 
 PblTableDlg::PblTableDlg(
         const QString & tableName,
-        QSqlDatabase &Db,
+        QSqlDatabase *Db,
         QWidget *parent,
-        bool editable,
+        cb_setting_mdl p_cbMdl,
+        cb_setting_view p_cbView,
         bool selectable,
         const QHash<QString,QVariant> &Filter,
         QSqlTableModel::EditStrategy edt
@@ -54,9 +58,13 @@ PblTableDlg::PblTableDlg(
 {
     ui->setupUi(this);
 
+    // ----------------------------------------------------
+    //      direct ctor
+    // ----------------------------------------------------
+
     setWindowTitle(tableName);
 
-    mdl = new PblSqlRelationalTableModel( Db , this);
+    mdl = new PblSqlRelationalTableModel( *Db , this);
 
     //qDebug() << " Filter " << Filter;
 
@@ -72,12 +80,17 @@ PblTableDlg::PblTableDlg(
         return;
     }
 
-    //mdl->setEditStrategy(edt);
+    if(p_cbMdl !=0) //  !!
+        p_cbMdl(mdl);
+
 
     view = new PblTableView (
                 this,
-                editable ,
+                p_cbMdl,
+                p_cbView,
                 selectable);
+
+
 
     if( ! view->prepare(mdl))
     {
@@ -90,12 +103,10 @@ PblTableDlg::PblTableDlg(
                               );
     }
 
-    init( Db, editable, selectable);
+    if(p_cbView !=0) //  !!
+        p_cbView(view);
 
-    _CONNECT_(view->act_selectAndClose, SIGNAL(triggered()),
-              this, SLOT(slot_accepted()));
-
-
+    init( *Db, editable, selectable);
 
 }
 
@@ -104,7 +115,8 @@ PblTableDlg::PblTableDlg( const QString &tableName,
                           PblTableView *View,
                           QSqlDatabase &Db,
                           QWidget *parent,
-                          bool editable,
+                          cb_setting_mdl p_cbMdl,
+                          cb_setting_view p_cbView,
                           bool selectable,
                           const QHash<QString,QVariant> Filter,
                           QSqlTableModel::EditStrategy edt)
@@ -125,6 +137,7 @@ PblTableDlg::PblTableDlg( const QString &tableName,
     mdl = Mdl;//new PblSqlRelationalTableModel( Db , this);
 
     qDebug() << "PblTableDlg Filter " <<Filter;
+
     if( ! mdl->prepare(tableName , Filter ))
     {
         QMessageBox::critical(this,
@@ -136,6 +149,7 @@ PblTableDlg::PblTableDlg( const QString &tableName,
 
     }
     view = View;
+
 
     if( ! view->prepare( mdl))
     {
@@ -151,15 +165,38 @@ PblTableDlg::PblTableDlg( const QString &tableName,
 
     init( Db, editable, selectable);
 
+    _CONNECT_( view , SIGNAL(clicked(QModelIndex)),
+               this, SLOT(slot_view_clicked(QModelIndex) ) );
+
+
 }
 
+void PblTableDlg::slot_view_clicked(QModelIndex idx)
+{
+    qDebug() << "PblTableDlg::slot_view_clicked";
+
+    qDebug() << "selectionBehavior" << view->selectionBehavior();
+
+    qDebug() << "focusPolicy" << view->focusPolicy();
+
+    qDebug()<<  "editTriggers " << view->editTriggers();
+
+
+    qDebug()<<  "editTriggers CurrentChanged " << view->editTriggers().testFlag(QAbstractItemView::CurrentChanged)
+             <<  "\n    DoubleClicked " <<view->editTriggers().testFlag(QAbstractItemView::DoubleClicked)
+              <<  view->editTriggers().testFlag(QAbstractItemView::SelectedClicked)
+               <<  view->editTriggers().testFlag(QAbstractItemView::EditKeyPressed)
+                <<  view->editTriggers().testFlag(QAbstractItemView::AnyKeyPressed)
+                 <<  view->editTriggers().testFlag(QAbstractItemView::AllEditTriggers)
+                     ;
+}
 
 bool PblTableDlg::init( QSqlDatabase &Db, bool editable, bool selectable)
 {
     if( ! Db.isOpen())
         return false;
 
-    db = Db;
+    sqlite = &Db;
 
 
     setSizeGripEnabled(true);
@@ -168,22 +205,39 @@ bool PblTableDlg::init( QSqlDatabase &Db, bool editable, bool selectable)
     view->setToLayout(ui->for_table_lo); // impotant
 
 
+    ui->for_table_lo->setStretch( 0 , 1);
+
+    ui->for_table_lo->setStretch( 1 , 400);
+
+    ui->for_table_lo->addStrut(20); // !!!!!
+
+
+    // Attention there are two construstors
+
+    _CONNECT_(view->act_selectAndClose, SIGNAL(triggered()),
+              this, SLOT(slot_accepted()));
+
+
     adjustSize();
 
     return true;
 
 }
 
-bool PblTableDlg::select()
+/*bool PblTableDlg::select()
 {
-    return mdl->select();
-}
+    bool bbb = mdl->select();
+
+    adjustSize();
+
+    return bbb ;
+}*/
 
 PblTableDlg::~PblTableDlg()
 {
     if(view !=0)
     {
-        qDebug() << "~PblTableDlgEx() delete view";
+        //qDebug() << "~PblTableDlgEx() delete view";
         delete view;
         view =0;
     }
@@ -191,7 +245,7 @@ PblTableDlg::~PblTableDlg()
 
     if(mdl !=0)
     {
-        qDebug() << "~PblTableDlgEx() delete mdl";
+        //qDebug() << "~PblTableDlgEx() delete mdl";
         delete mdl;
         mdl =0;
     }
@@ -244,3 +298,8 @@ QVBoxLayout * PblTableDlg::getUi()
     return ui->for_table_lo;
 }
 
+
+void PblTableDlg::on_btn_close_clicked()
+{
+    close();
+}

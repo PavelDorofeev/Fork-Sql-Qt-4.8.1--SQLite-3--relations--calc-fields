@@ -52,8 +52,8 @@ PblSqlRelation::PblSqlRelation( int IdField1,
       dstFldName(DestField),
       col(IdField1),
       displayType(-1),
-      subAcntColumn(FLD_UNDEFINED),
-      subDisplayAcntColumn(FLD_UNDEFINED)
+      subAcntColumn(COL_UNDEFINED),
+      subDisplayAcntColumn(COL_UNDEFINED)
 
 {
     joinMode = Join_mode;

@@ -18,35 +18,38 @@ class ComboBoxDelegate  : public QStyledItemDelegate
 public:
 
 
-    explicit ComboBoxDelegate(PblSqlRelationalTableModel *mdl,
-                              int column,
-                              QStringList &lst,
-                              QWidget *parent);
+    explicit ComboBoxDelegate( const QStringList &lst,
+                               QWidget *parent);
 
 
     QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
     void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const;
 
-    void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+//    void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+
+    //    QSize sizeHint(const QStyleOptionViewItem &option,
+    //                   const QModelIndex &index) const;
+
+
+    void paint(QPainter *painter,
+                                  const QStyleOptionViewItem &option,
+                                  const QModelIndex &index) const;
 
     QString displayText(const QVariant &value, const QLocale &locale) const ;
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 protected:
 
 public slots:
-    void slot_currentIndexChanged(int pos);
 
 private slots:
-    //void slot_commitAndCloseEditor(int);
+
 
 private:
-    int col;
+
     QStringList lst;
     QComboBox *cmb;
-    PblSqlRelationalTableModel *mdl;
 
 };
 

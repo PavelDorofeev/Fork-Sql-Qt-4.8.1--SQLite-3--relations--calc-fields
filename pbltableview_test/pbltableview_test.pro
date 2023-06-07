@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql network
+QT       += core gui sql network svg
 
 TARGET = pbltableview_test
 TEMPLATE = app
@@ -37,17 +37,17 @@ include(../logging_system/logging_system.pri)
 
 SOURCES +=\
     main.cpp \
-    dialog.cpp \
     config.cpp \
     pblsqlrelationaltablemodel2.cpp \
-    config2.cpp
+    config2.cpp \
+    dialog_test.cpp
 
 HEADERS  += \
-    dialog.h \
     config.h \
     version_app.h \
     pblsqlrelationaltablemodel2.h \
-    config2.h
+    config2.h \
+    dialog_test.h
 
 FORMS    += dialog.ui
 

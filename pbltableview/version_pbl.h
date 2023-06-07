@@ -18,10 +18,12 @@
 // setRelation , setBinding make convenient
 // 10.0.2.0
 
-#define PROG_VERSION    "10.0.2.0"
-#define VER1    10
+// 11.0.0.0  remove some functions
+
+#define PROG_VERSION    "11.0.0.0"
+#define VER1    11
 #define VER2    0
-#define VER3    2
+#define VER3    0
 #define VER4    0
 
 #endif // VERSION_H

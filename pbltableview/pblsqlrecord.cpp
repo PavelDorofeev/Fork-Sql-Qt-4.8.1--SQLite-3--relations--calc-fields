@@ -1,4 +1,5 @@
 #include "pblsqlrecord.h"
+#include <QDebug>
 
 PblSqlRecord::PblSqlRecord(const QSqlRecord &rec)
     :
@@ -6,7 +7,7 @@ PblSqlRecord::PblSqlRecord(const QSqlRecord &rec)
       priCol(-1)
 {
 
-
+    qDebug() << "PblSqlRecord rec " << rec;
 }
 
 

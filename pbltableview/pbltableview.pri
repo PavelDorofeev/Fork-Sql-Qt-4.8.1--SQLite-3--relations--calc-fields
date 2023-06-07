@@ -23,7 +23,12 @@ HEADERS += \
     pbltableview/pblsqlrecord.h \
     pbltableview/version.h \
     pbltableview/pblcalc_column.h \
-    pbltableview/pbltableview2.h
+    pbltableview/pbltableview2.h \
+    pbltableview/buttoniconautoresize.h \
+    pbltableview/defaultstyleditemdelegate.h \
+    pbltableview/pblheaderview.h \
+    ../../my_lib/pbltableview/icon_styleditemdelegate.h \
+    ../pbltableview/version_pbl.h
 
 SOURCES += \
     pbltableview/btn_toolbox.cpp \
@@ -43,7 +48,11 @@ SOURCES += \
     pbltableview/pblsqlrelationaltablemodel2.cpp \
     pbltableview/pblsqlrecord.cpp \
     pbltableview/pblcalc_column.cpp \
-    pbltableview/pbltableview2.cpp
+    pbltableview/pbltableview2.cpp \
+    pbltableview/buttoniconautoresize.cpp \
+    pbltableview/defaultstyleditemdelegate.cpp \
+    pbltableview/pblheaderview.cpp \
+    ../../my_lib/pbltableview/icon_styleditemdelegate.cpp
 
 FORMS    += \
     pbltableview/btn_toolbox.ui \

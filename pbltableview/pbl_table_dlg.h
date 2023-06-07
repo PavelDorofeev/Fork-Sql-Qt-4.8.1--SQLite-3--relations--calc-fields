@@ -31,7 +31,8 @@
 #include <QSqlRecord>
 #include <QModelIndex>
 #include "pbltableview/pblsqlrelationaltablemodel.h"
-#include <QSqlDatabase>
+#include "pbltableview/pbltableview.h"
+
 #include <QVBoxLayout>
 #include "pblsqlrecord.h"
 
@@ -39,8 +40,9 @@ namespace Ui {
 class PblTableDlg;
 }
 
-class PblSqlRelationalTableModel;
-class PblTableView;
+
+
+class QSqlDatabase;
 
 class PblTableDlg : public QDialog
 {
@@ -48,9 +50,10 @@ class PblTableDlg : public QDialog
     
 public:
     explicit PblTableDlg(const QString & tableName,
-                         QSqlDatabase &db,
+                         QSqlDatabase *sqlite,
                          QWidget *parent = 0,
-                         bool editable=false,
+                         cb_setting_mdl p_cbMdl =0,
+                         cb_setting_view p_cbView=0,
                          bool selectable=false,
                          const QHash<QString,QVariant> &filter=QHash<QString,QVariant>(),
                          QSqlTableModel::EditStrategy edt = QSqlTableModel::OnRowChange
@@ -70,10 +73,10 @@ public:
 
     PblTableView * view;
 
-    QSqlDatabase db;
+    QSqlDatabase *sqlite;
 
     //virtual bool set_Table(const  QString &tableName);
-    virtual bool select();
+    //virtual bool select();
 
     virtual bool setCalcField(CALC_COLUMN &calc);
 
@@ -86,9 +89,10 @@ protected:
             const QString &tableName,
             PblSqlRelationalTableModel *mdl,
             PblTableView *view,
-            QSqlDatabase &db,
+            QSqlDatabase &sqlite,
             QWidget *parent = 0,
-            bool editable=false,
+            cb_setting_mdl p_cbMdl = 0,
+            cb_setting_view p_cbView = 0,
             bool selectable=false,
             const QHash<QString,QVariant> filter=QHash<QString,QVariant>(),
             QSqlTableModel::EditStrategy edt = QSqlTableModel::OnRowChange);
@@ -97,9 +101,13 @@ public slots:
 
     void slot_accepted();
 
+    void slot_view_clicked(QModelIndex);
+
 
 private slots:
 
+
+    void on_btn_close_clicked();
 
 private:
     Ui::PblTableDlg *ui;

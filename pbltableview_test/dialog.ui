@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
-    <height>653</height>
+    <width>632</width>
+    <height>256</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QVBoxLayout" name="mainLo">
+    <layout class="QVBoxLayout" name="mainLo" stretch="0,100,0">
      <property name="margin">
       <number>10</number>
      </property>
@@ -23,6 +23,18 @@
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QComboBox" name="cmb_Language">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maxCount">
+          <number>10</number>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContents</enum>
+         </property>
          <item>
           <property name="text">
            <string>en</string>
@@ -65,26 +77,40 @@
          </property>
         </spacer>
        </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QToolButton" name="btn_goods">
-         <property name="text">
-          <string>goods</string>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>books</string>
          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <property name="margin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="btn_goods">
+            <property name="text">
+             <string>goods</string>
+            </property>
+            <property name="autoDefault">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_checks">
+            <property name="text">
+             <string>checks</string>
+            </property>
+            <property name="autoDefault">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="btn_checks">
-         <property name="text">
-          <string>checks</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
+        <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -95,6 +121,16 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_font">
+         <property name="text">
+          <string>font size</string>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="btn_logView">
@@ -114,6 +150,18 @@
         <string>document</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
+        <property name="leftMargin">
+         <number>5</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
+        <property name="bottomMargin">
+         <number>5</number>
+        </property>
         <item>
          <layout class="QVBoxLayout" name="tableViewLO">
           <property name="margin">
@@ -132,47 +180,23 @@
              <number>5</number>
             </property>
             <item row="0" column="0">
-             <widget class="QLabel" name="lbl_sum">
-              <property name="font">
-               <font>
-                <family>MS Shell Dlg 2</family>
-                <pointsize>12</pointsize>
-                <weight>50</weight>
-                <italic>false</italic>
-                <bold>false</bold>
-               </font>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Sum</string>
               </property>
-              <property name="styleSheet">
-               <string notr="true">color: rgb(85, 170, 255);
-font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="lbl_sum">
+              <property name="midLineWidth">
+               <number>0</number>
               </property>
               <property name="text">
                <string>...</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="label">
-              <property name="styleSheet">
-               <string notr="true">font: 75 12pt &quot;MS Shell Dlg 2&quot;;
-color: rgb(165, 183, 238);</string>
-              </property>
-              <property name="text">
-               <string>Sum</string>
-              </property>
-             </widget>
-            </item>
            </layout>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btn_save">
-            <property name="text">
-             <string>SAVE DOCUMENT</string>
-            </property>
-            <property name="autoDefault">
-             <bool>false</bool>
-            </property>
-           </widget>
           </item>
           <item>
            <spacer name="horizontalSpacer_5">
@@ -187,6 +211,16 @@ color: rgb(165, 183, 238);</string>
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QPushButton" name="btn_save">
+            <property name="text">
+             <string>SAVE DOCUMENT</string>
+            </property>
+            <property name="autoDefault">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
@@ -200,7 +234,7 @@ color: rgb(165, 183, 238);</string>
        <item>
         <widget class="QPushButton" name="btn_Close">
          <property name="text">
-          <string>Close</string>
+          <string>Close App</string>
          </property>
          <property name="autoDefault">
           <bool>false</bool>
