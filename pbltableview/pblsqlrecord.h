@@ -4,23 +4,43 @@
 #include <QSqlRecord>
 #include <QHash>
 
+//#include "pblsqlrelationaltablemodel.h"
+class PblSqlRelationalTableModel;
+
 class PblSqlRecord : public QSqlRecord
 {
+
 public:
 
-    PblSqlRecord()
-    {
-    }
+    typedef enum SPECIAL_FLD_TYPES{
+        //RELATION_TXT_FLD=1,
+        RELATION_ID_EXT_FLD=1,
+        SUBACCOUNT_ENABLE_FLD,
+        CALC_FLD
+    };
 
-    explicit PblSqlRecord(const QSqlRecord &rec);
+    PblSqlRecord();
+
+    explicit PblSqlRecord( PblSqlRelationalTableModel &mdl ,
+                           const QSqlRecord &rec); // copy ctor
+
+    PblSqlRecord& operator=(const QSqlRecord& other);
 
     virtual ~PblSqlRecord();
 
-    int priCol;
+    //int priCol;
 
-    QHash<int, int> hash;
+    QHash< QString, SPECIAL_FLD_TYPES > specialFld;
 
-    int getRelIdColumn(int relCol) const;
+    //QHash< QString, QString > relFields;
+
+    int isThis_RelExtColumn(const QString& relCol) const;
+
+private:
+
+    void func1(const QSqlRecord &rec);
+
+    PblSqlRelationalTableModel *mdl;
 
 
 };

@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -9,27 +7,14 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="800px"
-   height="800px"
-   viewBox="0 0 24 24"
+   width="50px"
+   height="50px"
+   viewBox="0 0 50 50"
    fill="none"
    version="1.1"
-   id="svg4"
+   id="svg1"
    sodipodi:docname="insert.svg"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
-  <metadata
-     id="metadata10">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs
-     id="defs8" />
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -41,22 +26,35 @@
      inkscape:pageshadow="2"
      inkscape:window-width="1680"
      inkscape:window-height="1021"
-     id="namedview6"
+     id="namedview7"
      showgrid="false"
-     inkscape:zoom="0.295"
-     inkscape:cx="240.67797"
-     inkscape:cy="400"
+     inkscape:zoom="4.72"
+     inkscape:cx="25"
+     inkscape:cy="25"
      inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg4" />
+     inkscape:current-layer="Insert" />
+  <metadata
+     id="metadata13">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs9" />
   <g
-     id="g4751"
+     id="Insert"
      style="fill:none;fill-opacity:1;stroke:#00b200;stroke-opacity:1">
     <path
        id="Vector"
-       d="m 8,12 h 4 m 0,0 h 4 m -4,0 v 4 m 0,-4 V 8 m 0,13 C 7.02944,21 3,16.9706 3,12 3,7.02944 7.02944,3 12,3 c 4.9706,0 9,4.02944 9,9 0,4.9706 -4.0294,9 -9,9 z"
-       inkscape:connector-curvature="0"
-       style="stroke:#00b200;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;fill:none;fill-opacity:1" />
+       d="m 15.297552,25.029661 h 9.838042 m 0,0 h 9.838041 m -9.838041,0 v 9.79096 m 0,-9.79096 v -9.79096 m 0,31.820621 C 12.91045,47.059322 3.0000001,37.196398 3.0000001,25.029661 3.0000001,12.863022 12.91045,3 25.135594,3 c 12.225242,0 22.135593,9.863022 22.135593,22.029661 0,12.166737 -9.910351,22.029661 -22.135593,22.029661 z"
+       style="fill:none;fill-opacity:1;stroke:#00b200;stroke-width:4.8;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>

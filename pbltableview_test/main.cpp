@@ -194,6 +194,8 @@ void setStyle( PblApplication &app )
 
     QFont font = QApplication::font();
 
+    int fontSz = font.pointSize();
+
     QFontMetrics fm(font);
 
     int ww = fm.width('w');
@@ -203,6 +205,7 @@ void setStyle( PblApplication &app )
 
     QString em1 = QString::number(ww);
     QString em2 = QString::number(ww*2);
+    QString em3 = QString::number(ww*3);
 
     QString em05 = QString::number( floor(hh*0.5));
     QString em02 = QString::number( floor(hh*0.2));
@@ -216,8 +219,19 @@ void setStyle( PblApplication &app )
             "   margin:"+em05+"px "+em02+"px;\n"\
             "   background-color: white;\n"\
             "   color: green;\n"\
-            "   border-radius:"+em02+"px;\n"\
+            "   border-radius: "+em05+"px;\n"\
+            "   background: rgb(225,231,252);\n"\
+            "   border-style: outset;\n"\
+            "   border-width: 2px;\n"\
+            "   border-color: rgb(200,200,200);\n"\
+            "   margin: "+em05+"px;\n"\
             "}\n"\
+
+            "QPushButton:disabled {\n"\
+            "   background: rgb(210,210,210);\n"\
+            "   color: rgb(150,150,150);\n"\
+            "}\n"\
+
 
             "QPushButton:!enabled{\n"\
             "   background:gray; \n"\
@@ -226,46 +240,118 @@ void setStyle( PblApplication &app )
 
 
             "QToolTip{\n"\
-            "   font-size:42px;\n"\
+            "   font-size:"+em2+"px;\n"\
             "   padding:"+em1+"px;\n"\
+            "   border-radius:"+em05+"px;\n"\
+            "   border: 1px solid gray;\n"\
             "}\n"
-/*
-
-                    "QComboBox{\n"\
-                    "}\n"\
-
-           "   color: #333;\n"\
-                            "padding:"+em1+"px;\n"\
-            "QLineEdit{\n"\
-            "   padding:"+em1+"px "+em1+"px "+em1+"px "+em1+"px;\n"\
-            "}\n"\
 
             "QTableView{\n"\
+            "   outline:none;\n"\
             "}\n"\
-
-        */
+/*
             "QTableView::item{\n"\
-            "padding:"+em05+"px;\n"\
+            "   padding:"+em1+"px;\n"\
+            "}\n"\
+*/
+            "QHeaderView::section{\n"\
+            "}\n"\
+
+            "QHeaderView::section:horizontal{\n"\
+            "   padding-left:"+em1+"px;\n"\
+            "   padding-right:"+em1+"px;\n"\
+            "   padding-top:"+em05+"px;\n"\
+            "   padding-bottom:"+em05+"px;\n"\
+            "}\n"\
+/*
+            "QHeaderView::section:horizontal:hover{\n"\
+            "   border: 2px solid green;\n"\
+            "   border-radius:"+em02+"px;\n"\
+            "}\n"\
+*/
+            /* enabled работает , но !enabled не дает выделять строку по клику на ячейке */
+
+            "QHeaderView::section:horizontal:checked{\n"\
+            "   border: 2px solid green;\n"\
+            "   border-radius:"+em02+"px;\n"\
+            "   padding-left:"+em05+"px;\n"\
+            "   padding-right:"+em05+"px;\n"\
+            "}\n"\
+/*
+            "QHeaderView::section:horizontal:!checked{\n"\
+            "   border: 2px solid red;\n"\
+            "   border-radius:"+em02+"px;\n"\
+            "   padding-left:"+em05+"px;\n"\
+            "   padding-right:"+em05+"px;\n"\
+            "}\n"\
+*/
+/*
+            "QHeaderView::section:horizontal:editable:checked{\n"\
+            "   border: 2px solid blue;\n"\
+            "   border-radius:"+em02+"px;\n"\
+            "   padding-left:"+em05+"px;\n"\
+            "   padding-right:"+em05+"px;\n"\
+            "}\n"\
+*/
+/*
+            "QHeaderView::section:horizontal:focus{\n"\
+            "   border: 2px solid blue;\n"\
+            "}\n"\
+
+            "QHeaderView::section:horizontal:selected{\n"\
+            "   border: 2px solid blue;\n"\
+            "   border-radius:"+em02+"px;\n"\
+            "}\n"\
+*/
+            "QHeaderView::section:vertical{\n"\
+            "   padding-top:"+em05+"px;\n"\
+            "   padding-bottom:"+em05+"px;\n"\
+            "   padding-left:"+em05+"px;\n"\
+            "   padding-right:"+em05+"px;\n"\
+            "   min-width:"+em2+"px;\n"\
+            "   min-height:"+em2+"px;\n"\
+            "}\n"\
+
+            "QHeaderView::section:vertical:checked{\n"\
+            "   border-radius:"+em02+"px;\n"\
+            "   border: 2px solid gray;\n"\
+            "   padding-left:"+em02+"px;\n"\
+            "   padding-right:"+em02+"px;\n"\
+            "}\n"\
+
+            "QToolButton{\n"\
+            "width: "+em1+"px;\n"\
+            "height: "+em1+"px;\n"\
             "}\n"\
 
 
-            "QHeaderView#vert::section {\n"\
-            "   color: #333;\n"\
-            "   padding:"+em1+"px "+em1+"px;\n"\
-            "   border: 1px solid #f6f7fa;\n"\
+/*
+                    "QTableView::item:!selected:focus{\n"\
+                    "   background:transparent;\n"\
+                    "}\n"\
+
+                    "   padding:"+em02+"px;\n"\
+                    "   border-radius:"+em02+"px;\n"\
+
+          :next-selected   :first
+
+      QHeaderView :first, :last, :only-one, :next-selected, :previous-selected, :selected, :horizontal, :vertical и :checked.
+
+*/
+            "#LineEdit{\n"\
+            "   border-radius:"+em02+"px;\n"\
+            "   border: 1px solid #555;\n"\
             "}\n"\
 
-            "QHeaderView#hor::section {\n"\
-            "   color: blue;\n"\
-            "   padding:"+em1+"px "+em1+"px;\n"\
-            "   border: 1px solid #f6f7fa;\n"\
+            "QComboBox{\n"\
+            "   border-radius:"+em02+"px;\n"\
+            "   border: 1px solid #555;\n"\
             "}\n"\
-
 
             "QCheckBox{\n"\
-            "   spacing: 5px;\n"\
             "   font-size:"+em1H+"px;\n"\
             "}\n"\
+
 
             "QCheckBox::indicator {\n"\
             "   width: "+em1H+"px;\n"\
@@ -273,64 +359,21 @@ void setStyle( PblApplication &app )
             "}\n"\
 
             "QCheckBox::indicator:checked{\n"\
-            "   image:url(:icon/img/checked.png);\n"\
+            "   image:url(:icon/img/checked.svg);\n"\
+            "}\n"\
+            "QCheckBox::indicator:!checked{\n"\
+            "   image:url(:icon/img/unchecked.svg);\n"\
             "}\n"\
 
             ;
 
 
     /*
-
-
+            "   spacing: 5px;\n"\
 
     "background-color: #EEE;\n"\
 
-                "QToolButton{"\
-                "width: "+sToolBtnSz+"px;\n"\
-                "height: "+sToolBtnSz+"px;\n"\
-                "}"\
 
-     QCheckBox {
-         spacing: 5px;
-     }
-
-     QCheckBox::indicator {
-         width: 13px;
-         height: 13px;
-     }
-
-     QCheckBox::indicator:unchecked {
-         image: url(:/images/checkbox_unchecked.png);
-     }
-
-     QCheckBox::indicator:unchecked:hover {
-         image: url(:/images/checkbox_unchecked_hover.png);
-     }
-
-     QCheckBox::indicator:unchecked:pressed {
-         image: url(:/images/checkbox_unchecked_pressed.png);
-     }
-
-     QCheckBox::indicator:checked {
-         image: url(:/images/checkbox_checked.png);
-     }
-
-     QCheckBox::indicator:checked:hover {
-         image: url(:/images/checkbox_checked_hover.png);
-     }
-
-     QCheckBox::indicator:checked:pressed {
-         image: url(:/images/checkbox_checked_pressed.png);
-     }
-
-     QCheckBox::indicator:indeterminate:hover {
-         image: url(:/images/checkbox_indeterminate_hover.png);
-     }
-
-     QCheckBox::indicator:indeterminate:pressed {
-         image: url(:/images/checkbox_indeterminate_pressed.png);
-     }
-    0
                 */
     qDebug() << st;
 
@@ -385,6 +428,23 @@ bool createTables()
 {
     QString  tableName;
 
+    tableName = "test";
+
+
+    if( ! createTbl( tableName, "CREATE TABLE "+tableName+" ("\
+                     "id	INTEGER UNIQUE,"\
+                     "int1	INTEGER NOT NULL,"\
+                     "int2	INTEGER DEFAULT NULL,"\
+                     "int3	INTEGER DEFAULT NULL,"\
+                     "int4	INTEGER DEFAULT NULL,"\
+                     "PRIMARY KEY(id AUTOINCREMENT))"))
+        return false;
+
+    firstInsertInto(tableName , "int1,int2,int3,int4" , "1, 2, 3, 4");
+    firstInsertInto(tableName , "int1,int2,int3,int4" , "1, 2, 3, 4");
+    firstInsertInto(tableName , "int1,int2,int3,int4" , "1, 2, 3, 4");
+
+    //------------------------------
     tableName = "checks";
 
 
@@ -428,7 +488,7 @@ bool createTables()
                      "price double default NULL,"\
                      "qty double default NULL,"\
                      "sum double default NULL,"\
-                     "cmb	INTEGER DEFAULT -1,"\
+                     "combobox	INTEGER DEFAULT -1,"\
                      "chk	INTEGER DEFAULT NULL,"\
                      "foo	INTEGER DEFAULT NULL,"\
                      "PRIMARY KEY(id AUTOINCREMENT)"\
@@ -436,8 +496,8 @@ bool createTables()
         return false;
 
 
-    firstInsertInto(tableName , "productName,price,qty,sum,cmb" , "1, 123.4, 1.35, 166.59 ,0");
-    firstInsertInto(tableName , "productName,price,qty,sum,cmb" , "2, 2.5, 2.334 ,5.835, 1");
+    firstInsertInto(tableName , "productName,price,qty,sum,combobox" , "1, 123.4, 1.35, 166.59 ,0");
+    firstInsertInto(tableName , "productName,price,qty,sum,combobox" , "2, 2.5, 2.334 ,5.845, 1");
     firstInsertInto(tableName , "productName,price,qty,sum,chk" , "3, 345.6, 3.4, 1175.04, 1");
 
 
@@ -447,7 +507,7 @@ bool createTables()
     if( ! createTbl( tableName, "CREATE TABLE "+tableName+" "\
                      "(id INTEGER UNIQUE,"\
                      "goods_id NOT NULL,"\
-                     "val varchar NOT NULL,"\
+                     "val varchar,"\
                      "PRIMARY KEY(id AUTOINCREMENT)"\
                      ")"))
         return false;

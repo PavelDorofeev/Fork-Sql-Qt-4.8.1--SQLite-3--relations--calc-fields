@@ -6,11 +6,13 @@
 #include "pbltableview.h"
 
 
-DoubleDelegate::DoubleDelegate(PblSqlRelationalTableModel *mdl_, QObject *parent) :
+DoubleDelegate::DoubleDelegate(int Precision,
+                               QObject *parent)
+    :
     QStyledItemDelegate(parent)
+    ,precision(Precision)
 {
 
-    mdl =mdl_;
 }
 
 void DoubleDelegate::paint(QPainter *painter,
@@ -19,7 +21,6 @@ void DoubleDelegate::paint(QPainter *painter,
 {
 
     QAbstractItemView* item = qobject_cast<QAbstractItemView*>(this->parent());
-    //QStyledItemDelegate* tableView = qobject_cast<QStyledItemDelegate*>(this->parent());
 
 
 
@@ -27,27 +28,16 @@ void DoubleDelegate::paint(QPainter *painter,
 }
 
 
-QWidget *DoubleDelegate::createEditor(QWidget *parent,
+QWidget *DoubleDelegate::createEditor( QWidget *parent,
                                       const QStyleOptionViewItem &option,
                                       const QModelIndex &index) const
 {
-    int pr=2;
-
-    if(index.isValid())
-    {
-        int col = index.column();
-
-        if( mdl->colInfo.contains(col))
-        {
-            pr = mdl->colInfo.value(col).precision;
-        }
-    }
 
     QDoubleSpinBox *spnBx = new QDoubleSpinBox(parent);
 
-    spnBx->setDecimals(pr);
+    spnBx->setDecimals( precision );
 
-    QPalette palette = option.palette;//editor->palette();
+    QPalette palette = option.palette;
 
     spnBx->setPalette(palette);
 

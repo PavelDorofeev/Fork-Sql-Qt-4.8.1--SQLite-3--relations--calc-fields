@@ -55,7 +55,7 @@ private slots:
 
     void on_btn_selectByValue_clicked(bool checked);
 
-    void on_btn_searchInTable_clicked(bool checked);
+    //void on_btn_searchInTable_clicked(bool checked);
 
     void on_btn_sortEnabled_clicked(bool checked);
 
@@ -66,8 +66,6 @@ private slots:
 
 
     void on_btn_clear_seached_text_clicked();
-
-
 
 
 private:

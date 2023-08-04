@@ -10,7 +10,8 @@ class Q_DECL_EXPORT DoubleDelegate : public QStyledItemDelegate
     Q_OBJECT
 public:
 
-    explicit DoubleDelegate(PblSqlRelationalTableModel *mdl, QObject *parent = 0);
+    explicit DoubleDelegate( int Precision,
+                             QObject *parent = 0);
 
    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
@@ -22,7 +23,7 @@ signals:
 public slots:
 
 private:
-    PblSqlRelationalTableModel *mdl;
+    int precision;
     
 };
 

@@ -75,10 +75,6 @@ public:
 
     QSqlDatabase *sqlite;
 
-    //virtual bool set_Table(const  QString &tableName);
-    //virtual bool select();
-
-    virtual bool setCalcField(CALC_COLUMN &calc);
 
     virtual bool setRelation(PblSqlRelation &rel);
 

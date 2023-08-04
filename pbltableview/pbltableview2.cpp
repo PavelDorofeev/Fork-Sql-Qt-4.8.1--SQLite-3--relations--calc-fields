@@ -33,7 +33,9 @@ bool PblTableView2::vrt_insertRow(int row)
 
         if( goodIdx.isValid())
         {
-            vrt_doubleClicked( goodIdx );
+            bool needsSubmitAfter = false;
+
+            return vrt_doubleClicked( goodIdx , needsSubmitAfter );
 
             return true;
         }
@@ -43,14 +45,15 @@ bool PblTableView2::vrt_insertRow(int row)
     return false;
 }
 
-bool PblTableView2::vrt_afterSetFldValue(int idRow,
-                                         int col,
-                                         const QModelIndex & idx,
-                                         const PblSqlRecord &rec)
+bool PblTableView2::vrt_afterSetFldValue( int idRow,
+                                          const QString & fldName,
+                                          const QModelIndex & idx,
+                                          const PblSqlRecord &rec,
+                                          bool &needsSubmitAfter)
 {
     int row = idx.row();
 
-    if( col == model()->baseRec.indexOf("productName"))
+    if( fldName == "productName")
     {
         if( ! idx.isValid())
         {
@@ -76,6 +79,8 @@ bool PblTableView2::vrt_afterSetFldValue(int idRow,
 
         model()->setData( model()->index( row , col) , 1.00 );
 
+        needsSubmitAfter = true;
+
 
         //qDebug() << "rec " << rec;
     }
@@ -85,9 +90,10 @@ bool PblTableView2::vrt_afterSetFldValue(int idRow,
     }
 
     PblTableView::vrt_afterSetFldValue(idRow,
-                                       col,
+                                       fldName,
                                        idx, // ?????
-                                       rec);
+                                       rec,
+                                       needsSubmitAfter);
     resizeColumnsToContents();
 
     return true;

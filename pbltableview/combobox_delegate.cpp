@@ -35,10 +35,29 @@ QWidget *ComboBoxDelegate::createEditor(QWidget *parent,
 
     cmb->insertItems(0,lst);
 
+    int width = 50;
+
+    for(int ii=0; ii < cmb->count(); ii++)
+    {
+        if( width < QApplication::fontMetrics().width( cmb->itemText(ii)) )
+            width = QApplication::fontMetrics().width( cmb->itemText(ii));
+    }
+
+
+
     QPalette palette = option.palette; //editor->palette();
 
     cmb->setPalette(palette);
 
+    QStyleOptionViewItem opt = option;
+
+    cmb->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+
+    cmb->setMinimumWidth( width);
+
+    cmb->updateGeometry();
+
+    qDebug() << "cmb->geometry() " << cmb->geometry();
     return cmb;
 }
 
@@ -86,15 +105,21 @@ void ComboBoxDelegate::paint(QPainter *painter,
 
     QStyleOptionViewItemV4 opt1 = option;
 
-    initStyleOption(&opt1, index); // !!! set opt1.text =...
+    //initStyleOption(&opt1, index); // !!! set opt1.text =...
 
-    QStyle *style = QApplication::style();
+    //QStyle *style = QApplication::style();
 
-    style->drawControl(QStyle::CE_ItemViewItem, &opt1, painter);
+    //style->drawControl(QStyle::CE_ItemViewItem, &opt1, painter);
 
     //style->drawItemText(painter , opt1.rect);
 
     //painter->drawText( opt1.rect ,  opt1.text);
+
+    QStyleOptionViewItem opt(option);
+
+    opt.rect.adjust(0, 0, 0, 0);
+
+    QStyledItemDelegate::paint(painter, opt, index);
 
 }
 

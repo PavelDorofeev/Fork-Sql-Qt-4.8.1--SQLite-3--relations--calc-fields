@@ -24,13 +24,9 @@ public:
 
     PblRelColumn operator=(const PblRelColumn &other);
 
-    int origCol;
-
     int exCol;
 
-    //COLUMN_TYPE type;
-
-    PblSqlRelation relation;
+//    /PblSqlRelation relation;
 
     const QString renamedHeaderCol;
 

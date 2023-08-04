@@ -89,22 +89,6 @@ void checkBox_Delegate::paint(QPainter *painter,
     {
     }
 
-    //painter->fillRect( option.rect , Qt::SolidPattern);//,  style->CC_ScrollBar);
-
-
-//    if( (option.state & QStyle::State_Enabled)
-//            &&(option.state & QStyle::State_Selected))
-//    {
-//         painter->fillRect( option.rect, option.palette.highlight());
-//    }
-//    else if( (option.state & QStyle::State_Selected) )//            &&  option.state & QStyle::State_Enabled)
-//    {
-//        //painter->fillRect( option.rect, option.palette.light());
-//    }
-//    else
-//    {
-//         painter->fillRect(option.rect, option.palette.base());
-//    }
 
     if (checked)
     {

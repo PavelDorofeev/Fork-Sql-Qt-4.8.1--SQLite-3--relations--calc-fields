@@ -41,11 +41,12 @@
 #include <QApplication>
 #include <QComboBox>
 #include <QSqlQuery>
+#include <QPainter>
 #include <QPaintEvent>
 #include "pbltableview/my_sql.h"
 #include "pbltableview/combobox_delegate.h"
 #include "config.h"
-#include "pbltableview/pblrelcolumn.h"
+//#include "pbltableview/pblrelcolumn.h"
 #include "pbltableview/checkbox_delegate.h"
 #include "pbltableview/defaultstyleditemdelegate.h"
 #include "pbltableview/pblsqlrelationaltablemodel.h"
@@ -54,26 +55,13 @@
 #include "pbltableview/pbl.h"
 #include "ui_btn_toolbox.h"
 #include "date_delegate.h"
+#include "horizontal_header.h"
+#include "pblsubaccnt.h"
 
 const QString PblTableView::s_submit= QObject::tr("submit");
 const QString PblTableView::s_submitAll= QObject::tr("submit All");
 int   PblTableView::margin_hor = 0;
 
-const QString PblTableView::styleSheet1 = QString("QTableView{\n"\
-                                                  "padding:10px;\n"\
-                                                  "border: 0px;\n"\
-                                                  "}"\
-                                                  "QTableView::item{\n"\
-                                                  "padding:10px;\n"\
-                                                  "border: 1px solid #f6f7fa;\n"\
-                                                  "}"\
-                                                  "QHeaderView::section {\n"\
-                                                  "color: white;\n"\
-                                                  "padding:10px;\n"\
-                                                  "background-color: rgb(150,150,150);\n"\
-                                                  "border: 1px solid #f6f7fa;\n"\
-                                                  "}\n"\
-                                                  );
 
 
 PblTableView::PblTableView(
@@ -94,30 +82,43 @@ PblTableView::PblTableView(
       act_choiceCurrentRecord(0),
       act_search(0),
       act_selectByFieldValue(0),
-      //act_view(0),
       act_selectAndClose(0),
       dblDlg(0),
       selectAndClose(0),
       selectable(Selectable),
-      editable( false),
-      //act_switch_editable(0),
+      //editable( false), //
       contextMenuEnabled(false),
       search_wgts_visible(false),
       showRelExColumns(false),
       changeEditStrategyEnable(false),
       hideEditBtns(true),
       p_cb_setting_view(pView),
-      p_cb_setting_mdl(pMdl)
+      p_cb_setting_mdl(pMdl),
+      mdl(0)
+
 {
 
     setSelectionMode(QAbstractItemView::SingleSelection);
 
+
+    setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
 
     // ----------------------------------------------------
     //              context menu
     // ----------------------------------------------------
 
     contextMenu = new QMenu(this);
+
+    hor = new Horizontal_Header(Qt::Horizontal , this);
+
+    setHorizontalHeader(hor);
+
+    _CONNECT_(hor, SIGNAL(sig_needsReselect(QList<int>)),
+              this, SLOT(slot_needsReselect(QList<int>)));
+
+    horizontalHeader()->setDragEnabled(true);
+    horizontalHeader()->setAcceptDrops(true);
+    horizontalHeader()->setDragDropMode(QAbstractItemView::DragDrop );
 
 
     _CONNECT_(this, SIGNAL(customContextMenuRequested(const QPoint &)),
@@ -175,8 +176,6 @@ PblTableView::PblTableView(
     _CONNECT_(tlbx->ui->chk_editable, SIGNAL(toggled(bool)),
               this, SLOT(slot_editingEnabled_clicked(bool)));
 
-    set_SelectionModel();
-
     //------------------------------------------------------------
 
     tlbx->ui->chk_showRelExColumns->setVisible(false); // default
@@ -191,24 +190,7 @@ PblTableView::PblTableView(
     _CONNECT_(tlbx->ui->cmb_Strategy, SIGNAL(currentIndexChanged(int)),
               this, SLOT(slot_editStrategyChange_clicked(int)));
 
-    //------------------------------------------------------------
-    //------------------------------------------------------------
 
-    //set_editingEnabled( editable );
-
-    if( editable)
-    {
-
-    }
-    else
-    {
-
-    }
-
-    if( selectable)
-    {
-
-    }
 
     // ----------------------------------------------------------
     //                      SEARCHING
@@ -253,7 +235,7 @@ PblTableView::PblTableView(
 
     QString emH1 = QString::number(hh);
 
-    int toolBtnSz = hh*3;
+    int toolBtnSz = hh*2;
 
     foreach( QToolButton * tlb , findChildren<QToolButton *>() )
     {
@@ -261,14 +243,79 @@ PblTableView::PblTableView(
 
         tlb->setFixedSize(toolBtnSz , toolBtnSz);
     }
+    //setIconSize( QSize(toolBtnSz , toolBtnSz));
 
-    tlbx->ui->cmb_Strategy->setMaximumHeight(toolBtnSz);
-    tlbx->ui->btn_submitAll->setMaximumHeight(toolBtnSz);
+    //    tlbx->ui->cmb_Strategy->setMaximumHeight(toolBtnSz);
+    //    tlbx->ui->btn_submitAll->setMaximumHeight(toolBtnSz);
 
-    setStyle_Sheet();
 
-    //    if(pView != 0)
-    //        pView(this);
+    // Мы здесь (в контсрукторе ) еще не знаем редактирование включено или нет
+    //set_behavoir( editable );
+
+    verticalHeader()->setDefaultAlignment( Qt::AlignCenter);
+
+    horizontalHeader()->setDefaultAlignment( Qt::AlignCenter);
+
+    verticalHeader()->setResizeMode(QHeaderView::ResizeToContents); // влияет существенно
+
+    horizontalHeader()->setResizeMode(QHeaderView::Interactive); // ResizeToContents не дает менять ширину
+
+
+}
+
+void PblTableView::set_tlbx_visible(bool visible)
+{
+    tlbx->setVisible( visible);
+}
+
+void PblTableView::set_editEnabledChkBoxVisible( bool visible)
+{
+    tlbx->ui->chk_editable->setVisible( visible);
+}
+
+void PblTableView::slot_needsReselect(QList<int> lst)
+{
+    return; //?????
+
+
+    qDebug() << "lst " <<lst;
+    QList<QString> lst2;
+
+    for(int col=0; col< lst.count(); col++)
+    {
+        int cl = lst.at( col );
+
+        QString fldName = model()->baseRec.fieldName( cl );
+
+        //Q_ASSERT (fldName.isEmpty() == false);
+
+        if ( fldName.isEmpty())
+        {
+            qDebug() << " baseRec " << model()->baseRec;
+            qDebug() << " cl " <<cl;
+        }
+
+        lst2.append( fldName );
+
+    }
+    qDebug() << "lst2 " << lst2;
+
+    //    horizontalHeader()->reset();
+
+    //    horizontalHeader()->restoreState( stt);
+
+
+
+
+    mdl->change_fld_list( lst2 );
+
+
+    setModel( mdl );
+
+
+    model()->select();
+
+    setContentsMargins(20,20,20,20);
 
 }
 
@@ -356,7 +403,7 @@ void PblTableView::set_searchingEnabled( bool On)
 }
 void PblTableView::slot_editStrategyChange_clicked(int strat)
 {
-    qDebug()<< " PblTableView::slot_editStrategyChanged_clicked ";
+    //qDebug()<< " PblTableView::slot_editStrategyChanged_clicked " <<strat;
 
     Q_ASSERT( strat >= QSqlTableModel::OnFieldChange && strat <= QSqlTableModel::OnManualSubmit);
 
@@ -412,15 +459,37 @@ void PblTableView::set_sortingEnabled(bool On)
 
 }
 
-void PblTableView::slot_editingEnabled_clicked(bool On) // from chk box toggled
+void PblTableView::set_behavoir(bool editOn)
 {
-    qDebug() << " slot_editingEnabled_clicked " << On;
+    // setting inertactive behavoir with combo boxes
+    // this will be called from ctor and click check box (edit enable)
 
-    model()->set_editable( On ); // !!!!!
+    set_repaintEditBtns( editOn , editOn , hideEditBtns); // On , On !!!
 
-    set_repaintEditBtns( On , On , hideEditBtns); // On , On !!!
+    set_SelectionModel( editOn );
 
-    repaint();
+    set_Edit_Triggers( editOn);
+
+
+
+
+}
+
+void PblTableView::slot_editingEnabled_clicked(bool editOn) // from chk box toggled
+{
+    QModelIndex idx =  currentIndex();
+
+    qDebug() << " slot_editingEnabled_clicked " << editOn;
+
+    //if( ! editOn )
+    horizontalHeader()->setHighlightSections( editOn );
+
+    model()->set_editable( editOn ); // !!!!!
+
+    set_behavoir( editOn);
+
+    setCurrentIndex( idx ); // repaint selections
+
 }
 
 void PblTableView::set_editingEnabled(bool On,
@@ -429,15 +498,19 @@ void PblTableView::set_editingEnabled(bool On,
 {
     qDebug() << " set_editingEnabled " << On << defVisibleWithOn << hideBtns;
 
-    editable = On;
+    //editable = On;
     defaultEditOn = defVisibleWithOn;
     hideEditBtns = hideBtns;
 
 
     if( On && defVisibleWithOn)
+
         tlbx->ui->chk_editable->setChecked( true ); // !!!!
+
     else
+
         tlbx->ui->chk_editable->setChecked( false ); // !!!!
+
 
     model()->set_editable( On ); // !!!!!
 
@@ -452,18 +525,21 @@ void PblTableView::set_editingEnabled(bool On,
 
 }
 
-void PblTableView::set_SelectionModel()
+void PblTableView::set_SelectionModel( bool EditMode)
 {
-    if(tlbx->ui->chk_editable->isChecked())
+    if( EditMode )
     {
         setSelectionBehavior(SelectItems);
         setSelectionMode(QAbstractItemView::SingleSelection);
+
     }
     else
     {
         setSelectionBehavior(SelectRows);
         setSelectionMode(QAbstractItemView::SingleSelection);
     }
+
+
 }
 
 void PblTableView::set_repaintEditBtns(bool On,
@@ -475,7 +551,6 @@ void PblTableView::set_repaintEditBtns(bool On,
     //              SWITCH_EDIT_ENABLED
     // ----------------------------------------------------------
 
-    set_SelectionModel();
 
     tlbx->ui->chk_editable->setVisible(true);
     //tlbx->ui->chk_editable->setChecked(def);
@@ -491,6 +566,7 @@ void PblTableView::set_repaintEditBtns(bool On,
     tlbx->ui->btn_delete->setEnabled( en );
 
     bool btnVisible = true;
+
     if( ! On && hideBtns)
         btnVisible = false;
 
@@ -589,6 +665,24 @@ void PblTableView::set_repaintEditBtns(bool On,
 
         }
 
+        // ----------------------------------------------------------
+        //                       CLEAR FIELD
+        // ----------------------------------------------------------
+
+        if(act_ClearField ==0)
+        {
+            act_ClearField = new QAction( QIcon(":icon/img/btn-db/clear_field.svg"),
+                                          trUtf8("clear field"), this);
+
+            act_ClearField->setShortcut(Qt::CTRL + Qt::Key_Backspace);
+
+            _CONNECT_(act_ClearField, SIGNAL(triggered()), this, SLOT(slot_clearFieldClick()));
+
+            contextMenu->addAction(act_ClearField);
+
+            //addAction(act_ClearField);
+        }
+
 
     }
 
@@ -679,48 +773,10 @@ void PblTableView::set_repaintEditBtns(bool On,
 
         tlbx->ui->btn_delete->setEnabled(false);
 
+        // ----------------------------------------------------------
+        //                       CLEAR_FIELD
+        // ----------------------------------------------------------
 
-    }
-
-
-    if(act_InsertRow != NULL)
-    {
-        //        QString suff="";
-        //        if( ! def)
-        //            suff="_dis";
-
-        //        QString str = ":icon/img/btn-db/insert"+suff+".svg";
-        //        qDebug();
-
-        //        QIcon icn(str) ;
-
-        //        act_InsertRow->setIcon(icn);
-        //        act_InsertRow->setDisabled( ! def );
-    }
-
-
-
-    // ----------------------------------------------------------
-    //                       CLEAR_FIELD
-    // ----------------------------------------------------------
-
-    if(On)
-    {
-        if(act_ClearField !=0)
-        {
-            act_ClearField = new QAction( QIcon(":icon/img/btn-db/clear_field.svg"),
-                                          trUtf8("clear field"), this);
-
-            _CONNECT_(act_ClearField, SIGNAL(triggered()), this, SLOT(slot_clearFieldClick()));
-
-            contextMenu->addAction(act_ClearField);
-
-            addAction(act_ClearField);
-        }
-
-    }
-    else if ( ! On)
-    {
         if(act_ClearField !=0)
         {
 
@@ -736,7 +792,10 @@ void PblTableView::set_repaintEditBtns(bool On,
         }
 
 
+
     }
+
+
 
 
 
@@ -754,12 +813,15 @@ PblTableView::~PblTableView()
 {
     //qDebug() << "~PblTableView()";
 
-    dlgts.clear();
+    delegts.clear();
 
 }
 
 void PblTableView::setModel(PblSqlRelationalTableModel *newMdl)
 {
+    mdl = newMdl;
+
+    set_behavoir( newMdl->editable );
 
     if( model() !=0 )
     {
@@ -777,7 +839,7 @@ void PblTableView::setModel(PblSqlRelationalTableModel *newMdl)
 
     }
 
-    QTableView::setModel(newMdl);
+    QTableView::setModel( newMdl );
 
     //mdl = qobject_cast<PblSqlRelationalTableModel*>( QTableView::model() ); // QAbstractItemModel *
 
@@ -814,10 +876,6 @@ void PblTableView::setModel(PblSqlRelationalTableModel *newMdl)
 
     tlbx->ui->cmb_Strategy->setCurrentIndex(newMdl->editStrategy());
 
-    qDebug() << "newMdl->editStrategy() "<<newMdl->editStrategy();
-
-
-    qDebug() << "PblTableView headerData : " << model()->headerData(0 , Qt::Horizontal, Qt::BackgroundRole);
 
 }
 
@@ -925,49 +983,36 @@ void PblTableView::slot_setVisibleExRelIdColumns(bool visible)
 
     showRelExColumns = visible;
 
-    for(int col = 0; col < model()->baseRecord().count(); col++)
+    foreach(QString fldName, model()->baseRec.specialFld.keys())
     {
-        // after select only
+        //qDebug() << "specialFld setColumnHidden " << fldName << ! showRelExColumns;
 
-        int relIdCol = model()->getRelIdColumn(col);
-
-        if( relIdCol >=0)
+        if( model()->baseRec.specialFld[ fldName ] !=  PblSqlRecord::CALC_FLD)
         {
-            qDebug() << "setColumnHidden " << model()->record().fieldName(relIdCol);
-            setColumnHidden(relIdCol , ! showRelExColumns);
+            int Col = model()->baseRec.indexOf( fldName );
+
+            setColumnHidden( Col , ! showRelExColumns);
         }
-
     }
 
-    setColumnHidden(model()->priCol , ! showRelExColumns);
+    QHashIterator<QString , PblColumnInfo> it(model()->colInfo);
 
-
-    foreach( int col , model()->addSubAcntOnFlds.keys())
+    while( it.hasNext() )
     {
-        int acntOnCol = model()->getAccountingOnColumn( col );
+        it.next();
 
-        Q_ASSERT( acntOnCol != -1);
+        //qDebug() << "COLUMN_INFO: " << it.value();
 
-        setColumnHidden(acntOnCol , ! showRelExColumns);
+        if( ! it.value().is_visible )
+
+            setColumnHidden( mdl->baseRec.indexOf( it.key( ) ) , ! showRelExColumns);
+
     }
 
-    foreach( int col , model()->addSubAcntOnFlds.keys())
-    {
-        int acntOnCol = model()->getAccountingOnColumn( col );
+    if( model()->getPriColumn() >=0)
+        setColumnHidden( model()->getPriColumn() , ! showRelExColumns);
 
-        Q_ASSERT( acntOnCol != -1);
-
-        setColumnHidden(acntOnCol , ! showRelExColumns);
-    }
-
-    foreach( QString col , model()->subAccountingFilter.keys())
-    {
-
-        setColumnHidden(model()->baseRec.indexOf(col) , ! visible);
-    }
-
-
-    resizeColumnsToContents();
+    //resizeColumnsToContents();
 
 }
 
@@ -1040,7 +1085,7 @@ void PblTableView::setContextMenuItemsVisibleAfterFieldSelected()
         act_ClearField->setEnabled(false);
 
 
-    if( ! editable )
+    if( ! model()->editable )
     {
         //        если ONLY READ
         //  контекстное меню все убрано
@@ -1055,10 +1100,10 @@ void PblTableView::setContextMenuItemsVisibleAfterFieldSelected()
         }
 
 
-        if( col < model()->record().count() )
+        if( col < model()->baseRec.count() )
         {
 
-            if( model()->getRelIdColumn(col)>0 )
+            if( model()->getRelIdColumn( col ) >= 0 )
             {
                 QString str= model()->data(model()->index(row,col)).toString();
 
@@ -1072,7 +1117,7 @@ void PblTableView::setContextMenuItemsVisibleAfterFieldSelected()
         }
 
     }
-    else if( editable )       // форма редактируемая
+    else if( model()->editable )       // форма редактируемая
     {
         if( act_EditRow != 0)
             act_EditRow->setVisible(true);
@@ -1089,7 +1134,7 @@ void PblTableView::setContextMenuItemsVisibleAfterFieldSelected()
         if( act_ClearField != 0)
             act_ClearField->setVisible(true);
 
-        if( editable )
+        if( model()->editable )
         {
             if( act_EditRow != 0)
                 act_EditRow->setEnabled(true);
@@ -1198,7 +1243,13 @@ bool PblTableView::vrt_clearRelField(const QModelIndex &idx)
         return false;
     }
 
-    if (!  model()->isRelationalColumn( col ) )
+    if ( !  model()->isRelationalColumn( col ) )
+
+        return false;
+
+    QString fldName = model()->baseRec.fieldName( col );
+
+    if(  fldName.isEmpty() )
 
         return false;
 
@@ -1206,7 +1257,7 @@ bool PblTableView::vrt_clearRelField(const QModelIndex &idx)
     //                 first clear relation id field !
     // ------------------------------------------------------------------
 
-    int extCol = model()->getRelIdColumn(col);
+    int extCol = model()->getRelIdColumn( col );
 
     QModelIndex exIdx = model()->index( row, extCol);
 
@@ -1228,12 +1279,12 @@ bool PblTableView::vrt_clearRelField(const QModelIndex &idx)
     }
 
     // ------------------------------------------------------------------
-    //                  sub accounting on files has to clear
+    //                  sub accounting fields has to clear
     // ------------------------------------------------------------------
 
     if( idx.isValid() ) // NOT submit/select
     {
-        if( model()->addSubAcntOnFlds.contains( col ))
+        if( model()->subAccnt.contains( fldName ))
         {
             int subOnCol = model()->getAccountingOnColumn( col );
 
@@ -1251,9 +1302,11 @@ bool PblTableView::vrt_clearRelField(const QModelIndex &idx)
 
     }
 
-    if( model()->rel_subAccounting.contains( col ))
+    if( model()->subAccnt.contains( fldName ))
     {
-        int subCol =  model()->rel_subAccounting.value( col )->subAcntColumn;
+        QString rel2FldName =  model()->subAccnt.value( fldName ).fld2;
+
+        int subCol = model()->baseRec.indexOf( rel2FldName );
 
         QModelIndex subIdx = model()->index( row , subCol );
 
@@ -1270,11 +1323,6 @@ bool PblTableView::vrt_clearRelField(const QModelIndex &idx)
 
 bool PblTableView::vrt_insertRow(int srcRow)
 {
-    //qDebug() << "PblTableView::insertRow()";
-
-    model()->submit(); // forever first call submit, result is not important
-
-
     int newRow = model()->rowCount();// forever insert at end
 
     if( ! model()->insertRow(newRow))
@@ -1283,15 +1331,13 @@ bool PblTableView::vrt_insertRow(int srcRow)
         return false;
     }
 
-    tlbx->ui->btn_submitAll->setEnabled(true); //
-
     model()->isInsertRow = newRow;
+
+    tlbx->ui->btn_submitAll->setEnabled(true); //
 
     setCurrentIndex( model()->index( newRow , 0 ) );
 
     // better save row to db now but maybe this does later too
-
-    //bool bbb = model()->submit();
 
     emit sig_showSubmitBtn( true);
 
@@ -1300,12 +1346,67 @@ bool PblTableView::vrt_insertRow(int srcRow)
 
 bool PblTableView::slot_insertRowBtnClick()
 {
+    bool needsToSubmit = false;
+
+    QSqlTableModel::EditStrategy old = model()->editStrategy();
+
+    // ---------------------------------------------------
+    // Important! with inserting a row we have immediately to submit for model strategy
+    // OnFieldChange and OnFieldChange
+    // ---------------------------------------------------
+
+    if( old == QSqlTableModel::OnFieldChange )
+    {
+        // temporary set OnRowChange
+
+        model()->setEditStrategy(QSqlTableModel::OnRowChange); //!!!
+
+    }
+
+    if(old != QSqlTableModel::OnManualSubmit)
+
+        needsToSubmit = true; // !!!!
+
+
     int row = 0;
 
     if( currentIndex().isValid())
+
         row = currentIndex().row();
 
-    return vrt_insertRow(row);
+
+    bool res = true;
+
+    if ( res = vrt_insertRow( row ) )
+    {
+        // here may be called a virtual fuction that makes initializing new row
+        // for example : open new dialog windows to select value for special field
+    }
+
+
+
+    if( res && needsToSubmit )
+    {
+
+        bool res = model()->submit(); // !!!!!!!
+
+        if ( ! res )
+        {
+            QMessageBox::critical(this ,
+                                  "error" ,
+                                  QString("submit returns  false\n"\
+                                          "sql error: %1")
+                                  .arg(model()->lastError().text())
+                                  );
+        }
+
+    }
+
+    if( old == QSqlTableModel::OnFieldChange)
+
+        model()->setEditStrategy( QSqlTableModel::OnFieldChange ); // restore
+
+    return res;
 }
 
 
@@ -1414,18 +1515,19 @@ bool PblTableView::vrt_copyRow(int srcRow)
 
     int newRow = model()->rowCount();
 
-    QSqlRecord src = model()->record(srcRow);
+    QSqlRecord srcRec = model()->record(srcRow);
 
     bool bb = model()->insertRow( newRow );
 
     if( ! bb )
     {
-        qCritical() << "PblTableView::copyRow  insertRow ERROR : " << model()->lastError();
+        qCritical() << "PblTableView::copyRow  insertRow ERROR : " << model()->lastError().text();
         return false;
     }
 
+    bool bbb = model()->removePrimaryKeys_fromRec( srcRec, PblSqlRelationalTableModel::INSERT );
 
-    bool bbb = model()->setRecord_withoutPriCol( newRow , src, PblSqlRelationalTableModel::INSERT );
+    bbb = model()->setRecord( newRow , srcRec);
 
     if(model()->editStrategy() == QSqlTableModel::OnManualSubmit)
     {
@@ -1473,10 +1575,9 @@ bool PblTableView::vrt_removeRow(int row)
 
             QMessageBox::warning(this ,
                                  mySql::warning ,
-                                 tr("before removing a line you should submit dirty row %2 (id : %3)\ntable '%1'\nerror:%4").
+                                 tr("before removing a line you should submit dirty row %2 \ntable '%1'\nerror:%3").
                                  arg(model()->tableName()).
                                  arg(model()->isInsertRow).
-                                 arg(model()->getRelIdColumn(model()->isInsertRow)).
                                  arg(model()->lastError().text()));
             return false;
         }
@@ -1548,90 +1649,149 @@ void PblTableView::setSelectAndClose()
 }
 
 
-bool PblTableView::vrt_doubleClicked(const QModelIndex & idx)
+bool PblTableView::vrt_doubleClicked(const QModelIndex & idx_dblClk , bool &needsSubmitAfter)
 {
 
+    needsSubmitAfter = false;
 
-    int col = idx.column();
-    int row = idx.row();
+    int col = idx_dblClk.column();
+    int row = idx_dblClk.row();
 
 
+    QString fldName = model()->baseRec.fieldName( col );
+
+    if( fldName .isEmpty() )
+        return false;
 
     int idCurrRow = model()->getRowPriValue( row );
 
-    if( ! editable )
+    if( ! model()->editable )
     {
         if( selectable) //selecting row and close dlg
-
+        {
             emit act_selectAndClose->trigger();
 
+        }
         else    // only view row
+        {
+            vrt_viewRow( row );
 
-            vrt_viewRow( row);
+        }
 
         return false;
     }
-    else if( editable )
+    else if( model()->editable )
     {
-        if( selectable && ! tlbx->ui->chk_editable->isChecked())
-            //selecting row and close dlg
+        if( selectable && ! tlbx->ui->chk_editable->isChecked() )
+
         {
+            //selecting row and close dlg
+
             emit act_selectAndClose->trigger();
 
-            return false;
-        }
-        else if( ! selectable && ! tlbx->ui->chk_editable->isChecked())
-        {
-            vrt_viewRow( row);
 
             return false;
         }
+        //        else if( ! selectable )//&& ! tlbx->ui->chk_editable->isChecked())
+        //        {
+        //            vrt_viewRow( row);
+
+
+        //            return false;
+        //        }
 
     }
 
+    if( model()->editStrategy() == QSqlTableModel::OnFieldChange)
+    {
+        QMessageBox::warning( this,
+                              "error",
+                              QString("you need to switch this model from OnFieldChange to OnRowChange (temporary)"));
+        return false;
+    }
 
     // ------------------------------------------------
     //          RELATION COLUMN
     // ------------------------------------------------
 
 
-    if(model()->isRelationalColumn( col) ) // relations
+    if(model()->isRelationalColumn( col ) ) // relations
     {
 
-        PblSqlRelation relation = model()->getRelationInfoForColumn(col);
+        PblSqlRelation relation = model()->getRelationInfoForColumn( fldName );
 
-        if( relation.col == PblSqlRelation::COL_UNDEFINED)
+        // ---------------------------------------------------------
+        //  if is subaccounting presents but this toggled off
+        // ---------------------------------------------------------
+
+        if( model()->rel_bindings.contains( fldName ) )
+        {
+            PblSubAccnt * subaccnt = model()->rel_bindings[ fldName ];
+
+            QString sub_on_fld_name = subaccnt->get_sub_on_fld_name();
+
+
+            if( ! sub_on_fld_name.isEmpty() )
+            {
+                bool ok;
+
+                int sub_on = model()->data( model()->index( row , model()->baseRec.indexOf( sub_on_fld_name ))).toInt( );
+
+                //                if( ok )
+                //                {
+                if ( sub_on == 0)
+                {
+                    QMessageBox::warning( this,
+                                          "warning",
+                                          QString("sub accounting toggled off for this row "),
+                                          QString("look field %1").arg(subaccnt->fld1)
+                                          );
+                    return false;
+                }
+                //}
+
+            }
+
+        }
+
+        // -----------------------------------------------------------------
+
+        int relCol = model()->baseRec.indexOf(relation.idField1Name);
+
+        if( relCol == PblSqlRelation::COL_UNDEFINED)
+
             return false;
 
         // ------------------------------------------------
         //          GENERATE SUB ACCOUNTING FILTER
         // ------------------------------------------------
 
-        QHash<QString,QVariant> Filter;
+        QHash< QString , QVariant > Filter;
 
-        if( model()->rel_bindings.contains(col))
+        if( model()->rel_bindings.contains(fldName))
         {
-            const PblSqlRelation *relation = model()->rel_bindings.value(col);
 
-            if( relation->subDisplayAcntColumn != PblSqlRelation::COL_UNDEFINED)
-            {
-                int parentCol = relation->subDisplayAcntColumn;
-
-                int relPrntIdCol = model()->getRelIdColumn( parentCol );
+            PblSubAccnt *subAccnt = model()->rel_bindings.value( fldName );
 
 
-                Q_ASSERT(relPrntIdCol != -1);
+            int parentCol =  model()->baseRec.indexOf( subAccnt->fld1 );
+
+            int relPrntIdCol = model()->getRelIdColumn( parentCol );
 
 
-                QModelIndex prntIdx = model()->index( row , relPrntIdCol);
+            Q_ASSERT(relPrntIdCol != -1);
 
-                QVariant relPrntIdVal = model()->data(prntIdx);
 
-                Filter.insert( relation->srvSubAcntParentFld, relPrntIdVal);
+            QModelIndex prntIdx = model()->index( row , relPrntIdCol);
 
-                qDebug() << "Filter " << Filter;
+            QVariant relPrntIdVal = model()->data(prntIdx);
 
-            }
+            QString fld = model()->relations2[subAccnt->fld1].get_ext_fld_name();
+
+            Filter.insert( fld, relPrntIdVal);
+
+
+            qDebug() << "Filter " << Filter;
 
         }
 
@@ -1649,20 +1809,20 @@ bool PblTableView::vrt_doubleClicked(const QModelIndex & idx)
 
                           );
 
-        //        if( ! config::setting_mdl( dlg.mdl ) ) // not use config:: here
-        //            return false;
-
-        //        if( ! config::setting_view(dlg.view) )
-        //            return false;
-
         if( ! dlg.mdl->select() )
+
             return false;
 
-        dlg.showFullScreen();
+        if(relation.extTblName == "sub_accounting")
+            dlg.showNormal();
+        else
+            dlg.showFullScreen();
+
 
         dlg.exec();
 
         if(dlg.result() == QDialog::Rejected)
+
             return false;
 
         // save id just in case
@@ -1678,7 +1838,7 @@ bool PblTableView::vrt_doubleClicked(const QModelIndex & idx)
 
         QVariant txt = dlg.chosenRec.value(relation.dstFldName);
 
-
+        qDebug() << " dlg.chosenRec " << dlg.chosenRec;
 
         if(dlg.chosenId == -1)
         {
@@ -1688,26 +1848,31 @@ bool PblTableView::vrt_doubleClicked(const QModelIndex & idx)
             return false;
         }
 
-        int id = model()->getRowPriValue( row );
-
-        if(! idx.isValid()) // submit
+        if(! idx_dblClk.isValid() ) // just in time , submit occures
         {
             qDebug() << " model()->editStrategy() " << model()->editStrategy();
+            Q_ASSERT_X(idx_dblClk.isValid()==false,"464576576","43675465465");
         }
 
-        QModelIndex exIdx = model()->index(row, model()->getRelIdColumn(col));
+        Q_ASSERT(model()->getRelIdColumn( col )>=0);
+
+        QModelIndex extColIdx = model()->index(row, model()->getRelIdColumn( col ));
+
+        if(  ! extColIdx.isValid())
+
+            return false;
 
 
-
-        if( model()->editStrategy() <= QSqlTableModel::OnRowChange)
+        if( model()->editStrategy() >= QSqlTableModel::OnRowChange) // <=!!!
         {
             // ------------------------------------------------
-            //         OnFieldChange   OnRowChange
+            //         OnRowChange   OnManualSubmit !!!!
             // ------------------------------------------------
 
-            // will be submit/select
 
-            if( ! model()->setData( exIdx , dlg.chosenId ,Qt::EditRole))
+            // first time we set relExtIdCol
+
+            if( ! model()->setData( extColIdx , dlg.chosenId , Qt::EditRole))
             {
                 QMessageBox::critical(this ,
                                       "error" ,
@@ -1716,20 +1881,108 @@ bool PblTableView::vrt_doubleClicked(const QModelIndex & idx)
                                           "field : '%1'\n"\
                                           "value : '%2'\n"\
                                           "sql error: %3").
-                                      arg(model()->record().fieldName(exIdx.column())).
+                                      arg(model()->baseRec.fieldName(extColIdx.column())).
                                       arg(dlg.chosenId).
                                       arg(model()->lastError().text())
                                       );
+
                 return false;
             }
 
-            if(  exIdx.isValid() && idx.isValid()) // submit not occure, it is OK, nothing more
+
+            needsSubmitAfter= true; //!!!!!!!!
+
+
+            QVariant var =  model()->data( extColIdx );
+
+            if( ! extColIdx.isValid() || ! idx_dblClk.isValid() )
+            {
+
+                return false;
+            }
+
+            // submit not occures, it is OK, nothing more to do
+
+            // -----------------------------------------------
+            //          set text emulation field
+            // -----------------------------------------------
+
+            qDebug() << "txt " << txt;
+
+            if( ! model()->setData( idx_dblClk , txt ,Qt::EditRole))
+            {
+                QMessageBox::critical(this ,
+                                      "error" ,
+                                      tr(
+                                          "setData returns  false\n"\
+                                          "field : '%1'\n"\
+                                          "value : '%2'\n"\
+                                          "sql error: %3").
+                                      arg(model()->baseRec.fieldName(extColIdx.column())).
+                                      arg(dlg.chosenId).
+                                      arg(model()->lastError().text())
+                                      );
+
+
+                return false;
+            }
+
+
+            if( ! idx_dblClk.isValid())
+            {
+
+                return false;
+            }
+
+            // ----------------------------
+            //  submit NOT occures - ok
+            // ----------------------------
+
+            if( model()->isSubAccounting( fldName ))
             {
                 // -----------------------------------------------
-                //          set text field
+                //          set sub_on field true/false
                 // -----------------------------------------------
 
-                if( ! model()->setData( idx , txt ,Qt::EditRole))
+                int subOnCol = model()->getAccountingOnColumn( col );
+
+                Q_ASSERT_X(subOnCol>=0, "65363565","8477857");
+
+                QModelIndex subOnIdx = model()->index( idx_dblClk.row() , subOnCol );
+
+                if( ! subOnIdx.isValid())
+                {
+                    QMessageBox::critical(this ,
+                                          "error" ,
+                                          tr(
+                                              "subOnIdx in not valid\n")
+                                          );
+
+                    return false;
+
+                }
+
+                QString fldName2 = model()->baseRec.fieldName( col );
+
+                if(fldName2.isEmpty())
+                {
+                    return false;
+                }
+
+
+                QString subOnFld_extTbl = model()->subAccnt.value( fldName2 ).sub_on_fld_name_extTbl;
+
+
+                if( ! dlg.chosenRec.contains( subOnFld_extTbl ))
+                {
+
+                    return false;
+                }
+
+
+                QVariant sub_on_val = dlg.chosenRec.value( subOnFld_extTbl );
+
+                if( ! model()->setData( subOnIdx , sub_on_val ,Qt::EditRole))
                 {
                     QMessageBox::critical(this ,
                                           "error" ,
@@ -1738,194 +1991,64 @@ bool PblTableView::vrt_doubleClicked(const QModelIndex & idx)
                                               "field : '%1'\n"\
                                               "value : '%2'\n"\
                                               "sql error: %3").
-                                          arg(model()->record().fieldName(exIdx.column())).
+                                          arg(model()->baseRec.fieldName(extColIdx.column())).
                                           arg(dlg.chosenId).
                                           arg(model()->lastError().text())
                                           );
+
                     return false;
                 }
+
             }
 
-            if( idx.isValid()) // submit NOT occures
+
+            if( ! idx_dblClk.isValid()) // submit NOT occures
             {
 
-                if( model()->isSubAccounting( idx.column()))
-                {
-                    // -----------------------------------------------
-                    //          set sub_on field true/false
-                    // -----------------------------------------------
-
-                    int subOnCol = model()->getAccountingOnColumn( col );
-
-                    QModelIndex subOnIdx = model()->index( idx.row() , subOnCol );
-
-                    if( ! subOnIdx.isValid())
-                    {
-                        QMessageBox::critical(this ,
-                                              "error" ,
-                                              tr(
-                                                  "subOnIdx in not valid\n")
-                                              );
-                        return false;
-
-                    }
-
-                    QString srvFld = model()->rel_subAccounting.value( col)->srvSubAcntOnFldName;
-
-                    QVariant vv = dlg.chosenRec.value(srvFld);
-
-                    if( ! model()->setData( subOnIdx , vv ,Qt::EditRole))
-                    {
-                        QMessageBox::critical(this ,
-                                              "error" ,
-                                              tr(
-                                                  "setData returns  false\n"\
-                                                  "field : '%1'\n"\
-                                                  "value : '%2'\n"\
-                                                  "sql error: %3").
-                                              arg(model()->record().fieldName(exIdx.column())).
-                                              arg(dlg.chosenId).
-                                              arg(model()->lastError().text())
-                                              );
-                        return false;
-                    }
-                }
-
-                if( model()->editStrategy() <= QSqlTableModel::OnRowChange)
-                {
-                    bool bbb = model()->submit(); // ENTER
-                    // i.e. When we set relational field then we call forever a submit/select chain
-
-                    if ( ! bbb )
-                    {
-                        QMessageBox::critical(this ,
-                                              "error" ,
-                                              tr(
-                                                  "submit returns  false\n"\
-                                                  "sql error: %1").
-                                              arg(model()->lastError().text())
-                                              );
-                    }
-                }
-            }
-
-        }
-
-        else if ( model()->editStrategy() == QSqlTableModel::OnManualSubmit)
-        {
-
-            // ------------------------------------------------
-            //                      OnManualSubmit
-            // ------------------------------------------------
-
-
-            if( ! model()->setData( exIdx , dlg.chosenId ,Qt::EditRole))
-            {
-                QMessageBox::critical(this ,
-                                      "error" ,
-                                      tr(
-                                          "setData returns  false\n"\
-                                          "field : '%1'\n"\
-                                          "value : '%2'\n"\
-                                          "sql error: %3").
-                                      arg(model()->record().fieldName(exIdx.column())).
-                                      arg(dlg.chosenId).
-                                      arg(model()->lastError().text())
-                                      );
                 return false;
             }
 
-            if( ! exIdx.isValid()) // submit  - Why?
-            {
-                qDebug() << " model()->editStrategy() " << model()->editStrategy();
-            }
-
-            if( idx.isValid()) // submit was NOT occures
-            {
-                if( ! model()->setData(idx , txt.toString() ,Qt::EditRole))
-                {
-                    QMessageBox::critical(this ,
-                                          "error" ,
-                                          tr("setData returns  false\n"\
-                                             "field : '%1'\n"\
-                                             "value : '%2'\n"\
-                                             "sql error: %3").
-                                          arg(model()->record().fieldName(idx.column())).
-                                          arg(txt.toString()).
-                                          arg(model()->lastError().text())
-                                          );
-                    return false;
-                }
-            }
-
-            if( idx.isValid() && model()->isSubAccounting(col)) // submit was NOT occured
-            {
-                //  --------------------------------------------------------------------------
-                //          set sub_on field
-                //  --------------------------------------------------------------------------
-
-                int sub_on_col = model()->getAccountingOnColumn(col);
-
-                Q_ASSERT(sub_on_col != pbl::COL_UNDEFINED);
-
-                QModelIndex subOnIdx = model()->index( row, sub_on_col );
-
-                Q_ASSERT(subOnIdx.isValid());
-
-                Q_ASSERT(model()->rel_subAccounting.contains( col ));
-
-                QString srvFld = model()->rel_subAccounting.value( col )->srvSubAcntOnFldName;
-
-                if(! srvFld.isEmpty() && dlg.chosenRec.contains(srvFld))
-                {
-
-                    QVariant vv = dlg.chosenRec.value(srvFld);
+            bool bbb= vrt_afterSetFldValue( idCurrRow,
+                                            fldName ,
+                                            idx_dblClk,
+                                            dlg.chosenRec,
+                                            needsSubmitAfter  );
 
 
-                    if( ! model()->setData( subOnIdx , vv ,Qt::EditRole))
-                    {
-                        QMessageBox::critical(this ,
-                                              "error" ,
-                                              tr(
-                                                  "setData returns  false\n"\
-                                                  "field : '%1'\n"\
-                                                  "value : '%2'\n"\
-                                                  "sql error: %3").
-                                              arg(model()->record().fieldName(exIdx.column())).
-                                              arg(dlg.chosenId).
-                                              arg(model()->lastError().text())
-                                              );
-                        return false;
-                    }
-                }
-
-            }
+            return true;
 
         }
-
-        bool bbb= vrt_afterSetFldValue(idCurrRow, col , idx, dlg.chosenRec);
-
-        if ( ! bbb )
-            return bbb;
 
 
     }
-    else if(dlgts.contains(col))
+    else if( delegts.contains( fldName ) )
     {
-        if(qobject_cast<checkBox_Delegate *>(dlgts.value(col)))
+        checkBox_Delegate * chk = qobject_cast<checkBox_Delegate *>(delegts.value( fldName ));
+
+        if ( chk )
         {
-            checkBox_Delegate * chk = qobject_cast<checkBox_Delegate *>(dlgts.value(col));
+            bool ok;
 
-            bool b = model()->data(idx).toBool();
+            int checked = model()->data( idx_dblClk , Qt::DisplayRole).toInt( &ok );
 
-            if ( ! model()->setData(idx , (int)! b) )
-            {
-                qCritical("error setData checkbox field");
-                return false;
-            }
+            if(checked == 0)
+                checked = 1;
+            else
+                checked = 0;
+
+            bool bbbb = model()->setData( idx_dblClk , checked, Qt::EditRole );
+
+            //qDebug() << "checked " << checked << " setData " << bbbb << model()->editStrategy();
+
+            needsSubmitAfter = true;
+
             return true;
         }
+
+
     }
+
+    return false;
 
 }
 
@@ -1933,7 +2056,44 @@ void PblTableView::slot_doubleClicked(const QModelIndex & index)
 {
     //qDebug() << "PblTableView::slot_doubleClicked";
 
-    vrt_doubleClicked(index);
+
+    bool needsRetTo_OnFieldChange = false;
+
+    if( model()->editStrategy() == QSqlTableModel::OnFieldChange)
+    {
+        // temporary set OnRowChange
+
+        model()->setEditStrategy(QSqlTableModel::OnRowChange); //!!!
+
+        needsRetTo_OnFieldChange = true;
+    }
+
+    bool needsSubmitAfter;
+
+    if ( vrt_doubleClicked(index , needsSubmitAfter ) )
+    {
+
+        if ( needsSubmitAfter )
+        {
+            bool submit_res = model()->submit(); // !!!!!!!
+
+            if ( ! submit_res )
+            {
+                QMessageBox::critical(this ,
+                                      "error" ,
+                                      QString("submit returns  false\n"\
+                                              "sql error: %1")
+                                      .arg(model()->lastError().text())
+                                      );
+            }
+        }
+
+    }
+
+    if(needsRetTo_OnFieldChange)
+
+        model()->setEditStrategy(QSqlTableModel::OnFieldChange); //!!!
+
 
 }
 
@@ -1960,11 +2120,11 @@ bool PblTableView::slot_searchInTable(const QString &txt)
 
     Q_ASSERT(find_settings.searchedField != PblSqlRelationalTableModel::FLD_UNDEFINED);
 
-    QVariant::Type type = model()->record().field((int)find_settings.searchedField).type();
+    QVariant::Type type = model()->baseRec.field((int)find_settings.searchedField).type();
 
     qDebug() << "QVariant::Type type : " << type;
 
-    if (model()->getRelIdColumn(find_settings.searchedField) != PblSqlRelationalTableModel::FLD_UNDEFINED )
+    if (model()->getRelIdColumn(  find_settings.searchedField ) != PblSqlRelationalTableModel::FLD_UNDEFINED )
     {
         find_settings.seachType = Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT;
     }
@@ -2037,7 +2197,8 @@ bool PblTableView::slot_searchInTable(const QString &txt)
 
         if(find_settings.seachType == Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT)
         {
-            QString str = model()->getRelationInfoForColumn(find_settings.searchedField).dstFldName;
+            QString str = model()->getRelationInfoForColumn(
+                        model()->baseRec.fieldName( find_settings.searchedField ) ).dstFldName;
 
             flt.append(QString::fromLatin1(" %3_%1.%2 ").
                        arg(col).
@@ -2106,7 +2267,7 @@ bool PblTableView::slot_searchInTable(const QString &txt)
     {
         if( ! model()->setHeaderData(col ,
                                      Qt::Horizontal,
-                                     QIcon(":icon/img/btn-db/clear_field.svg"), Qt::DecorationRole))
+                                     QIcon(":icon/img/btn-db/search.svg"), Qt::DecorationRole))
 
             QMessageBox::critical(this , "error" , "setHeaderData return false 6575637657");
 
@@ -2132,28 +2293,27 @@ bool PblTableView::slot_searchInTable(const QString &txt)
     return true;
 }
 
+//bool PblTableView::prepare_view( PblSqlRelationalTableModel * Mdl )
+//{
 
-bool PblTableView::prepare( PblSqlRelationalTableModel * Mdl )
-{
+//    setModel(Mdl);
 
-    setModel(Mdl);
+//    //??    if ( ! model()->select())
+//    //    {
+//    //        QMessageBox::warning(this,
+//    //                             mySql::error_,
+//    //                             tr("error in select query:\n\n%1\n\n\n%2").
+//    //                             arg(model()->query().lastQuery()).
+//    //                             arg(model()->lastError().text()));
+//    //        return false;
+//    //    }
 
-    //??    if ( ! model()->select())
-    //    {
-    //        QMessageBox::warning(this,
-    //                             mySql::error_,
-    //                             tr("error in select query:\n\n%1\n\n\n%2").
-    //                             arg(model()->query().lastQuery()).
-    //                             arg(model()->lastError().text()));
-    //        return false;
-    //    }
-
-    //qWarning() << " PblTableView::prepare setting_view " ;
-
+//    //qWarning() << " PblTableView::prepare setting_view " ;
 
 
-    return true;
-}
+
+//    return true;
+//}
 
 void PblTableView::set_viewEnabled( bool On)
 {
@@ -2244,104 +2404,160 @@ void PblTableView::slot_triggeredSelectByFieldValue(bool forceClear)
 
 void PblTableView::setDefaultDelegate(int col)
 {
-    if(col <0 || col >= model()->record().count())
+    if( ! model()->baseRec.field( col ).isValid() )
     {
         QMessageBox::warning(this ,
                              mySql::error_ ,
-                             tr("column is out of range , field : %1").arg(col));
+                             tr("column is out of range , field : %1")
+                             .arg(col));
         return;
     }
 
-    if( dlgts.contains(col) )
+    QString fldName = model()->baseRec.fieldName( col );
+
+    if( delegts.contains( fldName ) )
     {
         QMessageBox::warning(this ,
                              mySql::error_ ,
-                             tr("second attempting adding QCheckBox to field : %1").arg(col));
+                             tr("second attempting adding QCheckBox to field : '%1'").arg( fldName ));
 
         return;
     }
 
 
-    dlgts.insert( col, new DefaultStyledItemDelegate(this) );
+    delegts.insert( fldName, new DefaultStyledItemDelegate( this ) );
 
-    QStyledItemDelegate * delegate = dlgts.value(col);
+    QStyledItemDelegate * delegate = delegts.value( fldName );
+    //delegate->
 
-    setItemDelegateForColumn(col, delegate); // is not important
+    setItemDelegateForColumn( col , delegate); // is not important
 
 }
 
 
-void PblTableView::setCheckBoxDelegate(int col)
+void PblTableView::setCheckBoxDelegate( const QString & fldName)
 {
-    if(col <0 || col >= model()->record().count())
+    if( ! model()->baseRec.field( fldName ).isValid() )
     {
-        QMessageBox::warning(this , mySql::error_ , tr("column is out of range , field : %1").arg(col));
+        QMessageBox::warning(this ,
+                             mySql::error_ ,
+                             QString("column is out of range , field : %1")
+                             .arg(fldName));
         return;
     }
 
-    if(dlgts.contains(col))
+    if(delegts.contains( fldName ))
     {
-        QMessageBox::warning(this , mySql::error_ , tr("second attempting adding QCheckBox to field : %1").arg(col));
+        QMessageBox::warning(this ,
+                             mySql::error_ ,
+                             QString("second attempting adding QCheckBox to field : %1")
+                             .arg(fldName));
         return;
     }
 
 
-    dlgts.insert( col, new checkBox_Delegate( this ) );
+    delegts.insert( fldName , new checkBox_Delegate( this ) );
 
-    QStyledItemDelegate * cmbDeleg = dlgts.value(col);
+    QStyledItemDelegate * cmbDeleg = delegts.value( fldName );
 
-    setItemDelegateForColumn(col, cmbDeleg);
+    setItemDelegateForColumn( model()->baseRec.indexOf( fldName ) , cmbDeleg);
+
 }
 
-void PblTableView::setComboBoxDelegate(int col, QStringList &lst)
+void PblTableView::setDoubleWithPrecision( const QString & fldName , int precision)
 {
-    if(col <0 || col>=model()->record().count())
+    if( ! model()->baseRec.field( fldName ).isValid() )
     {
-        QMessageBox::warning(this , mySql::error_ , tr("column is out of range , field : %1").arg(col));
+        QMessageBox::warning(this ,
+                             mySql::error_ ,
+                             QString("column is out of range , field : %1")
+                             .arg(fldName));
         return;
     }
 
-    if(dlgts.contains(col))
+
+    if(delegts.contains( fldName ))
     {
-        QMessageBox::warning(this , mySql::error_ , tr("second attempting adding QComboBox to field : %1").arg(col));
+        QMessageBox::warning(this ,
+                             mySql::error_ ,
+                             QString("second attempting adding QCheckBox to field : %1")
+                             .arg(fldName));
         return;
     }
 
 
-    dlgts.insert( col,
-                  new ComboBoxDelegate( lst,
-                                        this)
-                  );
+    delegts.insert( fldName , new DoubleDelegate( precision, this ) );
 
-    QStyledItemDelegate * cmbDeleg = dlgts.value(col);
+    QStyledItemDelegate * dblDeleg = delegts.value( fldName );
+
+    setItemDelegateForColumn( model()->baseRec.indexOf( fldName ) , dblDeleg);
+
+}
+
+void PblTableView::setComboBoxDelegate(const QString & fldName, QStringList &lst)
+{
+    if ( ! model()->baseRec.field( fldName ).isValid() )
+    {
+        QMessageBox::warning(this ,
+                             mySql::error_ , QString("column is out of range , field : %1")
+                             .arg(fldName));
+
+        return;
+    }
+
+    if( delegts.contains( fldName ) )
+    {
+        QMessageBox::warning(this , mySql::error_ , tr("second attempting adding QComboBox to field : %1")
+                             .arg( fldName ));
+        return;
+    }
 
 
-    setItemDelegateForColumn(col, cmbDeleg);
+    delegts.insert( fldName ,
+                    new ComboBoxDelegate( lst,
+                                          this )
+                    );
+
+    QStyledItemDelegate * cmbDeleg = delegts.value( fldName );
+
+    int col = model()->baseRec.indexOf( fldName );
+
+
+    setItemDelegateForColumn( col , cmbDeleg);
 
     model()->defaultVls.insert( col , -1);
 
 }
 
-void PblTableView::setDateTimeDelegate(int col)
+void PblTableView::setDateTimeDelegate(const QString & fldName)
 {
-    if(col <0 || col>=model()->record().count())
+    if( ! model()->baseRec.field( fldName ).isValid() )
     {
-        QMessageBox::warning(this , mySql::error_ , tr("column is out of range , field : %1").arg(col));
+        QMessageBox::warning(this ,
+                             mySql::error_ ,
+                             tr("column is out of range , field : %1")
+                             .arg(fldName));
         return;
     }
 
-    if(dlgts.contains(col))
+
+    if(delegts.contains( fldName ))
     {
-        QMessageBox::warning(this , mySql::error_ , tr("second attempting add a date_Delegate to field : %1").arg(col));
+        QMessageBox::warning(this ,
+                             mySql::error_ ,
+                             tr("second attempting add a date_Delegate to field : %1")
+                             .arg( fldName ));
         return;
     }
 
 
-    dlgts.insert( col,
-                  new date_Delegate( 1 , this)
-                  );
+    delegts.insert( fldName ,
+                    new date_Delegate( 1 , this)
+                    );
 
-    setItemDelegateForColumn(col, dlgts.value(col));
+    int col =  model()->baseRec.indexOf( fldName );
+
+    setItemDelegateForColumn( col , delegts[fldName] );
 
 }
 
@@ -2417,23 +2633,27 @@ PblSqlRelationalTableModel* PblTableView::model() const
     return qobject_cast<PblSqlRelationalTableModel*>(QTableView::model());
 }
 
-void PblTableView::slot_setMouseBehavior(bool editOn)
+void PblTableView::set_Edit_Triggers(bool editOn)
 {
 
     if( editOn)
     {
-        setSelectionBehavior(QAbstractItemView::SelectItems);
+        //setSelectionBehavior(QAbstractItemView::SelectItems);
 
-        setEditTriggers(QAbstractItemView::DoubleClicked
-                        |QAbstractItemView::AnyKeyPressed); //EditKeyPressed);//AllEditTriggers);
-
+        setEditTriggers( QAbstractItemView::DoubleClicked
+                         //|QAbstractItemView::AnyKeyPressed
+                         //|QAbstractItemView::EditKeyPressed
+                         |QAbstractItemView::SelectedClicked
+                         //|QAbstractItemView::CurrentChanged
+                         //|QAbstractItemView::AllEditTriggers
+                         );
     }
     else if ( ! editOn )
     {
 
-        setSelectionBehavior(QAbstractItemView::SelectRows);
+        //setSelectionBehavior( QAbstractItemView::SelectRows);
 
-        setEditTriggers(QAbstractItemView::NoEditTriggers);
+        setEditTriggers( QAbstractItemView::NoEditTriggers );
     }
 
 }
@@ -2443,14 +2663,16 @@ void PblTableView::slot_setEditEnabled(bool editOn)
 
     set_editingEnabled( editOn );
 
-    tlbx->ui->chk_editable->setVisible(true);
+    tlbx->ui->chk_editable->setVisible( true );
 
-    slot_setMouseBehavior( editOn);
+    //set_SelectionModel(); // !!
+
+    set_Edit_Triggers( editOn);
 }
 
 void PblTableView::slot_editStrategyChanged(QSqlTableModel::EditStrategy newStrategy)
 {
-    qDebug() << "PblTableView::slot_editStrategyChanged " << model()->editStrategy() << " newStrategy " << newStrategy;
+    //qDebug() << "PblTableView::slot_editStrategyChanged " << model()->editStrategy() << " newStrategy " << newStrategy;
 
     if(tlbx->ui->cmb_Strategy->currentIndex() != newStrategy ) // setModel by programming
     {
@@ -2467,7 +2689,7 @@ void PblTableView::slot_editStrategyChanged(QSqlTableModel::EditStrategy newStra
     //reset();
 
 
-    qDebug() << "PblTableView::slot_editStrategyChanged model()->editStrategy" << model()->editStrategy();
+    //qDebug() << "PblTableView::slot_editStrategyChanged model()->editStrategy" << model()->editStrategy();
 
 
 }
@@ -2661,7 +2883,7 @@ void PblTableView::slot_cmb_Strategy_currentIndexChanged(int newStrategy)
         //return;
     }
 
-    qDebug() << "slot_cmb_Strategy_currentIndexChanged model() " << model() << "editStrategy " <<model()->editStrategy() << model()->tableName();
+    //qDebug() << "slot_cmb_Strategy_currentIndexChanged model() " << model() << "editStrategy " <<model()->editStrategy() << model()->tableName();
 
     if(model()->editStrategy() == QSqlTableModel::OnFieldChange)
     {
@@ -2717,16 +2939,16 @@ void PblTableView::slot_rowIsDirty(int row)
 }
 
 bool PblTableView::vrt_afterSetFldValue(int idRow,
-                                        int col,
+                                        const QString & fldName,
                                         const QModelIndex & idx,
-                                        const PblSqlRecord &rec)
+                                        const PblSqlRecord &rec,
+                                        bool &needsSubmitAfter)
 {
     qDebug() << "PblTableView::vrt_afterSetFldValue";
 
-
-    if( model()->isRelationColumn( col))
+    if( model()->isRelationColumn( fldName))
     {
-        if( model()->isSubAccounting( col ))
+        if( model()->isSubAccounting( fldName ))
         {
 
             int row = idx.row();
@@ -2745,20 +2967,36 @@ bool PblTableView::vrt_afterSetFldValue(int idRow,
                 }
             }
 
-            const PblSqlRelation *relation = model()->rel_subAccounting.value(col);
 
-            QModelIndex subIdx = model()->index( row , relation->subAcntColumn);
+            if(fldName.isEmpty())
 
-            if( model()->isSubAccountingOn_forFld( row, col ))
+                return false;
+
+            if( ! model()->subAccnt.contains( fldName ) )
+
+                return false;
+
+
+            QString rel2ColName = model()->subAccnt.value( fldName ).fld2;
+
+            Q_ASSERT(rel2ColName.isEmpty()==false);
+
+            int rel2Col = model()->baseRec.indexOf( rel2ColName );
+
+            Q_ASSERT( rel2Col >= 0 );
+
+            QModelIndex rel2Idx = model()->index( row , rel2Col );
+
+            if( model()->isSubAccountingOn_forFld( row, fldName ))
             {
 
-                vrt_doubleClicked(subIdx);
+                vrt_doubleClicked( rel2Idx , needsSubmitAfter );
 
                 return true;
             }
             else
             {
-                vrt_clearRelField( subIdx );
+                vrt_clearRelField( rel2Idx );
             }
 
         }
@@ -2770,17 +3008,20 @@ bool PblTableView::vrt_afterSetFldValue(int idRow,
 
 void PblTableView::slot_afterSelect( bool ok)
 {
-    if( ok)
-        emit sig_showSubmitBtn( false);
+    if( ! ok)
+
+        return;
+
+    emit sig_showSubmitBtn( false);
 
     if( ! showRelExColumns)
     {
-        slot_setVisibleExRelIdColumns(showRelExColumns);
+        slot_setVisibleExRelIdColumns( showRelExColumns );
     }
 
     tlbx->ui->btn_submitAll->setEnabled(false);
 
-    qDebug() << "PblTableView::slot_afterSelect";
+    //qDebug() << "PblTableView::slot_afterSelect";
 
     resizeColumnsToContents();
 }
@@ -2806,103 +3047,23 @@ void PblTableView::paintEvent(QPaintEvent *e)
     //qDebug() << "Style_Sheet " << styleSheet();
 
     QTableView::paintEvent( e );
+
+    //    QPainter painter(this);
+
+    //    int radius = 6;
+
+    //    painter.setRenderHint( QPainter::Antialiasing );
+
+    //    QPen pen = painter.pen();
+
+    //    painter.setPen( Qt::SolidLine);//NoPen );
+
+    //    painter.drawRoundedRect(rect().adjusted(1, 1, -1, -1), radius, radius,
+    //                            Qt::AbsoluteSize);
+    //    painter.drawRoundedRect(rect().adjusted(1, 1, -1, -rect().height() + 10), 2, 2,
+    //                            Qt::AbsoluteSize);
+
 }
 
-void PblTableView::setStyle_Sheet()
-{
-    QFont font = QApplication::font();
 
-    QFontMetrics fm(font);
-
-    int ww = fm.width('w');
-    int hh = fm.height();
-
-    QString em1 = QString::number(ww);
-    QString em2 = QString::number(ww*2);
-
-
-    QString em_0_5  = QString::number( floor(hh*0.5));
-    QString em_0_2  = QString::number( floor(hh*0.2));
-    QString emH3    = QString::number( hh*3 );
-
-    /*
-        "padding: "+em1+"px "+em1+"px "+em1+"px "+em1+"px;\n"\
-
-        "padding: "+em1+"px;\n"\
-        "margin: "+em1+"px;\n"\
-        "border: 2px solid #3873d9;\n"\
-
-            "QHeaderView::section{\n"\
-            "color: #333;\n"\
-            "padding-left: "+em2+"px;\n"\
-            "padding-right: "+em2+"px;\n"\
-            "padding-top: "+em1+"px;\n"\
-            "padding-bottom: "+em1+"px;\n"\
-            "border: 0.5px solid #AAA;\n"\
-            "background-color: #EEE;\n"\
-            "}\n"\
-
-            "QHeaderView::item{\n"\
-            "border: 0px;\n"\
-            "margin-left: "+em1+"px;\n"\
-            "margin-right: "+em1+"px;\n"\
-            "}\n"\
-
-    */
-    /*  QString st = "QTableView{}\n"\
-            "QHeaderView::section{\n"\
-            "background-color: #EEE;\n"\
-            "padding-left: "+em2+"px;\n"\
-            "padding-right: "+em2+"px;\n"\
-            "padding-top: "+em1+"px;\n"\
-            "padding-bottom: "+em1+"px;\n"\
-            "color: #333;\n"\
-            "border: 0.5px solid #AAA;\n"\
-            "}\n"\
-
-            ;*/
-
-
-    // QHeaderView *vh = new QHeaderView(Qt::Vertical , this);
-
-    /*QHeaderView *vh = verticalHeader();
-
-    qDebug() << "vh.height() : " << vh->height();
-    qDebug() << "vh.widht() : " << vh->width();*/
-
-
-    verticalHeader()->setObjectName("vert");
-
-    verticalHeader()->setResizeMode(QHeaderView::ResizeToContents); // влияет существенно
-
-    horizontalHeader()->setResizeMode(QHeaderView::Interactive); // ResizeToContents не дает менять ширину
-
-    horizontalHeader()->setObjectName("hor");
-
-
-    //horizontalHeader()->
-
-    //verticalHeader()->setContentsMargins(150,150,150,150);
-
-    //horizontalHeader()->setContentsMargins(150,150,150,150);
-
-    //setRowHeight(0 , 50);
-
-    setWordWrap( true );
-
-    setCornerButtonEnabled( true );
-
-    setTabKeyNavigation( true);
-
-    //setLineWidth(55); // QFrame::setLineWidth не влияет
-
-    //vh->setDefaultSectionSize( hh*3 );
-
-    //vh->setMinimumSectionSize( hh*3 ); // !!!!
-
-    //setHorizontalHeader(new PblHeaderView(Qt::Horizontal , this));
-
-
-    //qDebug() << "styleSheet " <<styleSheet();
-}
 

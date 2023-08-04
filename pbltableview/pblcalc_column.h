@@ -3,48 +3,47 @@
 
 #include <QString>
 
-typedef struct CALC_COLUMN
-{
-    CALC_COLUMN():
-        extTblName(QString()),
-        idField1(-1),
-        idField2Name(QString()),
-        summaryField(QString()),
-        calcFunc(QString()),
-        calcFuncName_As(QString()),
-        col(-1)
-    {
-
-    }
-    int col;
-    QString     summaryField;
-
-    QString     extTblName;
-
-    int         idField1;
-
-    QString     idField2Name;
-
-    QString     calcFunc;
-
-    QString     calcFuncName_As;
-};
-
-
-class PblCalcColumn
+const class PblCalcColumn
 {
 public:
 
     PblCalcColumn();
 
-    PblCalcColumn(const CALC_COLUMN & calc,
-              int col);
+    explicit PblCalcColumn( const QString &summaryField,
 
-    int col;
+                            const QString &extTblName,
 
-    int extCol;
+                            const QString &idField1Name,
 
-    CALC_COLUMN calc;
+                            const QString &idField2Name,
+
+                            const QString &calcFunc,
+
+                            const QString &header=QString(),
+
+                            const QString &col_after = QString()
+            );
+
+    PblCalcColumn &operator=(const PblCalcColumn& other);
+
+    const QString     summaryField;
+
+    const QString     extTblName;
+
+    const QString     idField1Name;
+
+    const QString     idField2Name;
+
+    const QString     calcFunc;
+
+    const QString   col_after;
+
+
+    const QString   header;
+
+    const QString   select_as_name;
+
+    QString  get_fld_name();
 
 
 };

@@ -41,7 +41,7 @@ bool PblSqlRelationalTableModel2::select()
 {
     bool bbb= PblSqlRelationalTableModel::select();
 
-    emit sig_column_values_changed( fieldIndex("sum") );
+    emit sig_column_values_changed(  baseRec.indexOf("sum") );
 
     return bbb;
 }
@@ -93,20 +93,22 @@ bool PblSqlRelationalTableModel2::setData(const QModelIndex &idx, const QVariant
     return false;
 }
 
-bool PblSqlRelationalTableModel2::prepare(const QString &tableName,
-                                          const QHash<QString,QVariant> &SubAccountingFilter)
+bool PblSqlRelationalTableModel2::prepare_mdl( const QString &tableName,
+                                               const QHash<QString,QVariant> &SubAccountingFilter)
 {
-    if( PblSqlRelationalTableModel::prepare(tableName , SubAccountingFilter) )
+    if( PblSqlRelationalTableModel::prepare_mdl(tableName ,
+                                                QStringList(),
+                                                SubAccountingFilter) )
     {
 
-//        if ( ! config2::setting_mdl( this ) )
-//        {
-//            QMessageBox::warning(0,
-//                                 mySql::error_,
-//                                 tr("error in setting_mdl"),
-//                                 "");
-//            return false;
-//        }
+        //        if ( ! config2::setting_mdl( this ) )
+        //        {
+        //            QMessageBox::warning(0,
+        //                                 mySql::error_,
+        //                                 tr("error in setting_mdl"),
+        //                                 "");
+        //            return false;
+        //        }
 
         return true;
     }

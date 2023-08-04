@@ -11,6 +11,8 @@ TEMPLATE = app
 
 CONFIG +=  console windows
 
+#DEFINES += QT_NO_SPINBOX
+
 OBJECTS_DIR     = tmp\\obj\\$$out_dir
 MOC_DIR         = tmp\\moc\\$$out_dir
 RCC_DIR         = tmp\\rcc\\$$out_dir
@@ -68,7 +70,7 @@ PWD_WIN ~= s,/,\\,g
 DESTDIR_WIN ~= s,/,\\,g
 
 # dont remember to make Tool/External/QtLinguist/Update Translations (lupdate) and Update Translations (lrelease) !
-copyfiles.commands = $$quote(cmd /c xcopy /S /I /Y $$PWD_WIN\*.qm $$DESTDIR_WIN)
+copyfiles.commands = $$quote(cmd /c xcopy /S /I /Y $$PWD_WIN\\*.qm $$DESTDIR_WIN)
 QMAKE_EXTRA_TARGETS += copyfiles
 PRE_TARGETDEPS += copyfiles
 message(copyfiles.commands $$copyfiles.commands)

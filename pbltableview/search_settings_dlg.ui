@@ -6,16 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>386</width>
-    <height>177</height>
+    <width>494</width>
+    <height>379</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>494</width>
+    <height>379</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>setting: where to search text by fields</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resource2.qrc">
+   <iconset>
     <normaloff>:/icon/img/btn-db/find-100x100.png</normaloff>:/icon/img/btn-db/find-100x100.png</iconset>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -31,7 +40,7 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>where to search</string>
+          <string>where to search : </string>
          </property>
         </widget>
        </item>
@@ -74,9 +83,7 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="resource2.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>

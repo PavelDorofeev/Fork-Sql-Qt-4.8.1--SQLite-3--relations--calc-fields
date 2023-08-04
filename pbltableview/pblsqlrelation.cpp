@@ -28,17 +28,21 @@
 #include "pblsqlrelation.h"
 #include <QDebug>
 
+int PblSqlRelation::counter = 0;
+
 PblSqlRelation::PblSqlRelation()
     :
       extTblName("undefined"),
-      displayType(123)
+      ext_fld_name("")
 {
 
-    qDebug() << "ctor DEFAULT PblSqlRelation " << this;
+    counter++;
+
+    qDebug() << "PblSqlRelation counter " << counter;
 
 }
 
-PblSqlRelation::PblSqlRelation( int IdField1,
+PblSqlRelation::PblSqlRelation( const QString & IdField1,
                                 const QString & Table,
                                 const QString & IdField2,
                                 const QString & DestField,
@@ -46,41 +50,46 @@ PblSqlRelation::PblSqlRelation( int IdField1,
 
     :
 
-      idField1(IdField1),
-      extTblName(Table),
-      idField2Name(IdField2),
-      dstFldName(DestField),
-      col(IdField1),
-      displayType(-1),
-      subAcntColumn(COL_UNDEFINED),
-      subDisplayAcntColumn(COL_UNDEFINED)
+      idField1Name  ( IdField1),
+      extTblName    ( Table),
+      idField2Name  ( IdField2),
+      dstFldName    ( DestField),
+      ext_fld_name  ( QString("%1_%2").arg(extTblName).arg(idField2Name) )
 
 {
     joinMode = Join_mode;
 
-    //qDebug() << "ctor PblSqlRelation extTblName " << extTblName << this;
+    counter++;
+
+    qDebug() << "PblSqlRelation counter " << counter << extTblName << idField1Name << idField2Name << dstFldName;
+
 }
+
+QString PblSqlRelation::get_fld_name()
+{
+    return idField1Name;
+}
+
+const QString & PblSqlRelation::get_ext_fld_name() const
+{
+    return ext_fld_name;
+}
+
 
 PblSqlRelation::~PblSqlRelation()
 {
-    //qDebug() << "~PblSqlRelation extTblName " << extTblName << this;
+    counter--;
+
+    qDebug() << "~PblSqlRelation counter " << counter << extTblName << idField1Name << idField2Name << dstFldName;
 }
-
-
 
 PblSqlRelation PblSqlRelation::operator=(const PblSqlRelation &other)
 {
-    //qDebug() << "PblSqlRelation::operator=";
+    qDebug() << "PblSqlRelation::operator=";
 
-    displayType =234;
     //relation = other.relation;
 
     return *this;
 };
 
-
-void PblSqlRelation::setSubAcntOnFld(const QString & SubAcntOnFld)
-{
-    subAcntOnFld = SubAcntOnFld;
-}
 

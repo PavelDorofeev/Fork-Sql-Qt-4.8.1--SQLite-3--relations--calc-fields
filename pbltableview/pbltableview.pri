@@ -14,21 +14,25 @@ HEADERS += \
     pbltableview/doubledelegate.h \
     pbltableview/pblsqlrelationaltablemodel.h \
     pbltableview/pblsqlrelation.h \
-    pbltableview/pblrelcolumn.h \
+    #pbltableview/pblrelcolumn.h \
     pbltableview/combobox_delegate.h \
     pbltableview/checkbox_delegate.h \
     pbltableview/empty_delegate.h \
     pbltableview/date_delegate.h \
     pbltableview/pblsqlrelationaltablemodel2.h \
     pbltableview/pblsqlrecord.h \
-    pbltableview/version.h \
-    pbltableview/pblcalc_column.h \
     pbltableview/pbltableview2.h \
     pbltableview/buttoniconautoresize.h \
     pbltableview/defaultstyleditemdelegate.h \
     pbltableview/pblheaderview.h \
-    ../../my_lib/pbltableview/icon_styleditemdelegate.h \
-    ../pbltableview/version_pbl.h
+    pbltableview/version_pbl.h \
+    my_lib/pbltableview/icon_styleditemdelegate.h \
+    pbltableview/version_pbl.h \
+    pbltableview/pblfield.h \
+    pbltableview/horizontal_header.h \
+    pbltableview/pblsubaccnt.h \
+    pbltableview/pblcolumninfo.h \
+    pbltableview/pblcalc_column.h
 
 SOURCES += \
     pbltableview/btn_toolbox.cpp \
@@ -40,19 +44,22 @@ SOURCES += \
     pbltableview/doubledelegate.cpp \
     pbltableview/pblsqlrelationaltablemodel.cpp \
     pbltableview/pblsqlrelation.cpp \
-    pbltableview/pblrelcolumn.cpp \
     pbltableview/combobox_delegate.cpp \
     pbltableview/checkbox_delegate.cpp \
     pbltableview/empty_delegate.cpp \
     pbltableview/date_delegate.cpp \
     pbltableview/pblsqlrelationaltablemodel2.cpp \
     pbltableview/pblsqlrecord.cpp \
-    pbltableview/pblcalc_column.cpp \
     pbltableview/pbltableview2.cpp \
     pbltableview/buttoniconautoresize.cpp \
     pbltableview/defaultstyleditemdelegate.cpp \
     pbltableview/pblheaderview.cpp \
-    ../../my_lib/pbltableview/icon_styleditemdelegate.cpp
+    pbltableview/icon_styleditemdelegate.cpp \
+    pbltableview/pblfield.cpp \
+    pbltableview/horizontal_header.cpp \
+    pbltableview/pblsubaccnt.cpp \
+    pbltableview/pblcolumninfo.cpp \
+    pbltableview/pblcalc_column.cpp
 
 FORMS    += \
     pbltableview/btn_toolbox.ui \

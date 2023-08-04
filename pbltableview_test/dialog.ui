@@ -87,6 +87,16 @@
            <number>5</number>
           </property>
           <item>
+           <widget class="QPushButton" name="btn_test">
+            <property name="text">
+             <string>test</string>
+            </property>
+            <property name="autoDefault">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="btn_goods">
             <property name="text">
              <string>goods</string>

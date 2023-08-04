@@ -44,6 +44,7 @@ class PblSqlRelationalTableModel;
 class Btn_ToolBox;
 class ComboBoxDelegate;
 class PblTableDlg;
+class Horizontal_Header;
 
 
 typedef bool (*cb_setting_mdl) (PblSqlRelationalTableModel *);
@@ -67,19 +68,17 @@ public:
 
     virtual ~PblTableView();
 
-    void setStyle_Sheet();
 
     virtual bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event);
 
     void paintEvent(QPaintEvent *e);
 
-    void setModel(PblSqlRelationalTableModel *model);
+    virtual void setModel( PblSqlRelationalTableModel *model );
 
     void reset();
 
     void setContextMenuEnabled( bool yes);
 
-    static const QString styleSheet1;
 
     static const QString s_submit;
 
@@ -87,9 +86,11 @@ public:
 
     static int  margin_hor;
 
+    QByteArray stt;
+
+    PblSqlRelationalTableModel *mdl;
 
     Btn_ToolBox *tlbx;
-
 
     QSize sizeHint() const;
 
@@ -119,6 +120,7 @@ public:
 
     DoubleDelegate *dblDlg;
 
+    void set_behavoir(bool On);
 
     //void set_chkEditable_isVisible(bool);
 
@@ -134,12 +136,14 @@ public:
 
     virtual bool vrt_viewRow(int row);
 
-    virtual bool vrt_doubleClicked(const QModelIndex & index);
+    virtual bool vrt_doubleClicked(const QModelIndex & index , bool &needsSubmitAfter);
 
 
     void setSelectAndClose();
 
-//    /void set_Actions(PblTableView::ACTIONS , bool );
+    void set_editEnabledChkBoxVisible( bool yes);
+
+    void set_tlbx_visible( bool yes);
 
     void set_contextMenuEnabled(bool );
 
@@ -169,29 +173,32 @@ public:
 
     virtual bool vrt_clearRelField(const QModelIndex &currIdx);
 
-    virtual bool prepare( PblSqlRelationalTableModel * Mdl );
+    //virtual bool prepare_view( PblSqlRelationalTableModel * Mdl );
 
     Search_Settings_Dlg::FIND_SETTINGS find_settings;
 
-    void setComboBoxDelegate(int col, QStringList &lst);
+    void setComboBoxDelegate(const QString & fldName, QStringList &lst);
 
-    void setDateTimeDelegate(int col);
+    void setDateTimeDelegate(const QString & fldName);
 
-    void setCheckBoxDelegate(int col);
+    void setCheckBoxDelegate(const QString & fldName);
+
+    void setDoubleWithPrecision(const QString & fldName , int precision);
 
     void setDefaultDelegate(int col);
 
-    QHash<int , QStyledItemDelegate*> dlgts;
+    QHash< QString , QStyledItemDelegate*> delegts;
 
     int restoreCurrentRowPositionAfterSubmit(int srcRow);
 
     virtual bool vrt_afterSetFldValue(int idRow,
-                                      int col,
+                                      const QString & fldName,
                                       const QModelIndex & idx,
-                                      const PblSqlRecord &rec);
+                                      const PblSqlRecord &rec,
+                                      bool & needsSubmitAfter);
 
     bool selectable;
-    bool editable;
+    //bool editable; // use editable flag only from model
     bool defaultEditOn;
     bool hideEditBtns;
 
@@ -199,6 +206,7 @@ public:
 
     void setToLayout(QVBoxLayout * lo);
 
+    void set_Edit_Triggers(bool on);
 
 
 
@@ -244,9 +252,8 @@ public Q_SLOTS:
 
     void slot_setEditEnabled(bool on);
 
-    void slot_setMouseBehavior(bool on);
 
-    void slot_doubleClicked(const QModelIndex & );
+    virtual void slot_doubleClicked(const QModelIndex & );
 
     void slot_cmb_Strategy_currentIndexChanged(int index);
 
@@ -292,10 +299,12 @@ private slots:
 
     void slot_beforeInsert(QSqlRecord &record);
 
+    void slot_needsReselect(QList<int>);
+
 private:
     void set_repaintEditBtns(bool On, bool def ,bool hideBtns );
 
-    void set_SelectionModel();
+    void set_SelectionModel( bool EditMode );
 
     QString filter;
 
@@ -306,6 +315,8 @@ private:
     QVBoxLayout * tlbxVl;
 
     bool contextMenuEnabled;
+
+    Horizontal_Header * hor;
 
 
 

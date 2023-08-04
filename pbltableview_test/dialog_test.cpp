@@ -58,12 +58,14 @@ DialogTest::DialogTest(QString langId,
 
     mdl = new PblSqlRelationalTableModel2(db , this);
 
-    if( ! mdl->prepare(tableName))
+    if( ! mdl->prepare_mdl(tableName))
     {
         QMessageBox::warning(this,
                              mySql::error_,
-                             tr("opening table '%1' is unsuccefully").arg(tableName)
-                             +tr("\n\nerror: : %2").arg(mdl->lastError().text()));
+                             tr("opening table '%1' is unsuccefully")
+                             .arg(tableName)
+                             +tr("\n\nerror: : %2")
+                             .arg(mdl->lastError().text()));
 
         return ;
     }
@@ -97,18 +99,8 @@ DialogTest::DialogTest(QString langId,
                              false);
 
 
-    if ( ! view->prepare( mdl ))
-    {
-        QMessageBox::warning(this,
-                             mySql::error_,
-                             tr("opening table '%1' is unsuccefully").arg(tableName)
-                             +tr("\n\nerror: : %2").arg(mdl->lastError().text()));
+    view->setModel( mdl );
 
-        return ;
-    }
-
-//    view->set_editingEnabled( true , true , false );
-//    view->set_ExtColumnsVisible(true, false);
 
     if( ! config::setting_view(view))
     {
@@ -132,13 +124,13 @@ DialogTest::DialogTest(QString langId,
     ui->tableViewLO->setStretch( 1 , 4);
     ui->tableViewLO->addStrut(2); // !!!!!
 
-    qDebug() << "   stretch(0) " << ui->tableViewLO->stretch(0);
+    //    qDebug() << "   stretch(0) " << ui->tableViewLO->stretch(0);
 
-    qDebug() << "   stretch(1) " << ui->tableViewLO->stretch(1);
+    //    qDebug() << "   stretch(1) " << ui->tableViewLO->stretch(1);
 
-    qDebug() << "   stretch(2) " << ui->tableViewLO->stretch(2);
+    //    qDebug() << "   stretch(2) " << ui->tableViewLO->stretch(2);
 
-    qDebug() << "   stretch(3) " << ui->tableViewLO->stretch(3);
+    //    qDebug() << "   stretch(3) " << ui->tableViewLO->stretch(3);
 
     slot_recalculate_tbl(mdl->fieldIndex("sum"));
 
@@ -175,9 +167,9 @@ void DialogTest::on_btn_save_clicked()
 
     int dat =  QDateTime::currentDateTime().toTime_t() ;
 
-    int extCol1 = mdl->getRelIdColumn(mdl->baseRec.indexOf("productName"));
+    int extCol1 = mdl->getRelIdColumn3( "productName");
 
-    int extCol2 = mdl->getRelIdColumn(mdl->baseRec.indexOf("sub"));
+    int extCol2 = mdl->getRelIdColumn3( "sub" );
 
     for(int row=0; row < mdl->rowCount(); row++)
     {
@@ -245,18 +237,21 @@ void DialogTest::openTable(const QString & tableName)
                     false);
 
 
-//    if ( ! config::setting_mdl( dlg.mdl) )
-//        ;
-
-//    if ( ! config::setting_view( dlg.view ) )
-//        ;
-
-
-    dlg.mdl->select();
+    if (! dlg.mdl->select())
+    {
+        QMessageBox::warning( this,
+                              "select query error",
+                              dlg.mdl->lastError().text()
+                              );
+        return;
+    }
 
     dlg.setWindowTitle(tableName);
 
-    dlg.showFullScreen();
+    if(tableName == "sub")
+        dlg.showNormal();
+    else
+        dlg.showFullScreen();
 
     dlg.exec();
 
@@ -342,16 +337,16 @@ void DialogTest::on_btn_font_clicked()
     if(newFont.pointSize()< 6)
     {
         QMessageBox::warning(this,
-                 tr("Недопустимый размер"),
-                 tr("Не допускается выбирать размер меньше 6!"));
+                             tr("Недопустимый размер"),
+                             tr("Не допускается выбирать размер меньше 6!"));
         return;
     }
 
     if(newFont.pointSize()>36)
     {
         QMessageBox::warning(this,
-                 tr("invalid size (>36)"),
-                 tr("This is impissible to use the size more 36!"));
+                             tr("invalid size (>36)"),
+                             tr("This is impissible to use the size more 36!"));
         return;
     }
 
@@ -375,3 +370,8 @@ void DialogTest::on_btn_font_clicked()
 
 }
 
+
+void DialogTest::on_btn_test_clicked()
+{
+    openTable("test");
+}

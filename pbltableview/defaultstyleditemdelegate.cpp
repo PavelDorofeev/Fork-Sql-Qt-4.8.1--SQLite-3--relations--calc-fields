@@ -35,11 +35,11 @@ void DefaultStyledItemDelegate::paint(QPainter *painter,
 {
     if(idx.column() == 1)
     {
-        qDebug() << "\nDefaultStyledItemDelegate row " << idx.row()<< "  col " << idx.column() << " option.state " << option.state; // !!!
+        //qDebug() << "\nDefaultStyledItemDelegate row " << idx.row()<< "  col " << idx.column() << " option.state " << option.state; // !!!
 
-        qDebug() << "painter " << painter->background();
+        //qDebug() << "painter " << painter->background();
 
-        qDebug() << "currentColorGroup " << option.palette.currentColorGroup();
+        //qDebug() << "currentColorGroup " << option.palette.currentColorGroup();
     }
 
 

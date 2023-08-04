@@ -31,33 +31,39 @@
 #include <QSqlTableModel>
 #include <QSqlRecord>
 
-#include "pblrelcolumn.h"
-#include "pblcalc_column.h"
+//#include "pblrelcolumn.h"
+#include "pbltableview/pblcalc_column.h"
 #include "pblsqlrelation.h"
 #include "pblsqlrecord.h"
+#include "pblfield.h"
+#include "pblsubaccnt.h"
+#include "pblcolumninfo.h"
 
 #include <QList>
 #include <QSqlIndex>
 
 #include <QHash>
+#include <QDebug>
 
-typedef struct COLUMN_INFO
+class Order_Settings
 {
-    COLUMN_INFO():
-        alignment(Qt::AlignCenter),
-        precision(0),
-        cFormat(' '),
-        editable(true)
-    {
+public:
 
-    }
+    Order_Settings();
 
-    Qt::Alignment alignment;
-    int precision;
-    char cFormat;
-    bool editable;
-    //PblRelColumn::COLUMN_TYPE type;
+    QString fldName;
+    Qt::SortOrder order;
+
+    static const QString asc;// = " ASC";
+    static const QString desc;// = " DESC";
+    static const QString ord;// = " DESC";
+
+    QString resTxt;
+
+    QString getTxt();
+
 };
+
 
 class PblSqlRelationalTableModel: public QSqlTableModel
 {
@@ -85,8 +91,9 @@ public:
     
     //PblSqlRelationalTableModel(); //??
 
-    explicit PblSqlRelationalTableModel(QSqlDatabase &db ,
-                                        QObject *parent = 0
+    explicit PblSqlRelationalTableModel(QSqlDatabase &db_ ,
+                                        QObject *parent = 0,
+                                        const QList<QString> &FieldSet = QList<QString>()
 
             );
     
@@ -113,38 +120,63 @@ public:
 
     static const QLatin1String prefix;
 
-    QSqlDatabase &db;
+    QSqlDatabase &db_;
 
     void set_editable( bool Editable);
 
     QString relationField(const QString &tableName, const QString &fieldName) const;
 
+    //const QList<QString> otherFldsSet; // added in version 12.xxx
+
+    virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
+
     bool canFetchMore(const QModelIndex &parent) const;
 
-    QHash<int , PblCalcColumn> calc_columns;    // calc columns  [ ]
-
-    QHash<int , int > relations;     //
-
-    QHash<int , int > addSubAcntOnFlds;     // sub accounting enable fields [1,2 ++]
-
-    QHash<int , PblSqlRelation> rel_clmn;    // extended columns info [0,1,2..]
-
-    QHash<int , const PblSqlRelation * > rel_bindings;           //
-
-    QHash<int , const PblSqlRelation * > rel_subAccounting;           //
-
-    bool isSubAccounting(int col);
-
-    bool isSubAccountingOn_forFld(int row, int col);
-
-    bool isParentBinding(int col);
 
 
-    QHash<int, COLUMN_INFO> colInfo;    // extended columns info
+
+    bool change_fld_list(const QList<QString> &lst);
+
+    PblSqlRecord baseRec; // first time the original table record is without extended fields (relations id, calc functions,..)
+
+    // --------------------------------------------------------------------------------------
+    //  here is all required containers for relations, calculations, subaccounting
+    //
+    //  Important ! contaners keys will be QString while look by field name (not col number)
+    //  field name more universal calls (column positions may be changes )
+    // --------------------------------------------------------------------------------------
+
+    QHash< QString , PblCalcColumn> calc_columns;    // calculate columns  [ ]
+
+    QHash< int , QVariant> defaultVls;
+
+    //QHash<int , int > relations;     // removed
+
+    QHash<QString , PblSqlRelation > relations2;     // !!!
+
+    //QHash<QString , int > addSubAcntOnFlds;     // removed
+
+
+    QHash< QString , PblSubAccnt > subAccnt;           //
+
+    QHash< QString , PblSubAccnt * > rel_bindings; //
+
+
+    QHash< QString , PblColumnInfo> colInfo;    // additional columns info for visual repainting
+
+    QHash< QString , QVariant > subAccountingFilter; // if we open the sub accounting table we have to filter its rows
+
+    // -------------------------------------------------------------------------------
+
+    bool isSubAccounting( const QString &fldName );
+
+    bool isSubAccountingOn_forFld(int row, const QString &fldName);
+
+
 
     QSqlIndex primaryIndex;
 
-    int priCol;
+    QString priColName;
 
     int getPriColumn() const;
 
@@ -164,85 +196,88 @@ public:
 
     QVariant getRecordPriValue(const QSqlRecord &rec) const;
 
-    bool addSubAcntOnField ( PblSqlRelation &rel, int col , int col2 , const QString &name);
-
-
-    QHash<int , QVariant> defaultVls;
-
-    QSqlRecord baseRec; // the original table record without extended fields (relations id, calc functions,..)
-
     bool translateFieldNames(int row, QSqlRecord &values, PblSqlRelationalTableModel::MODE isRowMode ) const;
-
     
+    void setTable(const QString &tableName);
+
     virtual QString selectStatement() const;
     
     virtual QVariant data(const QModelIndex &item, int role = Qt::DisplayRole) const;
 
     virtual bool setData(const QModelIndex &item, const QVariant &value, int role = Qt::EditRole);
 
-    /*bool setDataForRelationField(const QModelIndex &idx,
-                                 const QVariant &value,
-                                 int role);*/
-
     bool setRecord_withoutPriCol(int row, QSqlRecord &record, MODE mode);
 
-    bool prepareRecord(QSqlRecord &rec, MODE mode);
+    bool removePrimaryKeys_fromRec(QSqlRecord &rec, MODE mode);
 
     virtual Qt::ItemFlags flags(const QModelIndex &idx) const;
 
+    bool editable;
+
     virtual bool submit();
 
-    bool setRelation(const PblSqlRelation &relation);
+    bool setRelation(PblSqlRelation &relation);
 
-    bool setSubAccount(int col1 ,
-                       int col2 ,
-                       const QString & filterColName,
-                       const QString & sub_on
-                       );
+    bool setSubAccount(
+            const QString & ExtTblName ,
+            const QString & col1 ,
+            const QString & col2 ,
+            const QString & filterColName,
+            const QString & sub_on
+            );
 
-    bool setCalcField(CALC_COLUMN & calcLst);
-    
+
+    bool setCalcField( PblCalcColumn calc);
+
     virtual bool select();
 
     virtual  void clear();
 
-    PblSqlRelationalTableModel::MODE isRowMode(int row) const;
-    PblSqlRelationalTableModel::MODE isRecordMode(const QSqlRecord &rec) const;
+    //PblSqlRelationalTableModel::MODE isRowMode(int row) const;
+    //PblSqlRelationalTableModel::MODE isRecordMode(const QSqlRecord &rec) const;
     bool isCopyRowMode(int extCol , const QSqlRecord &rec) const;
 
 
-    int sortColumn;
-    Qt::SortOrder sortOrder;
+    mutable Order_Settings orderSet;
+
 
     virtual void setSort(int column, Qt::SortOrder order);
-    
-    
-    virtual bool prepare(const QString &tableName,
-                         const QHash<QString,QVariant> &filter=QHash<QString,QVariant>());
 
 
-    void setAlignment(int col , Qt::Alignment align);
-    void setPrecision(int col , int precision);
-    void setDblFormat(int col , char ch);
-    void setEditable(int col , bool on);
-    
+    virtual bool prepare_mdl( const QString &tableName,
+                              const QList<QString> &fldList = QList<QString>(),
+                              const QHash<QString,QVariant> &filter=QHash<QString,QVariant>());
+
+
+    void setColInf(const QString & colName , const PblColumnInfo & inf);
+    void setAlignment(const QString & colName , Qt::Alignment align);
+    void setPrecision(const QString & colName , int precision);
+    void setDblFormat(const QString & colName , char ch);
+    void setEditable(const QString & colName , bool on);
+    void setSelectable(const QString & colName , bool on);
+    void set_Visible(const QString & colName , bool on);
+
     const QSqlRecord & baseRecord();
 
     //PblColumn::COLUMN_TYPE exColType(int exCol);
 
-    PblSqlRelation  getRelationInfoForColumn(int col);
+    PblSqlRelation  getRelationInfoForColumn(const QString &fldName);
 
-    bool isCalcColumn(int col) const;
+    bool isCalcColumn(const QString &) const;
 
-    bool isRelationColumn(int col) const;
+    bool isRelationColumn( const QString &  fldName ) const;
 
     bool isRelationExtIdColumn(int col) const;
 
-    int getOrigRelationColumn(int extCol) const;
 
-    int getRelIdColumn(int relCol) const;
+    int getRelIdColumn(int col) const; // for calls from with QModelIndex parameters
 
-    int getRelIdColumn2(int relCol) const;
+    bool isSpecialColumn(int col) const;
+
+
+    int getRelIdColumn3(const QString & fldName) const;
+
+    QString getRelIdColumn4(const QString & fldName);
 
     int getAccountingOnColumn(int relCol) const;
 
@@ -257,15 +292,13 @@ public:
 
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
-    PblSqlRecord getPblSqlRecord(const QSqlRecord & rec);
+    PblSqlRecord getPblSqlRecord(  const QSqlRecord & rec);
 
-    PblSqlRecord record2(int row);
+    //PblSqlRecord record2(int row);
 
-    QHash<QString,QVariant> subAccountingFilter;
 
     int isDefaultSearchingColumn;
 
-    bool setSubAccountingFields( QSqlRecord &rec);
 
 signals:
 
@@ -283,19 +316,18 @@ public Q_SLOTS:
 
 
     void slot_primeInsert(int row, QSqlRecord &rec);
-    
+
 protected:
-    
+
     bool updateRowInTable(int row, const QSqlRecord &values);
-    
+
     bool insertRowIntoTable(const QSqlRecord &values);
 
 
     QString orderByClause() const;
-    
+
 private:
 
-    bool editable;
     void clearDirtyRow();
     void setDirtyRow(int dirtyRow, int dirtyCol);
 };

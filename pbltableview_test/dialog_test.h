@@ -59,6 +59,8 @@ private slots:
     void on_btn_font_clicked();
 
 
+    void on_btn_test_clicked();
+
 private:
     Ui::Dialog *ui;
 

@@ -109,15 +109,15 @@ void Btn_ToolBox::on_ledt_filter_returnPressed()
 }
 
 
-void Btn_ToolBox::on_btn_searchInTable_clicked(bool checked)
-{
+//void Btn_ToolBox::on_btn_searchInTable_clicked(bool checked)
+//{
 
-    if(! checked && ! ui->ledt_filter->text().isEmpty())
-    {
-        ui->ledt_filter->clear();
-        on_ledt_filter_returnPressed();
-    }
-}
+//    if(! checked && ! ui->ledt_filter->text().isEmpty())
+//    {
+//        ui->ledt_filter->clear();
+//        on_ledt_filter_returnPressed();
+//    }
+//}
 
 void Btn_ToolBox::on_btn_selectByValue_clicked(bool checked)
 {
@@ -186,5 +186,6 @@ void Btn_ToolBox::on_btn_clear_seached_text_clicked()
     ui->ledt_filter->clear();
     on_ledt_filter_returnPressed();
 }
+
 
 

@@ -200,11 +200,17 @@
    </item>
    <item>
     <widget class="QWidget" name="wgt_search_block" native="true">
-     <layout class="QHBoxLayout" name="wgt_search" stretch="1,0">
+     <layout class="QHBoxLayout" name="wgt_search" stretch="0,0">
       <item>
-       <widget class="QWidget" name="wgt" native="true">
+       <widget class="QFrame" name="LineEdit">
         <property name="styleSheet">
          <string notr="true">background-color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="1,0">
          <property name="spacing">
@@ -472,7 +478,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>show rel id columns</string>
+        <string>show all columns</string>
        </property>
       </widget>
      </item>
@@ -501,6 +507,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="resource2.qrc"/>
   <include location="resource2.qrc"/>
  </resources>
  <connections/>

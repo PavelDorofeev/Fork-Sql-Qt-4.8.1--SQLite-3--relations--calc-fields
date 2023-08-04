@@ -3,6 +3,8 @@
 
 #include <QString>
 #include <QSqlRecord>
+#include <QSqlRecord>
+#include "pblcolumninfo.h"
 
 class PblSqlRelationalTableModel;
 class PblTableView;
@@ -11,6 +13,8 @@ class config
 {
 public:
     config();
+
+    static PblColumnInfo inf;
 
     static char * prog_version;
 

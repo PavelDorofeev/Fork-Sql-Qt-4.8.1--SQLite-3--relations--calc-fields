@@ -50,7 +50,6 @@ PblTableDlg::PblTableDlg(
     :
       QDialog(parent),
       ui(new Ui::PblTableDlg),
-      chosenRec(QSqlRecord()),
       chosenRow(-1),
       view(0),
       mdl(0)
@@ -68,7 +67,7 @@ PblTableDlg::PblTableDlg(
 
     //qDebug() << " Filter " << Filter;
 
-    if( ! mdl->prepare(tableName , Filter))
+    if( ! mdl->prepare_mdl(tableName , QStringList(), Filter))
     {
         QMessageBox::critical(this ,
                               mySql::error_ ,
@@ -92,16 +91,7 @@ PblTableDlg::PblTableDlg(
 
 
 
-    if( ! view->prepare(mdl))
-    {
-        QMessageBox::critical(this ,
-                              mySql::error_ ,
-                              tr(
-                                  "prepare table view is wrong\n"\
-                                  "sql error: 13").
-                              arg(mdl->lastError().text())
-                              );
-    }
+    view->setModel(mdl);
 
     if(p_cbView !=0) //  !!
         p_cbView(view);
@@ -123,7 +113,7 @@ PblTableDlg::PblTableDlg( const QString &tableName,
     :
       QDialog(parent),
       ui(new Ui::PblTableDlg),
-      chosenRec(QSqlRecord()),
+      //chosenRec(QSqlRecord()),
       chosenRow(-1),
       view(0),
       mdl(0)
@@ -138,7 +128,7 @@ PblTableDlg::PblTableDlg( const QString &tableName,
 
     qDebug() << "PblTableDlg Filter " <<Filter;
 
-    if( ! mdl->prepare(tableName , Filter ))
+    if( ! mdl->prepare_mdl(tableName , QStringList(), Filter ))
     {
         QMessageBox::critical(this,
                               mySql::error_,
@@ -150,18 +140,7 @@ PblTableDlg::PblTableDlg( const QString &tableName,
     }
     view = View;
 
-
-    if( ! view->prepare( mdl))
-    {
-        QMessageBox::critical(this,
-                              mySql::error_,
-                              tr("wrong table view init\t"\
-                                 "table name : '%1").
-                              arg(tableName)
-                              );
-        return;
-    }
-    view->setModel(mdl);
+    view->setModel( mdl);
 
     init( Db, editable, selectable);
 
@@ -262,7 +241,8 @@ void PblTableDlg::slot_accepted()
 
     chosenRow = view->currentIndex().row();
 
-    chosenRec = mdl->getPblSqlRecord( mdl->record(chosenRow) );
+
+    chosenRec = mdl->getPblSqlRecord(  mdl->record( chosenRow ) );
 
     QSqlIndex pk = mdl->primaryKey();
 
@@ -281,11 +261,6 @@ void PblTableDlg::slot_accepted()
     accept();
 }
 
-bool PblTableDlg::setCalcField(CALC_COLUMN &calc)
-{
-    return mdl->setCalcField(calc);
-
-}
 
 bool PblTableDlg::setRelation(PblSqlRelation &rel)
 {

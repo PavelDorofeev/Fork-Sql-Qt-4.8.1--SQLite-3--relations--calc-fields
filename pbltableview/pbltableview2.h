@@ -15,9 +15,10 @@ public:
     virtual bool vrt_insertRow(int row);
 
     virtual bool vrt_afterSetFldValue(int idRow,
-                                         int col,
-                                         const QModelIndex & idx,
-                                         const PblSqlRecord &rec);
+                                      const QString & fldName,
+                                      const QModelIndex & idx,
+                                      const PblSqlRecord &rec,
+                                      bool &needsSubmitAfter);
 
 signals:
     

@@ -18,15 +18,15 @@ PblRelColumn::PblRelColumn()
 PblRelColumn::PblRelColumn(const PblSqlRelation &Relation,
                      int exCol_)
 
-    :
+//    /:
 
      //type(COLUMN_TYPE_RELATION_ID),
 
-      relation(Relation)
+      //relation(Relation)
 
 
 {
-    origCol = Relation.idField1;
+    //??origCol = Relation.col;
 
     exCol = exCol_;
 
@@ -39,7 +39,7 @@ PblRelColumn PblRelColumn::operator=(const PblRelColumn &other)
 {
     qDebug() << "PblColumn::operator=";
 
-    relation = other.relation;
+    //relation = other.relation;
 
     //origCol = other.origCol;
 

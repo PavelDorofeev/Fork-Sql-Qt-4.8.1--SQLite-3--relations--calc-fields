@@ -41,7 +41,7 @@ public:
 
     virtual bool setData(const QModelIndex &item, const QVariant &value, int role = Qt::EditRole);
 
-    bool prepare(const QString &tableName ,
+    bool prepare_mdl(const QString &tableName ,
                  const QHash<QString,QVariant> &SubAccountingFilter = QHash<QString,QVariant>());
 
     QHash<int,int> summaryColumns;

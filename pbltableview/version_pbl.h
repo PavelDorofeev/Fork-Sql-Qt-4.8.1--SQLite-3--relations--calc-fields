@@ -20,8 +20,32 @@
 
 // 11.0.0.0  remove some functions
 
-#define PROG_VERSION    "11.0.0.0"
-#define VER1    11
+// our fields order is not equal db fields order , some fields may be in other position
+// setRelation method has changed , anymore no field number only field name will be used
+// add new parametr to constructor PblSqlRelationalTableModel : const QList<QString> &FieldsSet
+// setSubAccount has changed
+// Many changes
+// selectStatement
+/*
+    SELECT purchases.id,
+    relTbl_1.productName AS productName_id, !!!!!!! productName_id orig
+    purchases.price,
+    .....
+    relTbl_26.name AS suppliers,
+     relTbl_1.id AS goods_id_1,
+     relTbl_26.id AS suppliers_id_26
+    FROM purchases
+    LEFT JOIN goods relTbl_1 ON purchases.productName_id=relTbl_1.id
+    LEFT JOIN suppliers relTbl_26 ON purchases.suppliers=relTbl_26.id
+*/
+// все оригинальные имена (поля) имею оригинальные имена !!! в select выборке, чтобы можно было к ним обращаться по наименваниям !!!!!
+// orderByClause
+// calls fieldIndex will never used anymore . uses onle baseRec.indexOf !fieldIndex
+// 12.0.0.0
+
+
+#define PROG_VERSION    "12.0.0.0"
+#define VER1    12
 #define VER2    0
 #define VER3    0
 #define VER4    0
