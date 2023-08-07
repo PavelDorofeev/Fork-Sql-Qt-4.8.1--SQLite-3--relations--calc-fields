@@ -71,7 +71,7 @@ Basic idea is in a reimplementation function selectStatement that generated quer
 
 We add second level of abstration our development - class PblSqlRelationalTableModel2. This is adds internal operations into table with binding fields, i.g. price*qty=price. PblSqlRelationalTableModel2 inherited form PblSqlRelationalTableModel. 
 
-Demo video on youtube: https://youtu.be/HKrCBZA5eVI
+Demo video on youtube: https://youtu.be/vUrVNU1h_rY
 
 Setting relation is easy and just call one function:
 setRelation( PblSqlRelation( mdl->baseRec.indexOf("productName"),
