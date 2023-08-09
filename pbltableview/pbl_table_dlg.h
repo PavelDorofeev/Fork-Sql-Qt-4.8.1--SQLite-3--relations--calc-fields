@@ -41,6 +41,8 @@ class PblTableDlg;
 }
 
 
+typedef bool (*cb_setting_mdl) (PblSqlRelationalTableModel *);
+
 
 class QSqlDatabase;
 

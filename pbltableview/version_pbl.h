@@ -38,10 +38,14 @@
     LEFT JOIN goods relTbl_1 ON purchases.productName_id=relTbl_1.id
     LEFT JOIN suppliers relTbl_26 ON purchases.suppliers=relTbl_26.id
 */
-// все оригинальные имена (поля) имею оригинальные имена !!! в select выборке, чтобы можно было к ним обращаться по наименваниям !!!!!
+// все оригинальные имена (поля) имею оригинальные имена !!! в select выборке, чтобы можно было к ним обращаться по наименованиям !!!!!
 // orderByClause
 // calls fieldIndex will never used anymore . uses onle baseRec.indexOf !fieldIndex
 // 12.0.0.0
+
+// подправили F8 select
+// подправили selectStatement для subAccountingFilter
+//12.1.0.0
 
 
 #define PROG_VERSION    "12.0.0.0"

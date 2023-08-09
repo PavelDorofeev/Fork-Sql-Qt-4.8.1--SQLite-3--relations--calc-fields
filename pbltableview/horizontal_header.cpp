@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QPainter>
+#include "pbltableview/my_sql.h"
 
 Horizontal_Header::Horizontal_Header(
         Qt::Orientation orientation,
@@ -45,6 +46,7 @@ void Horizontal_Header::paintSection(QPainter *painter, const QRect &rect, int l
     QHeaderView::paintSection(painter , rect , logicalIndex );
 }
 
+
 void Horizontal_Header::slot_sectionPressed(int section)
 {
     qDebug() <<" slot_sectionPressed " <<section ;
@@ -66,13 +68,13 @@ void Horizontal_Header::mousePressEvent(QMouseEvent *event)
 
         for( int ll = 0; ll < count(); ll++)
         {
-    //                if ( ! isSectionHidden( logicNN) )
-    //                    continue;
+            //                if ( ! isSectionHidden( logicNN) )
+            //                    continue;
 
-//            qDebug() << "logicNN " << ll
-//                     << "  sectionPosition " << sectionPosition(ll)
-//                     << "   visualIndex " << visualIndex(ll)
-//                     << "  isSectionHidden " << isSectionHidden( ll );
+            //            qDebug() << "logicNN " << ll
+            //                     << "  sectionPosition " << sectionPosition(ll)
+            //                     << "   visualIndex " << visualIndex(ll)
+            //                     << "  isSectionHidden " << isSectionHidden( ll );
         }
 
         //parent()
@@ -93,6 +95,7 @@ void Horizontal_Header::mouseMoveEvent(QMouseEvent *event)
 
 void Horizontal_Header::initialize_Sections()
 {
+    qDebug() << "initialize_Sections : " << count();
     initializeSections(0 , count());
 }
 

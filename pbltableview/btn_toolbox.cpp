@@ -119,14 +119,24 @@ void Btn_ToolBox::on_ledt_filter_returnPressed()
 //    }
 //}
 
-void Btn_ToolBox::on_btn_selectByValue_clicked(bool checked)
+void Btn_ToolBox::on_btn_selectByValue_clicked( bool checked )
 {
-//    if( view->act_selectByFieldValue->isChecked())
-//    {
-        view->slot_triggeredSelectByFieldValue( false);
-//    }
-//    else
-//        ;
+    //if( view->model()->having.count() > 0 || ! view->model()->filter().isEmpty())
+    if( ! checked )
+    {
+
+        view->slot_selectByFieldValue_Triggered( false );
+
+        view->act_selectByFieldValue->setChecked( false);
+
+    }
+    else
+    {
+        view->slot_selectByFieldValue_Triggered( true );
+
+        view->act_selectByFieldValue->setChecked( true );
+    }
+
 
 
 }

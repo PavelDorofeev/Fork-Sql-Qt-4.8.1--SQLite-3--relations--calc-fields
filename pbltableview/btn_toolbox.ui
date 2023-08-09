@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1006</width>
-    <height>76</height>
+    <width>991</width>
+    <height>62</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -23,6 +23,9 @@
    <set>Qt::ImhHiddenText</set>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="margin">
+    <number>7</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <property name="sizeConstraint">
@@ -207,7 +210,7 @@
          <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
         <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+         <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Plain</enum>

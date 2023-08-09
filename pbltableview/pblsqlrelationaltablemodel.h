@@ -45,6 +45,8 @@
 #include <QHash>
 #include <QDebug>
 
+typedef bool (*cb_setting_mdl) (PblSqlRelationalTableModel *);
+
 class Order_Settings
 {
 public:
@@ -63,6 +65,7 @@ public:
     QString getTxt();
 
 };
+
 
 
 class PblSqlRelationalTableModel: public QSqlTableModel
@@ -92,6 +95,7 @@ public:
     //PblSqlRelationalTableModel(); //??
 
     explicit PblSqlRelationalTableModel(QSqlDatabase &db_ ,
+                                        cb_setting_mdl pMdl =0,
                                         QObject *parent = 0,
                                         const QList<QString> &FieldSet = QList<QString>()
 
@@ -122,6 +126,8 @@ public:
 
     QSqlDatabase &db_;
 
+    cb_setting_mdl callback_setting_mdl_func;
+
     void set_editable( bool Editable);
 
     QString relationField(const QString &tableName, const QString &fieldName) const;
@@ -136,6 +142,13 @@ public:
 
 
     bool change_fld_list(const QList<QString> &lst);
+
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+
+    virtual bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole) ;
+
+
+    QString sqlite_qoutes_for_value(const QVariant & vv);
 
     PblSqlRecord baseRec; // first time the original table record is without extended fields (relations id, calc functions,..)
 
@@ -166,6 +179,9 @@ public:
 
     QHash< QString , QVariant > subAccountingFilter; // if we open the sub accounting table we have to filter its rows
 
+    QHash<QString,QString> having; // filter for aggregate functions
+
+    //QHash<QString,QString> where; // "where" cannot be used on aggregate functions
     // -------------------------------------------------------------------------------
 
     bool isSubAccounting( const QString &fldName );
@@ -198,7 +214,6 @@ public:
 
     bool translateFieldNames(int row, QSqlRecord &values, PblSqlRelationalTableModel::MODE isRowMode ) const;
     
-    void setTable(const QString &tableName);
 
     virtual QString selectStatement() const;
     
@@ -284,7 +299,7 @@ public:
     bool isRelationalColumn(int col);
 
 
-    QString getsubAccountingFilter();
+    //QString getsubAccountingFilter();
 
     Filter filterDone;
 
@@ -327,6 +342,13 @@ protected:
     QString orderByClause() const;
 
 private:
+
+    int origTblColumnCount;
+
+    void setTable(const QString &tableName); // now you have to use a prepare_mdl method ! Its incapsulates setTable.
+
+    int fieldIndex(const QString &fieldName) const; // // don't use anymore
+
 
     void clearDirtyRow();
     void setDirtyRow(int dirtyRow, int dirtyCol);

@@ -8,7 +8,7 @@ class PblTableView2 : public PblTableView
     Q_OBJECT
 public:
     explicit PblTableView2(QWidget          *parent = 0,
-                           cb_setting_mdl   pMdl = 0,
+                           //cb_setting_mdl   pMdl = 0,
                            cb_setting_view  pView = 0,
                            bool selectable = false);
 

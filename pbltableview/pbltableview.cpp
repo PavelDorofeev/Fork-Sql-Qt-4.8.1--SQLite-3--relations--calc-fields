@@ -66,7 +66,7 @@ int   PblTableView::margin_hor = 0;
 
 PblTableView::PblTableView(
         QWidget *parent,
-        cb_setting_mdl pMdl,
+        //cb_setting_mdl pMdl,
         cb_setting_view pView,
         const bool Selectable)
 
@@ -93,7 +93,7 @@ PblTableView::PblTableView(
       changeEditStrategyEnable(false),
       hideEditBtns(true),
       p_cb_setting_view(pView),
-      p_cb_setting_mdl(pMdl),
+      //p_cb_setting_mdl(pMdl),
       mdl(0)
 
 {
@@ -219,7 +219,8 @@ PblTableView::PblTableView(
     mainVl->addWidget( tlbx );
 
 
-    setLayout(mainVl);
+
+    setLayout( mainVl );
 
     act_selectAndClose->setVisible(true);
 
@@ -353,11 +354,14 @@ void PblTableView::set_searchingEnabled( bool On)
 
             act_selectByFieldValue->setShortcut(Qt::Key_F8);
 
+            act_selectByFieldValue->setCheckable( true ); // !!! for triggered signal
+
             act_selectByFieldValue->setChecked(false);
 
+            //qDebug() << ;
 
-            _CONNECT_(act_selectByFieldValue, SIGNAL(triggered(bool)),
-                      this, SLOT(slot_triggeredSelectByFieldValue(bool)));
+            _CONNECT_(act_selectByFieldValue, SIGNAL( triggered(bool)),
+                      this, SLOT(slot_selectByFieldValue_Triggered(bool)));
 
             contextMenu->addAction(act_selectByFieldValue);
 
@@ -383,7 +387,7 @@ void PblTableView::set_searchingEnabled( bool On)
         if(act_selectByFieldValue  != 0)
         {
             _DISCONNECT_(act_selectByFieldValue, SIGNAL(triggered(bool)),
-                         this, SLOT(slot_triggeredSelectByFieldValue(bool)));
+                         this, SLOT(slot_selectByFieldValue_Triggered(bool)));
 
             contextMenu->removeAction(act_selectByFieldValue);
 
@@ -909,61 +913,6 @@ void PblTableView::slot_dataChanged(const QModelIndex &topLeft, const QModelInde
     }
 }
 
-/*
-QIcon PblTableView::getActIcon(PblTableView::ACTION act)
-{
-
-    //    static QIcon insert = QIcon(":icon/img/btn-db/insert.svg");
-    //    static QIcon copy   = QIcon(":icon/img/btn-db/copy.svg");
-    //    static QIcon edit   = QIcon(":icon/img/btn-db/edit.svg");
-    //    static QIcon remove = QIcon(":icon/img/btn-db/remove.svg");
-    static QIcon search = QIcon(":icon/img/btn-db/choice.svg");
-    //static QIcon clrFld = QIcon(":icon/img/btn-db/clear_field.svg");
-    static QIcon txtFind = QIcon(":icon/img/btn-db/search.svg");
-    static QIcon view = QIcon(":icon/img/btn-db/view.svg");
-    static QIcon selectAndClose = QIcon(":icon/img/btn-db/selection.svg");
-
-    //    if(act == PblTableView::ACT_INSERT_ROW)
-    //        return insert;
-
-    //    if(act == PblTableView::ACT_COPY_ROW)
-    //        return copy;
-
-    //    else if(act == PblTableView::ACT_EDIT_ROW)
-    //        return edit;
-
-    //    else if(act == PblTableView::ACT_DELETE_ROW)
-    //        return remove;
-
-    //    if(act == PblTableView::ACT_SEARCH)
-    //        return search;
-
-    if(act == PblTableView::ACT_CLEAR_SEARCH_RESULTS)
-        return txtFind;
-
-    //    else if(act == PblTableView::ACT_CLEAR_FIELD)
-    //        return clrFld;
-
-    else if(act == PblTableView::ACT_VIEW)
-        return view;
-
-    else if(act == PblTableView::ACT_SELECT_AND_CLOSE)
-        return selectAndClose;
-
-
-
-}
-*/
-
-/*QIcon PblTableView::getIcon(int nn) //
-{
-
-    if( nn == 1 )
-        return QIcon(":icon/img/btn-db/choice.svg");
-    else
-        return QIcon(":icon/img/btn-db/choice_off.svg");
-
-}*/
 
 
 QSize PblTableView::sizeHint() const
@@ -1660,6 +1609,7 @@ bool PblTableView::vrt_doubleClicked(const QModelIndex & idx_dblClk , bool &need
 
     QString fldName = model()->baseRec.fieldName( col );
 
+    //qDebug() << "model()->baseRec sdsds " << model()->baseRec;
     if( fldName .isEmpty() )
         return false;
 
@@ -1802,7 +1752,7 @@ bool PblTableView::vrt_doubleClicked(const QModelIndex & idx_dblClk , bool &need
         PblTableDlg dlg ( relation.extTblName ,
                           &model()->database(),
                           this,
-                          p_cb_setting_mdl,  // !!!!
+                          model()->callback_setting_mdl_func,  // !!!!
                           p_cb_setting_view, // !!!!
                           true,
                           Filter
@@ -2070,7 +2020,7 @@ void PblTableView::slot_doubleClicked(const QModelIndex & index)
 
     bool needsSubmitAfter;
 
-    if ( vrt_doubleClicked(index , needsSubmitAfter ) )
+    if ( vrt_doubleClicked( index , needsSubmitAfter ) )
     {
 
         if ( needsSubmitAfter )
@@ -2250,16 +2200,6 @@ bool PblTableView::slot_searchInTable(const QString &txt)
     }
 
 
-    QString subAccountingFilter = model()->getsubAccountingFilter();
-
-    if ( ! subAccountingFilter.isEmpty() )
-    {
-        if( ! flt.isEmpty())
-            flt.append(" AND ");
-
-        flt.append(subAccountingFilter) ;
-    }
-
     model()->setFilter(flt); // select is into
 
 
@@ -2293,27 +2233,30 @@ bool PblTableView::slot_searchInTable(const QString &txt)
     return true;
 }
 
-//bool PblTableView::prepare_view( PblSqlRelationalTableModel * Mdl )
-//{
+bool PblTableView::prepare_view( PblSqlRelationalTableModel * mdl )
+{
+    if ( mdl->tableName().isEmpty() )
+    {
+        QMessageBox::warning(this,
+                             mySql::error_,
+                             QString("Called prepare_view method but table model is not initialized "));
 
-//    setModel(Mdl);
-
-//    //??    if ( ! model()->select())
-//    //    {
-//    //        QMessageBox::warning(this,
-//    //                             mySql::error_,
-//    //                             tr("error in select query:\n\n%1\n\n\n%2").
-//    //                             arg(model()->query().lastQuery()).
-//    //                             arg(model()->lastError().text()));
-//    //        return false;
-//    //    }
-
-//    //qWarning() << " PblTableView::prepare setting_view " ;
+        return false;
+    }
 
 
+    setModel( mdl );
 
-//    return true;
-//}
+    //qDebug() << " PblTableView::prepare setting_view for table " <<  mdl->tableName();
+
+    if( p_cb_setting_view != 0 )
+    {
+        qDebug() << "call externat function to configurate table view " << mdl->tableName();
+        p_cb_setting_view( this ); // !!!!
+    }
+
+    return true;
+}
 
 void PblTableView::set_viewEnabled( bool On)
 {
@@ -2342,33 +2285,54 @@ void PblTableView::set_viewEnabled( bool On)
 }
 
 
-void PblTableView::slot_triggeredSelectByFieldValue(bool forceClear)
+void PblTableView::slot_selectByFieldValue_Triggered( bool set ) // set
 {
-    if(act_selectByFieldValue ==0)
+    if( act_selectByFieldValue ==0 )
 
         return;
 
 
-    if( ! currentIndex().isValid())
-        return;
 
-    if( forceClear )
+    if( ! set )
     {
         model()->setFilter("");
+        model()->having.clear();
 
-        model()->select();
+        bool bbb = model()->select();
+
+        act_selectByFieldValue->setChecked(false);
+
+        tlbx->setBtn_selectByValue(true , false);
 
         act_selectByFieldValue->setIcon(QIcon(":icon/img/btn-db/choice_off.svg"));
 
-        act_selectByFieldValue->setChecked(false);
+        tlbx->ui->btn_selectByValue->setIcon(QIcon(":icon/img/btn-db/choice_off.svg"));
+
+        // clear all icon from column headers
+
+        for(int col=0; col < model()->baseRec.count(); col++ )
+        {
+            if( model()->headerData( col , Qt::Horizontal, Qt::DecorationRole).isValid() )
+            {
+                model()->setHeaderData(col ,
+                               Qt::Horizontal,
+                               QVariant(),
+                               Qt::DecorationRole);
+            }
+        }
 
         return;
 
     }
 
-    if( slot_selectByFieldValue( currentIndex())) // если filter <>"" то там сброс
+    if( ! currentIndex().isValid())
+        return;
+
+    int col = currentIndex().column();
+
+    if( slot_selectByFieldValue( currentIndex()))
     {
-        if( ! filter.isEmpty())
+        if( ! model()->filter().isEmpty()  || model()->having.count() > 0)
         {
             tlbx->setBtn_selectByValue(true , true);
 
@@ -2377,18 +2341,19 @@ void PblTableView::slot_triggeredSelectByFieldValue(bool forceClear)
             act_selectByFieldValue->setIcon(QIcon(":icon/img/btn-db/choice.svg"));
 
             tlbx->ui->btn_selectByValue->setIcon(QIcon(":icon/img/btn-db/choice.svg"));
+
+
+            bool bbb = model()->setHeaderData( col ,
+                           Qt::Horizontal,
+                           QIcon(":icon/img/btn-db/choice.svg"),
+                           Qt::DecorationRole);
+            qDebug()<< bbb;
+
         }
 
         else
         {
-            tlbx->setBtn_selectByValue(true , false);
-
-            act_selectByFieldValue->setChecked(false);
-
-            act_selectByFieldValue->setIcon(QIcon(":icon/img/btn-db/choice_off.svg"));
-
-            tlbx->ui->btn_selectByValue->setIcon(QIcon(":icon/img/btn-db/choice_off.svg"));
-
+            //Q_ASSERT(1==0);
         }
     }
 }
@@ -2570,57 +2535,81 @@ bool PblTableView::slot_selectByFieldValue(QModelIndex idx)
     //                          tr("...."),
     //                          tr("...."));
 
-    if(! idx.isValid())
+    if( ! idx.isValid() ) // clear filter by value
     {
-        filter.clear();
+        model()->setFilter("");
+        model()->having.clear();
+
+        act_selectByFieldValue->setChecked( false); // !!
+
     }
-    else
+    else // set filter by value
     {
-        if(! filter.isEmpty())
+        int col = idx.column();
+        int row = idx.row();
+
+        QVariant val = model()->data(idx);
+
+
+        QString fldName = model()->baseRecord().fieldName( col );
+
+        qDebug()<< " slot_selectByFieldValue val :" << val<< "  fldName " <<fldName;
+
+        if(fldName.isEmpty() || model()->tableName().isEmpty())
         {
-            filter.clear();
+            qCritical() <<"error : fieldName is empty, i.e. is not detected";
+            return false;
+        }
+
+        if( model()->isRelationColumn( fldName ) ) // relation
+        {
+            QModelIndex exIdx = model()->index(row , model()->getRelIdColumn(col));
+
+            val = model()->data(exIdx);
+
+            if( val.isNull())
+                val=(int)0;
+
+            model()->having.clear();
+
+            model()->setFilter( fldName + "=" + model()->sqlite_qoutes_for_value( val ) );
+
+
+        }
+
+        else if( model()->isCalcColumn( fldName )  ) // CalcColumn
+        {
+            // ---------------------------------------------
+            // do not use 'where',  jsut ues having
+            // ---------------------------------------------
+
+            //  "where" cannot be used on aggregate functions
+
+            if(val.isNull())
+                val=(int)0;
+
+            model()->having.clear();
+
+            model()->having.insert( fldName , model()->sqlite_qoutes_for_value( val ) );
+
+
         }
         else
         {
-            int col = idx.column();
-            int row = idx.row();
 
-            QVariant val = model()->data(idx);
+            model()->having.clear();
 
-            QString fieldName = model()->baseRecord().field(col).name();
+            model()->setFilter( QString::fromLatin1("%1.%2=%3").
+                                arg(model()->tableName()).
+                                arg(fldName)
+                                .arg( model()->sqlite_qoutes_for_value( val ) )) ;
 
-            if(fieldName.isEmpty() || model()->tableName().isEmpty())
-            {
-                qCritical() <<"error : fieldName is empty, i.e. is not detected";
-                return false;
-            }
-
-            if(model()->getRelIdColumn(col) >=0 ) // relation
-            {
-                QModelIndex exIdx = model()->index(row , model()->getRelIdColumn(col));
-
-                val = model()->data(exIdx);
-
-                if(val.isNull())
-                    val=(int)0;
-            }
-
-            QString strVal;
-
-            if(val.type() == QVariant::String)
-                strVal = val.toString().prepend("'").append("'");
-            else
-                strVal = val.toString();
-
-            filter.append(QString::fromLatin1(" %1.%2=%3 ").
-                          arg(model()->tableName()).
-                          arg(fieldName).
-                          arg(strVal));
         }
+
+        act_selectByFieldValue->setChecked( true ); // !!
 
     }
 
-    model()->setFilter(filter);
 
     bool bb = model()->select();
 
@@ -2681,114 +2670,11 @@ void PblTableView::slot_editStrategyChanged(QSqlTableModel::EditStrategy newStra
             tlbx->ui->cmb_Strategy->setCurrentIndex(newStrategy);
         }
     }
-    /*if( model()->editStrategy() == newStrategy )
-                return;*/
-
-    //setModel(model());
-    //model()->select()
-    //reset();
-
-
-    //qDebug() << "PblTableView::slot_editStrategyChanged model()->editStrategy" << model()->editStrategy();
-
 
 }
 
 
-//void PblTableView::commitData(QWidget *editor)
-//{
-//    qDebug() << "PblTableView::commitData";
 
-//    QTableView::commitData(editor);
-//}
-
-//void PblTableView::updateEditorData()
-//{
-//    //qDebug() << "PblTableView::updateEditorData";
-
-//    QTableView::updateEditorData();
-//}
-
-
-//void PblTableView::updateEditorGeometries()
-//{
-//    //qDebug() << "PblTableView::updateEditorGeometries";
-
-//    QTableView::updateEditorGeometries();
-
-//}
-
-//void PblTableView::updateGeometries()
-//{
-//    //qDebug() << "PblTableView::updateGeometries";
-
-//    QTableView::updateGeometries();
-
-//}
-
-//void PblTableView::editorDestroyed(QObject *editor)
-//{
-//    //qDebug() << "PblTableView::editorDestroyed";
-
-//    QTableView::editorDestroyed(editor);
-
-//}
-
-//void PblTableView::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)
-//{
-//    //qDebug() << "PblTableView::closeEditor";
-
-//    QTableView::closeEditor(editor , hint);
-//}
-
-//void PblTableView::verticalScrollbarAction(int action)
-//{
-//    //qDebug() << "PblTableView::verticalScrollbarAction";
-
-//    QTableView::verticalScrollbarAction(action);
-//}
-
-//void PblTableView::horizontalScrollbarAction(int action)
-//{
-//    //qDebug() << "PblTableView::horizontalScrollbarAction";
-
-//    QTableView::horizontalScrollbarAction(action);
-//}
-
-//void PblTableView::verticalScrollbarValueChanged(int value)
-//{
-//    //qDebug() << "PblTableView::verticalScrollbarValueChanged";
-
-//    QTableView::verticalScrollbarValueChanged(value);
-//}
-
-//void PblTableView::horizontalScrollbarValueChanged(int value)
-//{
-//    //qDebug() << "PblTableView::horizontalScrollbarValueChanged";
-
-//    QTableView::horizontalScrollbarValueChanged(value);
-//}
-
-/*
-void PblTableView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
-{
-    //qDebug() << "PblTableView::selectionChanged " << selected << deselected;
-
-    QTableView::selectionChanged(selected , deselected);
-}
-*/
-/*
-void PblTableView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
-{
-    //qDebug() << "PblTableView::currentChanged";
-
-    QTableView::currentChanged(current , previous);
-
-    if(current.row() != previous.row())
-        emit sig_rowSelected(current.row());
-
-}
-*/
 
 void PblTableView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
 {
@@ -3038,30 +2924,6 @@ void PblTableView::setToLayout(QVBoxLayout * lo)
 bool PblTableView::edit(const QModelIndex &index, EditTrigger trigger, QEvent *event)
 {
     return QTableView::edit( index, trigger, event);
-
-}
-
-void PblTableView::paintEvent(QPaintEvent *e)
-{
-    //qDebug() << "PblTableView::paintEvent " << e->rect() << e->region() ;
-    //qDebug() << "Style_Sheet " << styleSheet();
-
-    QTableView::paintEvent( e );
-
-    //    QPainter painter(this);
-
-    //    int radius = 6;
-
-    //    painter.setRenderHint( QPainter::Antialiasing );
-
-    //    QPen pen = painter.pen();
-
-    //    painter.setPen( Qt::SolidLine);//NoPen );
-
-    //    painter.drawRoundedRect(rect().adjusted(1, 1, -1, -1), radius, radius,
-    //                            Qt::AbsoluteSize);
-    //    painter.drawRoundedRect(rect().adjusted(1, 1, -1, -rect().height() + 10), 2, 2,
-    //                            Qt::AbsoluteSize);
 
 }
 

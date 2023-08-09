@@ -10,6 +10,7 @@ PblSqlRelationalTableModel2::PblSqlRelationalTableModel2(QSqlDatabase &db ,
                                                          QObject *parent)
     :
       PblSqlRelationalTableModel(db,
+                                 config::setting_mdl,
                                  parent)
 {
 

@@ -83,6 +83,7 @@ QString Order_Settings::getTxt()
 
 PblSqlRelationalTableModel::PblSqlRelationalTableModel(
         QSqlDatabase &Db,
+        cb_setting_mdl pToSettingFunc,
         QObject *parent,
         const QList<QString> &FieldsSet
         )
@@ -96,7 +97,9 @@ PblSqlRelationalTableModel::PblSqlRelationalTableModel(
       db_(Db),
       isDefaultSearchingColumn(FLD_UNDEFINED),
       editable(false),
-      priColName(QString())
+      priColName(QString()),
+      callback_setting_mdl_func( pToSettingFunc ),
+      origTblColumnCount(0)
 {
 
     qDebug() << "ctor PblSqlRelationalTableModel editStrategy " << editStrategy();
@@ -189,16 +192,6 @@ QVariant PblSqlRelationalTableModel::data(const QModelIndex &idx, int role) cons
 
     //qDebug() << "::data "<< idx.column() << idx.row() << " role : " << role;
 
-    /*if(role == Qt::SizeHintRole)
-    {
-         QVariant sz = QSqlTableModel::data(idx, role);
-
-        qDebug() << "data SizeHintRole :  " << sz ;
-
-        return sz;//QSize( 200 ,20);
-
-    }*/
-
     const QString &fldName = baseRec.fieldName(col);
 
 
@@ -208,24 +201,13 @@ QVariant PblSqlRelationalTableModel::data(const QModelIndex &idx, int role) cons
         if( baseRec.specialFld.contains( fldName ))
 
             return Qt::AlignCenter;
+
     }
 
     if( colInfo.contains( fldName ) )
     {
 
         PblColumnInfo inf = colInfo[ fldName ];
-
-        //            if( col = baseRec.indexOf("price"))
-
-        //    //                qDebug() << "TextAlignmentRole " << tableName()
-        //    //                         <<  baseRec.fieldName( col)
-        //    //                          << row
-        //    //                          << col
-        //    //                          << " precision " << inf.precision
-        //    //                          << " alignment " << inf.alignment;
-
-        //            return inf.alignment;
-
 
         if(role == Qt::DisplayRole)
         {
@@ -236,6 +218,10 @@ QVariant PblSqlRelationalTableModel::data(const QModelIndex &idx, int role) cons
                 return QString::number( var.toDouble(),
                                         inf.cFormat,
                                         inf.precision );
+        }
+        else if( role == Qt::TextAlignmentRole)
+        {
+            return colInfo[ fldName ].alignment;
         }
     }
 
@@ -428,19 +414,6 @@ QVariant PblSqlRelationalTableModel::getRecordPriValue(const QSqlRecord &rec) co
     return val;
 }
 
-//PblSqlRelationalTableModel::MODE PblSqlRelationalTableModel::isRowMode(int row) const
-//{
-//    int pri = getRowPriValue( row );
-
-//    if( pri == pbl::INT_UNDEFINED ) // this is insert mode
-
-//        return PblSqlRelationalTableModel::INSERT;
-
-//    else
-
-//        return PblSqlRelationalTableModel::UPDATE;
-
-//}
 
 bool PblSqlRelationalTableModel::isCopyRowMode(int extCol , const QSqlRecord &rec) const
 {
@@ -448,20 +421,7 @@ bool PblSqlRelationalTableModel::isCopyRowMode(int extCol , const QSqlRecord &re
 
 }
 
-//PblSqlRelationalTableModel::MODE PblSqlRelationalTableModel::isRecordMode(const QSqlRecord &rec) const
-//{
-//    // something is wrong in this
-//    QVariant pri = getRecordPriValue( rec );
 
-//    if( pri == QVariant() ) // this is insert mode
-
-//        return PblSqlRelationalTableModel::INSERT;
-
-//    else
-
-//        return PblSqlRelationalTableModel::UPDATE;
-
-//}
 
 
 bool PblSqlRelationalTableModel::setData(const QModelIndex &idx,
@@ -549,8 +509,12 @@ bool PblSqlRelationalTableModel::setData(const QModelIndex &idx,
     return bSetData;
 }
 
-
-bool PblSqlRelationalTableModel::setRelation(PblSqlRelation &relation)
+int PblSqlRelationalTableModel::fieldIndex(const QString &fieldName) const
+{
+    // don't use anymore
+    return -1;
+}
+bool PblSqlRelationalTableModel::setRelation( PblSqlRelation &relation )
 {
 
     if( ! baseRec.contains( relation.idField1Name)  )
@@ -570,8 +534,9 @@ bool PblSqlRelationalTableModel::setRelation(PblSqlRelation &relation)
 
         QMessageBox::warning(0,
                              "error",
-                             QString("PblSqlRelationalTableModel::setRelation. This is a second trying to add setRelation for column : %1 ")
+                             QString("PblSqlRelationalTableModel::setRelation. This is a second trying to add setRelation for column : %1 , table %2")
                              .arg(relation.idField1Name)
+                             .arg(tableName())
                              );
 
         return false;
@@ -850,46 +815,8 @@ bool PblSqlRelationalTableModel::select()
         clearDirtyRow();
     }
 
-    //    for( int col=0; col < baseRec.count(); col++)
-    //    {
-
-    //        qDebug() << "7979798    " << baseRec.fieldName( col ) << " col : " << col << "  headerData : " << headerData( col , Qt::Horizontal ).toString();
-
-    //    }
-    //    qDebug() << "657865780659";
 
     bool bbb = QSqlTableModel::select();
-
-    if( bbb )
-    {
-        foreach( PblCalcColumn Calc ,  calc_columns.values())
-        {
-            Q_ASSERT( baseRec.indexOf( Calc.select_as_name )>=0);
-
-            //qDebug() << "    " << Calc.select_as_name << " col : " << baseRec.indexOf( Calc.select_as_name ) << " header : "<<  Calc.header;
-
-            QString ii =  headerData( baseRec.indexOf( Calc.select_as_name ) , Qt::Horizontal ).toString();
-
-            if (ii != Calc.header)
-            {
-
-                qDebug()<< "sadfadsfasdfadsfd";
-
-                if( !  setHeaderData( baseRec.indexOf( Calc.select_as_name ) ,
-                                      Qt::Horizontal,
-                                      Calc.header ,
-                                      Qt::EditRole) )
-                {
-
-                    QMessageBox::warning( 0 ,
-                                          "error",
-                                          QString("setHeaderData method return false [246524565654]"));
-                    ;
-                    return false;
-                }
-            }
-        }
-    }
 
     emit sig_afterSelect(bbb);
 
@@ -902,8 +829,6 @@ bool PblSqlRelationalTableModel::select()
     isDirtyRow = -1;
     isInsertRow = -1;
 
-
-
     /*qDebug() << " after PblSqlRelationalTableModel::select() : " << tableName()
              << " lastDirtyRowId " << lastDirtyRowId
              << " isDirtyRow"  << isDirtyRow
@@ -915,27 +840,110 @@ bool PblSqlRelationalTableModel::select()
     return true;
 }
 
-QString PblSqlRelationalTableModel::getsubAccountingFilter()
+QVariant PblSqlRelationalTableModel::headerData(int section, Qt::Orientation orientation, int role ) const
 {
-    QString ff;
+    QVariant vv = QSqlTableModel::headerData( section , orientation , role );
 
-    if( subAccountingFilter.count() >0 )
+    if(orientation == Qt::Horizontal)
     {
 
-        foreach ( QString fldName, subAccountingFilter.keys())
+        QString fldName = baseRec.fieldName( section );
+
+        if( role == Qt::DisplayRole)
         {
-            int id = subAccountingFilter.value( fldName ).toInt();
+            if( section > origTblColumnCount )
+            {
+                // ------------------------------------------------------------
+                // needs only for column number greater than record().count() [orig table column count]
+                // ------------------------------------------------------------
 
 
-            //            if(subAccountingFilter.value(fldName).type() == QVariant::String)
-            //                val.prepend("'").append("'");
+                if( colInfo.contains( fldName ))
+                {
+                    //qDebug() << "PblSqlRelationalTableModel::headerData role : " << mySql::roleToStr(role) << " section : " << section << " origTblColumnCount " << origTblColumnCount << fldName << colInfo[ fldName ].header;
 
-            ff += fldName+"="+QString::number( id  );
+                    return colInfo[ fldName ].header;
+                }
+                else
+                {
+                    //qDebug() << " fldName "<< fldName;
+                }
+            }
+            else
+                ;//qDebug() << "PblSqlRelationalTableModel::headerData role :: " << mySql::roleToStr(role) << " origTblColumnCount " << origTblColumnCount << " section : " << section << fldName << vv;
+
+        }
+        else if( role == Qt::DecorationRole)
+        {
+            //qDebug() << "PblSqlRelationalTableModel::headerData role : " << mySql::roleToStr(role) << " section : " << section << fldName << vv;
+        }
+        else
+        {
+            /*
+                you can change here the behavior for this roles:
+
+                TextColorRole
+                BackgroundRole
+                DecorationRole
+                TextAlignmentRole
+                FontRole
+             */
+            //qDebug() << "PblSqlRelationalTableModel::headerData role : " << role << " section : " << section << fldName << vv;
+        }
+
+
+
+    }
+
+    return vv;
+}
+
+bool PblSqlRelationalTableModel::setHeaderData(int section,
+                                               Qt::Orientation orientation,
+                                               const QVariant &value,
+                                               int role )
+{
+    // reimplement
+
+    if(orientation == Qt::Horizontal)
+    {
+        if(role == Qt::EditRole)
+        {
+            // only for column number greater than record().count()
+
+            if( section >=origTblColumnCount )
+            {
+
+                QString fldName = baseRec.fieldName( section );
+
+                QString hdr = value.toString();
+
+                colInfo[ fldName ].header = hdr;
+
+
+                if( section == 27)
+                {
+                    QVariant vv = QSqlTableModel::headerData( section , orientation , role );
+
+                }
+                else
+                {
+
+                }
+            }
+        }
+        else
+        {
+
+            //qDebug() << "PblSqlRelationalTableModel::setHeaderData role : " << mySql::roleToStr(role) << "  section : " << section << orientation << value;
         }
     }
 
-    return ff;
+    QSqlTableModel::setHeaderData( section, orientation , value, role );
+
+    return true;
 }
+
 
 bool PblSqlRelationalTableModel::change_fld_list(const QList<QString> &lst)
 {
@@ -990,6 +998,8 @@ void PblSqlRelationalTableModel::setTable(const QString &tableName)
     QSqlTableModel::setTable( tableName );
 
     baseRec = record( );
+
+    origTblColumnCount = baseRec.count();
 
     // ----------------------------------------------------
 
@@ -1121,17 +1131,22 @@ bool PblSqlRelationalTableModel::prepare_mdl(const QString &tableName,
 
     setTable(tableName); // !!!
 
+
+    // ----------------------------------------------------------
+    //      may be call external function for setting this mdl
+    // ----------------------------------------------------------
+
+    if( callback_setting_mdl_func != 0)
+    {
+        qDebug() << "PblSqlRelationalTableModel::prepare_mdl table: " << tableName;
+
+        callback_setting_mdl_func( this ); //!!!!
+    }
+
+    // -------------------------------------------------------------------
+
     subAccountingFilter = SubCountingFilter;
 
-    //qDebug() << "subCountingFilter " << subAccountingFilter;
-
-    if( subAccountingFilter.count() >0 )
-    {
-        QString ff = getsubAccountingFilter();
-
-        if( ! ff .isEmpty())
-            setFilter(ff);
-    }
 
     return true;
 
@@ -1647,7 +1662,7 @@ QString PblSqlRelationalTableModel::selectStatement() const
 
     QString sTablesList;
     QString sFieldsList;
-    QString where;
+    //QString where;
 
     QStringList lstTables;
 
@@ -1890,24 +1905,79 @@ QString PblSqlRelationalTableModel::selectStatement() const
         query.append(sExtLeftJoins);
     }
 
-    // --------------------- WHERE ------------------------
+    // -------------------------------------------------
+    //                      WHERE
+    // -------------------------------------------------
 
-    if ( ! filter().isEmpty() )
+
+    QString where;
+
+    if( subAccountingFilter.count()>0 )
     {
+        foreach(QString fld, subAccountingFilter.keys())
+        {
+            if( ! where.isEmpty() )
+                where.append(" AND ");
 
-        query.append(QLatin1String(" \nWHERE ("));
-        query.append(filter());
-        query.append(QLatin1String(")"));
+            where.append( QString("%1=%2")
+                          .arg( fld )
+                          .arg( subAccountingFilter[fld].toString() ));
+        }
     }
 
-    // ---------------------- GROUP BY -------------------------
+    if( ! filter().isEmpty() )
+    {
+        if( ! where.isEmpty() )
+            where.append(" AND ");
+
+        where.append(filter());
+    }
+
+    if( ! where.isEmpty() )
+    {
+
+        query.append( QString( " \nWHERE (%1)")
+                .arg(where));
+
+    }
+
+
+    // -------------------------------------------------
+    //                     GROUP BY
+    // -------------------------------------------------
 
     if( groupBy>0)
     {
         query.append(QLatin1String(" \nGROUP BY ")).append(tableName()).append(QLatin1String(".id"));
     }
 
-    // ---------------------- ORDER -------------------------
+    // -------------------------------------------------
+    //                      HAVING
+    // -------------------------------------------------
+
+    if ( having.count()>0 )
+    {
+        // filter only for aggregate functions
+
+        query.append(QLatin1String(" \nHAVING ("));
+
+        QString havStr;
+
+        foreach( QString fld, having.keys())
+        {
+            if(! havStr.isEmpty())
+                havStr.append(" AND ");
+
+            havStr.append(fld + "="+having.value(fld));
+        }
+
+        query.append( havStr );
+        query.append(QLatin1String(")"));
+    }
+
+    // -------------------------------------------------
+    //                      ORDER
+    // -------------------------------------------------
 
     QString orderBy = orderByClause();
 
@@ -1979,10 +2049,7 @@ bool PblSqlRelationalTableModel::isRelationColumn( const QString &  fldName) con
 
     Q_ASSERT_X(fldName.isEmpty()==false,"6727984762565","56823056256");
 
-    if( ! relations2.contains( fldName ))
-        return false;
-
-    return true;
+    return relations2.contains( fldName );
 }
 
 bool PblSqlRelationalTableModel::isCalcColumn(const QString &colName) const
@@ -1996,7 +2063,7 @@ bool PblSqlRelationalTableModel::isCalcColumn(const QString &colName) const
     if( exCol >= ex_columns.count() )
         return false;*/
 
-    if( baseRec.contains( colName ) )
+    if( baseRec.specialFld.contains( colName ) && baseRec.specialFld.value( colName ) == PblSqlRecord::CALC_FLD)
 
         return true;
 
@@ -2101,14 +2168,6 @@ int PblSqlRelationalTableModel::getRelIdColumn(int col) const
 
 }
 
-//int PblSqlRelationalTableModel::getRelIdColumn2(int relCol) const
-//{
-//    if(relations.contains(relCol))
-//        return baseRec.count() + calc_columns.count() + relations.value(relCol);
-//    else
-//        return pbl::COL_UNDEFINED;
-//}
-
 int PblSqlRelationalTableModel::getAccountingOnColumn(int relCol) const
 {
 
@@ -2146,17 +2205,6 @@ bool PblSqlRelationalTableModel::isRelationExtIdColumn(int col) const
     return false;
 }
 
-//int PblSqlRelationalTableModel::getOrigRelationColumn(int col) const
-//{
-//    if(isRelationExtIdColumn( col))
-//    {
-
-//        return rel_clmn.value( col ).col;
-
-//    }
-
-//    return -1;
-//}
 
 
 void PblSqlRelationalTableModel::setSort(int col, Qt::SortOrder order)
@@ -2262,6 +2310,19 @@ bool PblSqlRelationalTableModel::isSubAccountingOn_forFld(int row, const QString
     }
     return false;
 }
+
+QString PblSqlRelationalTableModel::sqlite_qoutes_for_value(const QVariant & val)
+{
+
+    if(val.type() == QVariant::String)
+
+        return val.toString().prepend("'").append("'");
+
+    else
+
+        return val.toString();
+}
+
 
 
 QT_END_NAMESPACE

@@ -70,16 +70,6 @@ DialogTest::DialogTest(QString langId,
         return ;
     }
 
-    if( ! config::setting_mdl(mdl))
-    {
-        QMessageBox::warning(this,
-                             mySql::error_,
-                             tr("setting_mdl table '%1' is unsuccefully").arg(tableName)
-                             +tr("\n\nerror: : %2").arg(mdl->lastError().text()));
-
-        return ;
-    }
-
     if( ! config2::setting_mdl2(mdl)) //second level
     {
         QMessageBox::warning(this,
@@ -94,15 +84,12 @@ DialogTest::DialogTest(QString langId,
               this, SLOT(slot_recalculate_tbl(int)));
 
     view = new PblTableView2(this,
-                             config::setting_mdl,
                              config::setting_view,
                              false);
 
 
-    view->setModel( mdl );
 
-
-    if( ! config::setting_view(view))
+    if( !view->prepare_view( mdl ) )
     {
         QMessageBox::warning(this,
                              mySql::error_,
@@ -114,7 +101,14 @@ DialogTest::DialogTest(QString langId,
 
 
     if ( ! mdl->select() )
-        ;
+    {
+        QMessageBox::warning(this,
+                                  mySql::error_,
+                                  tr("select method with table '%1' is wrong").arg(tableName)
+                                  +tr("\n\nerror: : %2").arg(mdl->lastError().text()));
+
+             return ;
+      }
 
     view->resizeColumnsToContents();
 
@@ -132,7 +126,7 @@ DialogTest::DialogTest(QString langId,
 
     //    qDebug() << "   stretch(3) " << ui->tableViewLO->stretch(3);
 
-    slot_recalculate_tbl(mdl->fieldIndex("sum"));
+    slot_recalculate_tbl(mdl->baseRec.indexOf("sum"));
 
     setSizeGripEnabled(true);
 
@@ -306,13 +300,13 @@ void DialogTest::on_cmb_Language_currentIndexChanged(const QString &countryName)
 
 void DialogTest::slot_recalculate_tbl(int col)
 {
-    if( col == mdl->fieldIndex("sum"))
+    if( col == mdl->baseRec.indexOf("sum") )
     {
         double summ=0;
 
         for( int row =0 ; row < mdl->rowCount(); row++)
         {
-            QModelIndex idx = mdl->index( row , mdl->fieldIndex("sum"));
+            QModelIndex idx = mdl->index( row , mdl->baseRec.indexOf("sum"));
 
             double dblSum = mdl->data( idx ).toDouble();
 

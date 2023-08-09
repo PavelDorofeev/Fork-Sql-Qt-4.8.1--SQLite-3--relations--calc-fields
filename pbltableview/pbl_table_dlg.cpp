@@ -63,7 +63,9 @@ PblTableDlg::PblTableDlg(
 
     setWindowTitle(tableName);
 
-    mdl = new PblSqlRelationalTableModel( *Db , this);
+    mdl = new PblSqlRelationalTableModel( *Db ,
+                                          p_cbMdl,
+                                          this);
 
     //qDebug() << " Filter " << Filter;
 
@@ -79,22 +81,24 @@ PblTableDlg::PblTableDlg(
         return;
     }
 
-    if(p_cbMdl !=0) //  !!
-        p_cbMdl(mdl);
-
 
     view = new PblTableView (
                 this,
-                p_cbMdl,
                 p_cbView,
                 selectable);
 
 
 
-    view->setModel(mdl);
-
-    if(p_cbView !=0) //  !!
-        p_cbView(view);
+    if( ! view->prepare_view( mdl) ) //  !!
+    {
+        QMessageBox::critical(this ,
+                              mySql::error_ ,
+                              tr(
+                                  "prepare table model is wrong\n"\
+                                  "sql error: %3").
+                              arg(mdl->lastError().text())
+                              );
+    }
 
     init( *Db, editable, selectable);
 
@@ -140,7 +144,16 @@ PblTableDlg::PblTableDlg( const QString &tableName,
     }
     view = View;
 
-    view->setModel( mdl);
+    if( ! view->prepare_view( mdl ) )
+    {
+        QMessageBox::critical(this,
+                              mySql::error_,
+                              tr("wrong init table, name : '%1").
+                              arg(tableName)
+                              );
+        return;
+
+    }
 
     init( Db, editable, selectable);
 

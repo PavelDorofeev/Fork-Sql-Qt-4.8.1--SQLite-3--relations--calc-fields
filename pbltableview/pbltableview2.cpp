@@ -4,11 +4,11 @@
 
 
 PblTableView2::PblTableView2(QWidget *parent,
-                             cb_setting_mdl pMdl,
+                             //cb_setting_mdl pMdl,
                              cb_setting_view pView,
                              bool selectable ) :
     PblTableView(parent,
-                 pMdl,
+                 //pMdl,
                  pView,
                  selectable)
 {

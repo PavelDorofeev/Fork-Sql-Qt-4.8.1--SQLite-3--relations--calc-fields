@@ -47,7 +47,7 @@ class PblTableDlg;
 class Horizontal_Header;
 
 
-typedef bool (*cb_setting_mdl) (PblSqlRelationalTableModel *);
+//typedef bool (*cb_setting_mdl) (PblSqlRelationalTableModel *);
 
 typedef bool (*cb_setting_view) (PblTableView *);
 
@@ -58,7 +58,7 @@ public:
 
     explicit PblTableView(
             QWidget *parent = 0,
-            cb_setting_mdl pMdl =0,
+            //cb_setting_mdl pMdl =0,
             cb_setting_view = 0,
             const bool selectable = false);
 
@@ -71,9 +71,6 @@ public:
 
     virtual bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event);
 
-    void paintEvent(QPaintEvent *e);
-
-    virtual void setModel( PblSqlRelationalTableModel *model );
 
     void reset();
 
@@ -173,7 +170,7 @@ public:
 
     virtual bool vrt_clearRelField(const QModelIndex &currIdx);
 
-    //virtual bool prepare_view( PblSqlRelationalTableModel * Mdl );
+    virtual bool prepare_view( PblSqlRelationalTableModel * mdl );
 
     Search_Settings_Dlg::FIND_SETTINGS find_settings;
 
@@ -248,7 +245,7 @@ public Q_SLOTS:
 
     bool slot_selectByFieldValue(QModelIndex idx);
 
-    void slot_triggeredSelectByFieldValue(bool on = true);
+    void slot_selectByFieldValue_Triggered( bool checked = false );
 
     void slot_setEditEnabled(bool on);
 
@@ -302,11 +299,13 @@ private slots:
     void slot_needsReselect(QList<int>);
 
 private:
+
+    void setModel( PblSqlRelationalTableModel *model ); // now you have to use a prepare_view method ! Its incapsulates setTable.
+
     void set_repaintEditBtns(bool On, bool def ,bool hideBtns );
 
     void set_SelectionModel( bool EditMode );
 
-    QString filter;
 
     bool selectAndClose;
 

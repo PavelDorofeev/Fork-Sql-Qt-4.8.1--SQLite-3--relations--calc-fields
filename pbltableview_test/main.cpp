@@ -209,6 +209,8 @@ void setStyle( PblApplication &app )
 
     QString em05 = QString::number( floor(hh*0.5));
     QString em02 = QString::number( floor(hh*0.2));
+    QString em03 = QString::number( floor(hh*0.3));
+    QString em04 = QString::number( floor(hh*0.4));
 
     PblTableView::margin_hor = ww;
 
@@ -339,6 +341,7 @@ void setStyle( PblApplication &app )
 
 */
             "#LineEdit{\n"\
+            "   padding:"+em04+"px;\n"\
             "   border-radius:"+em02+"px;\n"\
             "   border: 1px solid #555;\n"\
             "}\n"\
@@ -346,6 +349,7 @@ void setStyle( PblApplication &app )
             "QComboBox{\n"\
             "   border-radius:"+em02+"px;\n"\
             "   border: 1px solid #555;\n"\
+            "   padding:"+em04+"px;\n"\
             "}\n"\
 
             "QCheckBox{\n"\

@@ -19,6 +19,7 @@ public:
     bool editable;
     bool selectable;
     bool is_visible;
+    QString header;
 
 };
 
