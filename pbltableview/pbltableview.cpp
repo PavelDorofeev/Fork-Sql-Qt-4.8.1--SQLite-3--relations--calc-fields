@@ -1749,15 +1749,15 @@ bool PblTableView::vrt_doubleClicked(const QModelIndex & idx_dblClk , bool &need
         //              OPEN DLG
         // ------------------------------------------------
 
-        PblTableDlg dlg ( relation.extTblName ,
-                          &model()->database(),
-                          this,
-                          model()->callback_setting_mdl_func,  // !!!!
-                          p_cb_setting_view, // !!!!
-                          true,
-                          Filter
+        PblTableDlg dlg( relation.extTblName ,
+                         model()->database(),
+                         model()->callback_setting_mdl_func,
+                         p_cb_setting_view,
+                         this,
+                         true,
+                         Filter
+                         );
 
-                          );
 
         if( ! dlg.mdl->select() )
 
@@ -1968,7 +1968,6 @@ bool PblTableView::vrt_doubleClicked(const QModelIndex & idx_dblClk , bool &need
             return true;
 
         }
-
 
     }
     else if( delegts.contains( fldName ) )
@@ -2315,9 +2314,9 @@ void PblTableView::slot_selectByFieldValue_Triggered( bool set ) // set
             if( model()->headerData( col , Qt::Horizontal, Qt::DecorationRole).isValid() )
             {
                 model()->setHeaderData(col ,
-                               Qt::Horizontal,
-                               QVariant(),
-                               Qt::DecorationRole);
+                                       Qt::Horizontal,
+                                       QVariant(),
+                                       Qt::DecorationRole);
             }
         }
 
@@ -2344,9 +2343,9 @@ void PblTableView::slot_selectByFieldValue_Triggered( bool set ) // set
 
 
             bool bbb = model()->setHeaderData( col ,
-                           Qt::Horizontal,
-                           QIcon(":icon/img/btn-db/choice.svg"),
-                           Qt::DecorationRole);
+                                               Qt::Horizontal,
+                                               QIcon(":icon/img/btn-db/choice.svg"),
+                                               Qt::DecorationRole);
             qDebug()<< bbb;
 
         }

@@ -164,20 +164,15 @@ PblSqlRelationalTableModel::~PblSqlRelationalTableModel()
 {
     //qDebug() << "dtor PblSqlRelationalTableModel " << tableName()<< "  isDirtyRow " <<isDirtyRow;
 
-    if(isDirtyRow != -1)
-    {
-        bool bbb = submit();
+    calc_columns.clear();
+    defaultVls.clear();
+    relations2.clear();
+    subAccnt.clear();
+    rel_bindings.clear();
+    colInfo.clear();
+    subAccountingFilter.clear();
+    having.clear();
 
-        if( ! bbb && isDirtyRow < rowCount())
-        {
-            QMessageBox::warning(0,
-                                 mySql::error_,
-                                 tr("The data of row %1 are not saved fully").
-                                 arg(isDirtyRow),
-                                 tr("%1").
-                                 arg(lastError().text()));
-        }
-    }
 
 }
 
@@ -240,6 +235,16 @@ QVariant PblSqlRelationalTableModel::data(const QModelIndex &idx, int role) cons
     }
 
 
+    if( calc_columns.contains( fldName ) && role == Qt::DisplayRole)
+    {
+        QVariant vv = QSqlTableModel::data(idx, role);
+
+        if( vv.type() >= QVariant::Int && vv.type() <= QVariant::Double &&  vv.toDouble() == 0)
+
+        //if( vv.isNull()) // !!!!
+
+            return "";
+    }
 
     return QSqlTableModel::data(idx, role);
 }
@@ -663,19 +668,6 @@ bool PblSqlRelationalTableModel::setSubAccount(
     return true;
 }
 
-//bool PblSqlRelationalTableModel::setCalcField( const QString &summaryField,
-
-//                                               const QString &extTblName,
-
-//                                               const QString &idField1Name,
-
-//                                               const QString &idField2Name,
-
-//                                               const QString &calcFunc,
-
-//                                               const QString &header,
-
-//                                               const QString & col_after)
 
 bool PblSqlRelationalTableModel::setCalcField( PblCalcColumn Calc)
 {
@@ -1692,7 +1684,7 @@ QString PblSqlRelationalTableModel::selectStatement() const
         if(calc_columns.contains(fldName) )
         {
             //-------------------------------------------------------
-            //                      EXT  CALC
+            //                      CALC
             //-------------------------------------------------------
 
             PblCalcColumn calcCol = calc_columns.value(fldName);
@@ -1712,10 +1704,22 @@ QString PblSqlRelationalTableModel::selectStatement() const
             for(int ii=0; ii < lst.count(); ii++) // this is a sum by some fields
             {
 
-                name.
-                        append(calcCol.extTblName).
-                        append(QLatin1String(".")).
-                        append(lst.at(ii));
+                if( calcCol.calcFunc == "sum" )
+                {
+                    name.
+                            append(QString("ifnull((%1.%2 ),0)")
+                                   .arg(calcCol.extTblName)
+                                   .arg(lst.at(ii))
+                                   );
+
+                }
+                else
+                {
+                    name.
+                            append(calcCol.extTblName).
+                            append(QLatin1String(".")).
+                            append(lst.at(ii));
+                }
 
                 fields.append(lst.at(ii));
 
@@ -1937,7 +1941,7 @@ QString PblSqlRelationalTableModel::selectStatement() const
     {
 
         query.append( QString( " \nWHERE (%1)")
-                .arg(where));
+                      .arg(where));
 
     }
 

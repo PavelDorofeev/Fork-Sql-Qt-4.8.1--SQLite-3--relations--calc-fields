@@ -68,9 +68,7 @@ public:
 
     virtual ~PblTableView();
 
-
     virtual bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event);
-
 
     void reset();
 

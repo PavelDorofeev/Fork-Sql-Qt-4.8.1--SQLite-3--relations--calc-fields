@@ -12,24 +12,26 @@ PblCalcColumn::PblCalcColumn()
       col_after(QString()),
       header(QString())
 {
+
     qDebug() << "ctor default PblCalcCol";
 
     //Q_ASSERT( 1==0 );
+
 }
 
-PblCalcColumn::PblCalcColumn(const QString &SummaryField,
+PblCalcColumn::PblCalcColumn( const QString &SummaryField,
 
-                             const QString &ExtTblName,
+                              const QString &ExtTblName,
 
-                             const QString &IdField1Name,
+                              const QString &IdField1Name,
 
-                             const QString &IdField2Name,
+                              const QString &IdField2Name,
 
-                             const QString &CalcFunc,
+                              const QString &CalcFunc,
 
-                             const QString &Header,
+                              const QString &Header,
 
-                             const QString &Col_after)
+                              const QString &Col_after)
 
     :
 
@@ -39,15 +41,22 @@ PblCalcColumn::PblCalcColumn(const QString &SummaryField,
       idField2Name(IdField2Name),
       calcFunc(CalcFunc),
       col_after(Col_after),
-      header(Header),
+      header(Header)
 
-      select_as_name(
-          QString("%1_%2_%3")
-          .arg(ExtTblName)
-          .arg(CalcFunc)
-          .arg(SummaryField)
-          )
+
 {
+
+    //QString select_as_name1 = select_as_name.replace(',',"_");
+
+    select_as_name = summaryField;
+    select_as_name.replace( "," , "_" );
+
+
+    //qDebug() << "summaryField " <<summaryField ;
+    //qDebug() << "select_as_name " <<select_as_name ;
+    //qDebug() << "select_as_name " <<select_as_name ;
+
+    //select_as_name = QString("%1_%2_%3").arg(ExtTblName).arg(CalcFunc).arg(str);
 
 
 }

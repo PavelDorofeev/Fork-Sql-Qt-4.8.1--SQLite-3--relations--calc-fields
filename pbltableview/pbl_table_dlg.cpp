@@ -38,11 +38,11 @@
 #include "btn_toolbox.h"
 
 PblTableDlg::PblTableDlg(
-        const QString & tableName,
-        QSqlDatabase *Db,
+        const QString tableName,
+        QSqlDatabase &Db,
+        cb_setting_mdl p_cb_setting_mdl,
+        cb_setting_view p_cb_setting_view,
         QWidget *parent,
-        cb_setting_mdl p_cbMdl,
-        cb_setting_view p_cbView,
         bool selectable,
         const QHash<QString,QVariant> &Filter,
         QSqlTableModel::EditStrategy edt
@@ -63,8 +63,8 @@ PblTableDlg::PblTableDlg(
 
     setWindowTitle(tableName);
 
-    mdl = new PblSqlRelationalTableModel( *Db ,
-                                          p_cbMdl,
+    mdl = new PblSqlRelationalTableModel( Db ,
+                                          p_cb_setting_mdl,
                                           this);
 
     //qDebug() << " Filter " << Filter;
@@ -84,7 +84,7 @@ PblTableDlg::PblTableDlg(
 
     view = new PblTableView (
                 this,
-                p_cbView,
+                p_cb_setting_view,
                 selectable);
 
 
@@ -100,9 +100,11 @@ PblTableDlg::PblTableDlg(
                               );
     }
 
-    init( *Db, editable, selectable);
+    init( Db, editable, selectable);
 
 }
+
+// protected
 
 PblTableDlg::PblTableDlg( const QString &tableName,
                           PblSqlRelationalTableModel *Mdl,
@@ -117,7 +119,6 @@ PblTableDlg::PblTableDlg( const QString &tableName,
     :
       QDialog(parent),
       ui(new Ui::PblTableDlg),
-      //chosenRec(QSqlRecord()),
       chosenRow(-1),
       view(0),
       mdl(0)

@@ -92,8 +92,6 @@ public:
     
 public:
     
-    //PblSqlRelationalTableModel(); //??
-
     explicit PblSqlRelationalTableModel(QSqlDatabase &db_ ,
                                         cb_setting_mdl pMdl =0,
                                         QObject *parent = 0,
@@ -132,14 +130,9 @@ public:
 
     QString relationField(const QString &tableName, const QString &fieldName) const;
 
-    //const QList<QString> otherFldsSet; // added in version 12.xxx
-
     virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
     bool canFetchMore(const QModelIndex &parent) const;
-
-
-
 
     bool change_fld_list(const QList<QString> &lst);
 
@@ -161,33 +154,26 @@ public:
 
     QHash< QString , PblCalcColumn> calc_columns;    // calculate columns  [ ]
 
-    QHash< int , QVariant> defaultVls;
+    QHash< int , QVariant> defaultVls;              // defalt values for insert row
 
-    //QHash<int , int > relations;     // removed
-
-    QHash<QString , PblSqlRelation > relations2;     // !!!
-
-    //QHash<QString , int > addSubAcntOnFlds;     // removed
+    QHash<QString , PblSqlRelation > relations2;     // here relational fields description
 
 
-    QHash< QString , PblSubAccnt > subAccnt;           //
+    QHash< QString , PblSubAccnt > subAccnt;        // here sub accounting connections
 
-    QHash< QString , PblSubAccnt * > rel_bindings; //
+    QHash< QString , PblSubAccnt * > rel_bindings;  // here is an info only for sub fields
 
-
-    QHash< QString , PblColumnInfo> colInfo;    // additional columns info for visual repainting
+    QHash< QString , PblColumnInfo> colInfo;    // additional columns info for visual repainting,  aligning, precision
 
     QHash< QString , QVariant > subAccountingFilter; // if we open the sub accounting table we have to filter its rows
 
     QHash<QString,QString> having; // filter for aggregate functions
 
-    //QHash<QString,QString> where; // "where" cannot be used on aggregate functions
     // -------------------------------------------------------------------------------
 
     bool isSubAccounting( const QString &fldName );
 
     bool isSubAccountingOn_forFld(int row, const QString &fldName);
-
 
 
     QSqlIndex primaryIndex;
@@ -248,10 +234,7 @@ public:
 
     virtual  void clear();
 
-    //PblSqlRelationalTableModel::MODE isRowMode(int row) const;
-    //PblSqlRelationalTableModel::MODE isRecordMode(const QSqlRecord &rec) const;
     bool isCopyRowMode(int extCol , const QSqlRecord &rec) const;
-
 
     mutable Order_Settings orderSet;
 
@@ -273,8 +256,6 @@ public:
     void set_Visible(const QString & colName , bool on);
 
     const QSqlRecord & baseRecord();
-
-    //PblColumn::COLUMN_TYPE exColType(int exCol);
 
     PblSqlRelation  getRelationInfoForColumn(const QString &fldName);
 
@@ -298,9 +279,6 @@ public:
 
     bool isRelationalColumn(int col);
 
-
-    //QString getsubAccountingFilter();
-
     Filter filterDone;
 
     int getLastInsertId();
@@ -308,9 +286,6 @@ public:
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
     PblSqlRecord getPblSqlRecord(  const QSqlRecord & rec);
-
-    //PblSqlRecord record2(int row);
-
 
     int isDefaultSearchingColumn;
 
@@ -328,7 +303,6 @@ signals:
 public Q_SLOTS:
 
     void setEditStrategy(EditStrategy strategy);
-
 
     void slot_primeInsert(int row, QSqlRecord &rec);
 

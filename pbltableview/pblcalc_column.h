@@ -41,7 +41,7 @@ public:
 
     const QString   header;
 
-    const QString   select_as_name;
+    QString   select_as_name;
 
     QString  get_fld_name();
 

@@ -36,6 +36,35 @@ include(../pbltableview/pbltableview.pri)
 
 include(../logging_system/logging_system.pri)
 
+CONFIG(release,release|debug){
+
+    contains(CONFIG,static){
+
+        DEFINES +=STATIC_MODE
+        QTPLUGIN += qsvg
+
+        message("----- RELEASE STATIC ----")
+    }
+    else{
+
+        message("----- release  shared ----??????")
+    }
+}
+else:CONFIG(debug,release|debug){
+    # DEBUG
+
+    contains(CONFIG,static){
+        message("????????---------- debug static -----------??????????")
+
+    }
+    else:contains(CONFIG,shared){
+        message("---------- DEBUG SHARED ----------- ")
+
+    }
+}
+
+
+
 
 SOURCES +=\
     main.cpp \

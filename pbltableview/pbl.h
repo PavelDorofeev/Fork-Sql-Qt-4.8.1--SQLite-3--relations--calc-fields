@@ -11,7 +11,9 @@ public:
         COL_UNDEFINED = UNDEFINED,
         ROW_UNDEFINED = UNDEFINED,
         INT_UNDEFINED = UNDEFINED,
-        REL_UNDEFINED = 0
+        REL_UNDEFINED = 0,
+        REL_EMPTY_ID  = REL_UNDEFINED,
+        EMPTY_ID      = REL_UNDEFINED,
     };
 
     pbl();

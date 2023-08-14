@@ -27,8 +27,10 @@ bool createTables();
 
 void setStyle( PblApplication &app );
 
-//(*func()){ return 0};
-///int (*)(int);
+#include <QtPlugin>     //!!
+#ifdef STATIC_MODE
+Q_IMPORT_PLUGIN(qsvg)   //!!
+#endif
 
 
 int main(int argc, char *argv[])
@@ -528,33 +530,3 @@ bool createTables()
 
 }
 
-
-/*QSqlQuery query;
-
-QString tableName="goods";
-
-
-
-
-firstInsertInto(tableName , "productName,price" , "1, 123.45");
-firstInsertInto(tableName , "productName,price" , "2, 234.56");
-firstInsertInto(tableName , "productName,price" , "3, 345.67");
-
-tableName ="purchases";
-
-sCreateTable="CREATE TABLE "+tableName+" "\
-        "(id integer primary key autoincrement,productName_id int default 0,price double default 0,qty double default 1,sum double default 0)";
-
-if( ! query.exec(sCreateTable))
-{
-    qCritical() << "Не удается создать таблицу базы данных : "<< sCreateTable << query.lastError().text();
-
-    return 0;
-}
-else
-    qWarning() << "succefully created table " ;
-
-firstInsertInto(tableName , "productName_id,price,qty,sum" , "1, 123.45, 1, 123.45");
-firstInsertInto(tableName , "productName_id,price,qty,sum" , "2, 123.45, 1, 123.45");
-firstInsertInto(tableName , "productName_id,price,qty,sum" , "3, 123.45, 1, 123.45");
-*/

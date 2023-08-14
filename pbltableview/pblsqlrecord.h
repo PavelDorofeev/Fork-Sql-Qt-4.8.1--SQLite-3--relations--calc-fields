@@ -34,7 +34,7 @@ public:
 
     //QHash< QString, QString > relFields;
 
-    int isThis_RelExtColumn(const QString& relCol) const;
+    int getRelIdCol(const QString& relCol) const;
 
 private:
 

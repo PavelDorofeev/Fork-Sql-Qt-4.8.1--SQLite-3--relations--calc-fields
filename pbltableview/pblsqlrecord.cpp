@@ -54,9 +54,11 @@ void PblSqlRecord::func1(const QSqlRecord &other)
 PblSqlRecord::~PblSqlRecord()
 {
     qDebug() << "~PblSqlRecord() " << this;
+
+    specialFld.clear();
 }
 
-int PblSqlRecord::isThis_RelExtColumn(const QString& relColName) const
+int PblSqlRecord::getRelIdCol(const QString& relColName) const
 {
     /*
     SELECT purchases.id,

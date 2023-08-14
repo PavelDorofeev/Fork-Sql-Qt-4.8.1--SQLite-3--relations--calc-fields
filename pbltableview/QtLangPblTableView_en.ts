@@ -10,147 +10,103 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="92"/>
-        <location filename="btn_toolbox.ui" line="124"/>
-        <location filename="btn_toolbox.ui" line="159"/>
-        <location filename="btn_toolbox.ui" line="186"/>
-        <location filename="btn_toolbox.ui" line="217"/>
-        <location filename="btn_toolbox.ui" line="283"/>
-        <location filename="btn_toolbox.ui" line="327"/>
-        <location filename="btn_toolbox.ui" line="353"/>
-        <location filename="btn_toolbox.ui" line="376"/>
+        <location filename="btn_toolbox.ui" line="55"/>
+        <source>toggled edit mode [F2]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.ui" line="83"/>
+        <source>insert row [INS]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.ui" line="86"/>
+        <location filename="btn_toolbox.ui" line="113"/>
+        <location filename="btn_toolbox.ui" line="144"/>
+        <location filename="btn_toolbox.ui" line="167"/>
+        <location filename="btn_toolbox.ui" line="194"/>
+        <location filename="btn_toolbox.ui" line="346"/>
+        <location filename="btn_toolbox.ui" line="389"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="250"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:7.5pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#3b3b3b;&quot;&gt;press any symbols for searching add last press [ENTER] key&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <oldsource>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:7.5pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; color:#3b3b3b;&quot;&gt;набираем символы и потом нажать [ENTER]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
+        <location filename="btn_toolbox.ui" line="110"/>
+        <source>copy row [F9]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="436"/>
-        <source>OnFieldChange</source>
+        <location filename="btn_toolbox.ui" line="141"/>
+        <source>edit row [F4]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.ui" line="164"/>
+        <source>remove row [DEL]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.ui" line="191"/>
+        <source>view [F3]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.ui" line="311"/>
+        <source>select field for seaching</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.ui" line="343"/>
+        <source>select by field value [F8]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.ui" line="437"/>
+        <source>Edit strategy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.ui" line="484"/>
+        <source>show all columns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="btn_toolbox.ui" line="441"/>
-        <source>OnRowChange</source>
+        <source>OnFieldChange</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="btn_toolbox.ui" line="446"/>
+        <source>OnRowChange</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="btn_toolbox.ui" line="451"/>
         <source>OnManulaSubmit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="466"/>
+        <location filename="btn_toolbox.ui" line="471"/>
         <source>submitAll</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="63"/>
+        <location filename="btn_toolbox.ui" line="58"/>
         <source>edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="85"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:7.5pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#55aa00;&quot;&gt;insert row [INS]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="btn_toolbox.ui" line="117"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#ffaa00;&quot;&gt;copy row [F9]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="btn_toolbox.ui" line="152"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#0000ff;&quot;&gt;edit row [F4]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="btn_toolbox.ui" line="179"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;remove row [DEL]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="btn_toolbox.ui" line="210"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#93c400;&quot;&gt;view [F3]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="btn_toolbox.ui" line="276"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;  font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#4b6fde;&quot;&gt;select by field value [F8] &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="btn_toolbox.ui" line="323"/>
-        <source>search []
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="btn_toolbox.ui" line="350"/>
-        <source>select field for seaching []</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="btn_toolbox.ui" line="373"/>
+        <location filename="btn_toolbox.ui" line="386"/>
         <source>Sorting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="428"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:7.5pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Edit strategy&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="btn_toolbox.ui" line="463"/>
+        <location filename="btn_toolbox.ui" line="468"/>
         <source>save changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="btn_toolbox.ui" line="479"/>
-        <source>show rel id columns</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
+        <location filename="btn_toolbox.ui" line="258"/>
         <location filename="btn_toolbox.cpp" line="30"/>
         <source>search</source>
         <translation type="unfinished"></translation>
@@ -197,46 +153,51 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../pbltableview_test/dialog.ui" line="92"/>
-        <source>goods</source>
+        <source>test</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../pbltableview_test/dialog.ui" line="102"/>
+        <source>goods</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pbltableview_test/dialog.ui" line="112"/>
         <source>checks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.ui" line="128"/>
+        <location filename="../pbltableview_test/dialog.ui" line="138"/>
         <source>font size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.ui" line="138"/>
+        <location filename="../pbltableview_test/dialog.ui" line="148"/>
         <source>view log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.ui" line="150"/>
+        <location filename="../pbltableview_test/dialog.ui" line="160"/>
         <source>document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.ui" line="185"/>
+        <location filename="../pbltableview_test/dialog.ui" line="195"/>
         <source>Sum</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.ui" line="195"/>
+        <location filename="../pbltableview_test/dialog.ui" line="205"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.ui" line="217"/>
+        <location filename="../pbltableview_test/dialog.ui" line="227"/>
         <source>SAVE DOCUMENT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog.ui" line="237"/>
+        <location filename="../pbltableview_test/dialog.ui" line="247"/>
         <source>Close App</source>
         <translation type="unfinished"></translation>
     </message>
@@ -244,32 +205,38 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DialogTest</name>
     <message>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="64"/>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="92"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="65"/>
         <source>opening table &apos;%1&apos; is unsuccefully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="65"/>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="75"/>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="93"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="67"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="78"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="97"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="108"/>
         <source>
 
 error: : %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="74"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="77"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="96"/>
         <source>setting_mdl table &apos;%1&apos; is unsuccefully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="148"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="107"/>
+        <source>select method with table &apos;%1&apos; is wrong</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="156"/>
         <source>you should fill the table &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="192"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="200"/>
         <source>query exec wrong 
 
 %1
@@ -278,27 +245,27 @@ error: : %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="205"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="213"/>
         <source>removeRows returns false, table &apos;%1&apos; </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="314"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="334"/>
         <source>Недопустимый размер</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="315"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="335"/>
         <source>Не допускается выбирать размер меньше 6!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="322"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="342"/>
         <source>invalid size (&gt;36)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/dialog_test.cpp" line="323"/>
+        <location filename="../pbltableview_test/dialog_test.cpp" line="343"/>
         <source>This is impissible to use the size more 36!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -306,109 +273,89 @@ error: : %2</source>
 <context>
     <name>PblSqlRelationalTableModel</name>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="131"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="153"/>
         <source>874584584 inserting row:
  set_newInsertedRowParameters returns false, table name &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="153"/>
-        <source>The data of row %1 are not saved fully</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="155"/>
-        <source>%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="298"/>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="337"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="353"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="393"/>
         <source>pri column have to exist in table!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="323"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="379"/>
         <source>pri column value dont convert to int !</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="349"/>
-        <source>pri column have to exist in record!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="425"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="453"/>
         <source>OnRowChange: needs to submit dirty row %1 (id : %2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="441"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="469"/>
         <source>OnRowChange: lost focus on row %1 (id : %2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="487"/>
-        <source>PblSqlRelationalTableModel::setRelation This is a second trying setRelation for column number : %1 </source>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="402"/>
+        <source>pri column have to exist in this record!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="522"/>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="532"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="517"/>
+        <source>PblSqlRelationalTableModel::setRelation. Error finding  : %1 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="635"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="523"/>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="533"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="636"/>
         <source>setBinding is not correct
 before you should create two relations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="732"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="1005"/>
+        <source>table &apos;%1&apos; is not valid [37675676576]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="1070"/>
         <source>database is not valid!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="740"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="1078"/>
         <source>database is not opened!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="746"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="1084"/>
         <source>database is not opened! %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="794"/>
-        <source>table &apos;%1&apos; is not valid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="1199"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="1497"/>
         <source>look reimplemention of insertRows function
 class PblSqlRelationalTableModel
 we have to set a field default values</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="1226"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="1525"/>
         <source>function insertRows
 setData for some field returns false</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="1669"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="1881"/>
         <source>PblSqlRelationalTableModel::selectStatement() field list is empty</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PblSqlRelationalTableModel2</name>
-    <message>
-        <location filename="pblsqlrelationaltablemodel2.cpp" line="97"/>
-        <source>error in setting_mdl</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -425,212 +372,185 @@ setData for some field returns false</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbl_table_dlg.cpp" line="70"/>
+        <location filename="pbl_table_dlg.cpp" line="76"/>
+        <location filename="pbl_table_dlg.cpp" line="96"/>
         <source>prepare table model is wrong
 sql error: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbl_table_dlg.cpp" line="89"/>
-        <source>prepare table view is wrong
-sql error: 13</source>
+        <location filename="pbl_table_dlg.cpp" line="151"/>
+        <source>wrong init table, name : &apos;%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbl_table_dlg.cpp" line="131"/>
+        <location filename="pbl_table_dlg.cpp" line="139"/>
         <source>wrong table name : &apos;%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="pbl_table_dlg.cpp" line="143"/>
-        <source>wrong table view init	table name : &apos;%1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>PblTableView</name>
     <message>
-        <location filename="pbltableview.cpp" line="460"/>
+        <location filename="pbltableview.cpp" line="590"/>
         <source>create row</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="502"/>
+        <location filename="pbltableview.cpp" line="632"/>
         <source>copy row</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="481"/>
+        <location filename="pbltableview.cpp" line="611"/>
         <source>edit row</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="170"/>
-        <source>show chk editable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="pbltableview.cpp" line="232"/>
+        <location filename="pbltableview.cpp" line="209"/>
         <source>select and close window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1238"/>
+        <location filename="pbltableview.cpp" line="1370"/>
         <source>Viewing a row.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1239"/>
+        <location filename="pbltableview.cpp" line="1371"/>
         <source>You should implement this code yourself!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1683"/>
+        <location filename="pbltableview.cpp" line="1527"/>
+        <source>before removing a line you should submit dirty row %2 
+table &apos;%1&apos;
+error:%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="pbltableview.cpp" line="1907"/>
         <source>subOnIdx in not valid
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1720"/>
-        <source>submit returns  false
-sql error: %1</source>
+        <location filename="pbltableview.cpp" line="2387"/>
+        <source>second attempting adding QCheckBox to field : &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1893"/>
-        <location filename="pbltableview.cpp" line="1915"/>
-        <location filename="pbltableview.cpp" line="1931"/>
-        <location filename="pbltableview.cpp" line="1942"/>
-        <location filename="pbltableview.cpp" line="2675"/>
+        <location filename="pbltableview.cpp" line="2086"/>
+        <location filename="pbltableview.cpp" line="2108"/>
+        <location filename="pbltableview.cpp" line="2124"/>
+        <location filename="pbltableview.cpp" line="2135"/>
+        <location filename="pbltableview.cpp" line="2849"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1894"/>
+        <location filename="pbltableview.cpp" line="2087"/>
         <source>searching value [&apos;%1&apos;] has not string type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1916"/>
+        <location filename="pbltableview.cpp" line="2109"/>
         <source>searching value [&apos;%1&apos;] has not integer type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1932"/>
+        <location filename="pbltableview.cpp" line="2125"/>
         <source>searching value [&apos;%1&apos;] has not double type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1943"/>
+        <location filename="pbltableview.cpp" line="2136"/>
         <source>unknown searching value type [&apos;%1&apos;] </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="527"/>
+        <location filename="pbltableview.cpp" line="657"/>
         <source>remove row</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="2091"/>
-        <source>view</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="pbltableview.cpp" line="289"/>
+        <location filename="pbltableview.cpp" line="335"/>
         <source>search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="2186"/>
-        <location filename="pbltableview.cpp" line="2213"/>
-        <location filename="pbltableview.cpp" line="2235"/>
-        <location filename="pbltableview.cpp" line="2267"/>
+        <location filename="pbltableview.cpp" line="2376"/>
+        <location filename="pbltableview.cpp" line="2503"/>
         <source>column is out of range , field : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="2194"/>
-        <location filename="pbltableview.cpp" line="2219"/>
-        <source>second attempting adding QCheckBox to field : %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="pbltableview.cpp" line="2241"/>
+        <location filename="pbltableview.cpp" line="2475"/>
         <source>second attempting adding QComboBox to field : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="2273"/>
+        <location filename="pbltableview.cpp" line="2513"/>
         <source>second attempting add a date_Delegate to field : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="2594"/>
+        <location filename="pbltableview.cpp" line="2768"/>
         <source>editStrategy dont settable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="2676"/>
+        <location filename="pbltableview.cpp" line="2850"/>
         <source>vrt_afterSetFldValue is not correct
 dont restore current row after select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="662"/>
+        <location filename="pbltableview.cpp" line="679"/>
         <source>clear field</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1285"/>
+        <location filename="pbltableview.cpp" line="1417"/>
         <source>You should realize this code yourself</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="738"/>
+        <location filename="pbltableview.cpp" line="854"/>
         <source>cast object error (43563565)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1298"/>
+        <location filename="pbltableview.cpp" line="1430"/>
         <source>before editing a line you should select it
 table &apos;%1&apos;
 error:%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1326"/>
+        <location filename="pbltableview.cpp" line="1458"/>
         <source>copying row,
 needs submit, after submit lost row focus,
 table %1, error: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1369"/>
+        <location filename="pbltableview.cpp" line="1502"/>
         <source>before copying a line you should select it
 table &apos;%1&apos;
 error:%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1394"/>
-        <source>before removing a line you should submit dirty row %2 (id : %3)
-table &apos;%1&apos;
-error:%4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="pbltableview.cpp" line="1592"/>
-        <location filename="pbltableview.cpp" line="1604"/>
+        <location filename="pbltableview.cpp" line="1785"/>
+        <location filename="pbltableview.cpp" line="1797"/>
         <source>the choice is not defined</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="1631"/>
-        <location filename="pbltableview.cpp" line="1653"/>
-        <location filename="pbltableview.cpp" line="1698"/>
-        <location filename="pbltableview.cpp" line="1743"/>
-        <location filename="pbltableview.cpp" line="1766"/>
-        <location filename="pbltableview.cpp" line="1806"/>
+        <location filename="pbltableview.cpp" line="1829"/>
+        <location filename="pbltableview.cpp" line="1866"/>
+        <location filename="pbltableview.cpp" line="1939"/>
         <source>setData returns  false
 field : &apos;%1&apos;
 value : &apos;%2&apos;
@@ -638,7 +558,7 @@ sql error: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="306"/>
+        <location filename="pbltableview.cpp" line="352"/>
         <source>select by field value</source>
         <translation type="unfinished"></translation>
     </message>
@@ -675,31 +595,31 @@ sql error: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="754"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="1092"/>
         <source>database is empty?
  %1:
  error: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="765"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="1103"/>
         <source>empty table name &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pblsqlrelationaltablemodel.cpp" line="779"/>
+        <location filename="pblsqlrelationaltablemodel.cpp" line="1114"/>
         <source>database is not contains table &apos;%1&apos; ?
 
  error: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="58"/>
+        <location filename="pbltableview.cpp" line="61"/>
         <source>submit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="pbltableview.cpp" line="59"/>
+        <location filename="pbltableview.cpp" line="62"/>
         <source>submit All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -741,25 +661,15 @@ sql error: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/config.cpp" line="52"/>
-        <source>qty sold</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../pbltableview_test/config.cpp" line="68"/>
-        <source>sum sold</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../pbltableview_test/config.cpp" line="116"/>
-        <location filename="../pbltableview_test/config.cpp" line="138"/>
-        <location filename="../pbltableview_test/config.cpp" line="200"/>
-        <location filename="../pbltableview_test/config.cpp" line="220"/>
+        <location filename="../pbltableview_test/config.cpp" line="118"/>
+        <location filename="../pbltableview_test/config.cpp" line="140"/>
+        <location filename="../pbltableview_test/config.cpp" line="212"/>
+        <location filename="../pbltableview_test/config.cpp" line="226"/>
         <source>setRelation returns false</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/config.cpp" line="401"/>
+        <location filename="../pbltableview_test/config.cpp" line="410"/>
         <source>table &apos;%1&apos;
 
 index row %2x%3 
@@ -768,44 +678,37 @@ index row %2x%3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/config.cpp" line="414"/>
-        <source>setData returns false , table &apos;%1&apos;
-
-%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../pbltableview_test/main.cpp" line="66"/>
+        <location filename="../pbltableview_test/main.cpp" line="72"/>
         <source>addDatabase returns false:
  error: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/main.cpp" line="78"/>
+        <location filename="../pbltableview_test/main.cpp" line="84"/>
         <source>database file is not opened:
  %1,
  error: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/main.cpp" line="90"/>
+        <location filename="../pbltableview_test/main.cpp" line="96"/>
         <source>Database is empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/main.cpp" line="91"/>
+        <location filename="../pbltableview_test/main.cpp" line="97"/>
         <source>Creating new database!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/main.cpp" line="367"/>
+        <location filename="../pbltableview_test/main.cpp" line="417"/>
         <source>Не удается создать таблицу базы данных %1:
 
 %2 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pbltableview_test/main.cpp" line="376"/>
+        <location filename="../pbltableview_test/main.cpp" line="426"/>
         <source>succefully created table %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -813,22 +716,22 @@ index row %2x%3
 <context>
     <name>Search_Settings_Dlg</name>
     <message>
-        <location filename="search_settings_dlg.ui" line="14"/>
+        <location filename="search_settings_dlg.ui" line="20"/>
         <source>setting: where to search text by fields</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="search_settings_dlg.ui" line="34"/>
-        <source>where to search</source>
+        <location filename="search_settings_dlg.ui" line="43"/>
+        <source>where to search : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="search_settings_dlg.ui" line="52"/>
+        <location filename="search_settings_dlg.ui" line="61"/>
         <source>case sensible</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="search_settings_dlg.ui" line="59"/>
+        <location filename="search_settings_dlg.ui" line="68"/>
         <source>exactly</source>
         <translation type="unfinished"></translation>
     </message>

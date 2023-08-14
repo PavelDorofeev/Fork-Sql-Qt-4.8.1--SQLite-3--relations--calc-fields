@@ -224,10 +224,10 @@ void DialogTest::on_btn_save_clicked()
 void DialogTest::openTable(const QString & tableName)
 {
     PblTableDlg dlg(tableName ,
-                    &db ,
-                    this,
+                    db ,
                     config::setting_mdl ,
                     config::setting_view ,
+                    this,
                     false);
 
 

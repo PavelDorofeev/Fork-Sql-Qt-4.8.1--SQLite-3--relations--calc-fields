@@ -46,19 +46,20 @@ typedef bool (*cb_setting_mdl) (PblSqlRelationalTableModel *);
 
 class QSqlDatabase;
 
-class PblTableDlg : public QDialog
+class   PblTableDlg : public QDialog
 {
     Q_OBJECT
     
 public:
-    explicit PblTableDlg(const QString & tableName,
-                         QSqlDatabase *sqlite,
-                         QWidget *parent = 0,
-                         cb_setting_mdl p_cbMdl =0,
-                         cb_setting_view p_cbView=0,
-                         bool selectable=false,
-                         const QHash<QString,QVariant> &filter=QHash<QString,QVariant>(),
-                         QSqlTableModel::EditStrategy edt = QSqlTableModel::OnRowChange
+
+    explicit PblTableDlg( const QString tableName,
+                          QSqlDatabase &db_,
+                          cb_setting_mdl p_cbMdl =0 ,
+                          cb_setting_view p_cbView = 0 ,
+                          QWidget *parent = 0,
+                          bool selectable=false,
+                          const QHash<QString,QVariant> &filter=QHash<QString,QVariant>(),
+                          QSqlTableModel::EditStrategy edt = QSqlTableModel::OnRowChange
             );
 
     virtual ~PblTableDlg();

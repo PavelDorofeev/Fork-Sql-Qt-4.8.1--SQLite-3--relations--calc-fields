@@ -47,6 +47,10 @@
 // подправили selectStatement для subAccountingFilter
 //12.1.0.0
 
+// for MDL : setTable,fieldIndex to private that this not use anymore from external calls ( now use only prepare_mdl )
+// for View : setModel to private too ( now use only prepare_view )
+//12.2.0.0
+
 
 #define PROG_VERSION    "12.0.0.0"
 #define VER1    12

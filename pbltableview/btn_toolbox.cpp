@@ -40,7 +40,7 @@ Ui::Btn_ToolBox *Btn_ToolBox::getUi()
 Btn_ToolBox::~Btn_ToolBox()
 {
     //qDebug("~Btn_ToolBox");
-    delete ui;;
+    delete ui;
 }
 
 
