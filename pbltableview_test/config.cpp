@@ -11,6 +11,8 @@
 #include <QDebug>
 #include <QHeaderView>
 
+#include "pbltableview/pbl.h"
+
 bool config::visibleRelIdColumns_byDefault = true;
 
 char * config::prog_version = "7.0.0.1";
@@ -314,7 +316,7 @@ bool config::setting_view(PblTableView *view)
     //                      SEARCHING
     // ----------------------------------------------------------
 
-    if ( mdl->isDefaultSearchingColumn != PblSqlRelationalTableModel::FLD_UNDEFINED )
+    if ( mdl->isDefaultSearchingColumn != pbl::COL_UNDEFINED )
 
         view->find_settings.searchedField = mdl->isDefaultSearchingColumn;
     else

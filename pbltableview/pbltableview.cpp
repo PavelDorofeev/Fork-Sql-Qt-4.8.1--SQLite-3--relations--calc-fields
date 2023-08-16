@@ -57,6 +57,7 @@
 #include "date_delegate.h"
 #include "horizontal_header.h"
 #include "pblsubaccnt.h"
+#include "pbl.h"
 
 const QString PblTableView::s_submit= QObject::tr("submit");
 const QString PblTableView::s_submitAll= QObject::tr("submit All");
@@ -261,6 +262,7 @@ PblTableView::PblTableView(
 
     horizontalHeader()->setResizeMode(QHeaderView::Interactive); // ResizeToContents не дает менять ширину
 
+    installEventFilter( this ); // !!!
 
 }
 
@@ -1597,6 +1599,12 @@ void PblTableView::setSelectAndClose()
 
 }
 
+void PblTableView::close()
+{
+    qDebug() << "PblTableView::close()";
+
+}
+
 
 bool PblTableView::vrt_doubleClicked(const QModelIndex & idx_dblClk , bool &needsSubmitAfter)
 {
@@ -2067,13 +2075,13 @@ bool PblTableView::slot_searchInTable(const QString &txt)
         return false;
     }
 
-    Q_ASSERT(find_settings.searchedField != PblSqlRelationalTableModel::FLD_UNDEFINED);
+    Q_ASSERT(find_settings.searchedField != pbl::COL_UNDEFINED);
 
     QVariant::Type type = model()->baseRec.field((int)find_settings.searchedField).type();
 
     qDebug() << "QVariant::Type type : " << type;
 
-    if (model()->getRelIdColumn(  find_settings.searchedField ) != PblSqlRelationalTableModel::FLD_UNDEFINED )
+    if (model()->getRelIdColumn(  find_settings.searchedField ) != pbl::COL_UNDEFINED )
     {
         find_settings.seachType = Search_Settings_Dlg::FIND_SETTINGS::SEARCH_RELATION_TEXT;
     }
@@ -2818,7 +2826,7 @@ void PblTableView::slot_rowIsDirty(int row)
 {
     //qDebug() << "   slot_rowIsDirty " << row;
 
-    setCurrentIndex(model()->index( row , model()->lastDirtyCol));
+    //setCurrentIndex(model()->index( row , model()->lastDirtyCol));
 
 
 }
@@ -2926,5 +2934,97 @@ bool PblTableView::edit(const QModelIndex &index, EditTrigger trigger, QEvent *e
 
 }
 
+bool PblTableView::eventFilter( QObject *obj, QEvent *event)
+{
+    qDebug() << "PblTableView::eventFilter " << pbl::toStr_Event_Type(event->type());
 
+    QEvent::Type tt = event->type();
 
+    if( tt == QEvent::Hide ) //  || tt == QEvent::Close || tt == QEvent::Quit )
+    {
+        qDebug() << "PblTableView::eventFilter " <<  pbl::toStr_Event_Type( event->type() ) << " obj : " << obj->objectName();
+
+        if( model()->editStrategy() >= QSqlTableModel::OnRowChange )
+        {
+            if ( model()->isDirtyRow != pbl::ROW_UNDEFINED)
+            {
+                if( ! model()->submitAll() )
+                {
+                    QMessageBox::warning( this,
+                                          "error",
+                                          QString("submitAll returns false [46556534565]")
+                                                  .arg(model()->database().lastError().text()));
+                }
+            }
+        }
+
+    }
+
+    bool bb = QTableView::eventFilter(obj , event);
+
+    return bb;
+}
+
+void PblTableView::closeEvent(QCloseEvent * evt)
+{
+    // -------------------------------------------
+    //  not called, look to hide event
+    // -------------------------------------------
+
+    qDebug() << "PblTableView::closeEvent ";
+
+    if( model()->isDirtyRow  != pbl::ROW_UNDEFINED )
+    {
+        bool bbb = model()->submit();
+    }
+
+    QTableView::closeEvent( evt );
+}
+
+void PblTableView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    if( model()->editStrategy() == QSqlTableModel::OnRowChange)
+    {
+        // -----------------------------------------------------------------------------------
+        // this needs to call submit method whan current changed (dirty) row lost the focus
+        // -----------------------------------------------------------------------------------
+
+        qDebug() << "PblTableView::currentChanged previous " << previous.row() << previous.column() << "  current row " << current.row() << " col " <<current.column();
+
+        if( previous.row() != -1 && previous.row() != current.row())
+        {
+            bool to_submit = false;
+
+            for(int col=0; col < model()->baseRec.count(); col++)
+            {
+                const QString & fldName = model()->baseRec.fieldName( col );
+
+                if( model()->baseRec.specialFld.contains( fldName )
+                        && ( model()->baseRec.specialFld[ fldName ] == PblSqlRecord::CALC_FLD
+                             || model()->baseRec.specialFld[ fldName ] == PblSqlRecord::SUBACCOUNT_ENABLE_FLD ))
+                    continue;
+
+                const QModelIndex idx = model()->index( previous.row() , col );
+
+                if( model()->isDirty( idx ))
+                {
+                    qDebug() << "PblTableView::currentChanged isDirty row : " << previous.row() << " col : " << col;
+                    to_submit = true;
+                }
+            }
+
+            if( to_submit )
+            {
+
+                if( ! model()->submit() )
+                {
+                    QMessageBox::warning( this,
+                                          "error",
+                                          "submit() returns false [45633565]");
+                }
+            }
+        }
+    }
+    QTableView::currentChanged( current , previous);
+
+}

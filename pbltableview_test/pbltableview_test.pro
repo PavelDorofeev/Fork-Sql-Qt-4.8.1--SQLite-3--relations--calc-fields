@@ -36,6 +36,7 @@ include(../pbltableview/pbltableview.pri)
 
 include(../logging_system/logging_system.pri)
 
+
 CONFIG(release,release|debug){
 
     contains(CONFIG,static){
@@ -78,7 +79,8 @@ HEADERS  += \
     version_app.h \
     pblsqlrelationaltablemodel2.h \
     config2.h \
-    dialog_test.h
+    dialog_test.h \
+    ../common/my_prog.h
 
 FORMS    += dialog.ui
 
@@ -86,7 +88,8 @@ RESOURCES += \
     pbltableview/resource2.qrc
 
 OTHER_FILES += \
-    rc2.rc
+    rc2.rc \
+    ../common/common-for-pbltableview.pri
 
 win32 {
   RC_FILE     += rc2.rc

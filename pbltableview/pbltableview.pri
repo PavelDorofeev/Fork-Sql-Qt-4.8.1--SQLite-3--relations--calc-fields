@@ -32,7 +32,8 @@ HEADERS += \
     pbltableview/horizontal_header.h \
     pbltableview/pblsubaccnt.h \
     pbltableview/pblcolumninfo.h \
-    pbltableview/pblcalc_column.h
+    pbltableview/pblcalc_column.h \
+    ../pbltableview/pbl.h
 
 SOURCES += \
     pbltableview/btn_toolbox.cpp \
@@ -59,7 +60,8 @@ SOURCES += \
     pbltableview/horizontal_header.cpp \
     pbltableview/pblsubaccnt.cpp \
     pbltableview/pblcolumninfo.cpp \
-    pbltableview/pblcalc_column.cpp
+    pbltableview/pblcalc_column.cpp \
+    ../pbltableview/pbl.cpp
 
 FORMS    += \
     pbltableview/btn_toolbox.ui \

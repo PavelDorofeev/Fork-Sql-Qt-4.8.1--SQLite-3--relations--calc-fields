@@ -80,11 +80,6 @@ public:
         FILTER_TYPE_SEARCH_BY_FIELD_VALUE,
     };
 
-    enum SOME_FIELDS_VALUES
-    {
-        FLD_UNDEFINED = -1,
-    };
-
     enum MODE{
         UPDATE=1,
         INSERT

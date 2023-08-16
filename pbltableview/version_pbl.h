@@ -51,10 +51,17 @@
 // for View : setModel to private too ( now use only prepare_view )
 //12.2.0.0
 
+// when dialog with table was closed then this data is not saves yet with OnRowChange (for example)
+// add PblTableView::currentChanged for OnRowChange
+// Calc field and sub accounting on field set non editable
+//12.3.0.0
 
-#define PROG_VERSION    "12.0.0.0"
+// не сохранялось последнее измененное значение в таблице при закрытии окна
+//12.4.0.0
+
+#define PROG_VERSION    "12.4.0.0"
 #define VER1    12
-#define VER2    0
+#define VER2    4
 #define VER3    0
 #define VER4    0
 

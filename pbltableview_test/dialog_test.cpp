@@ -22,6 +22,7 @@
 #include <QSqlQuery>
 #include <QFontDialog>
 #include "btn_toolbox.h"
+#include "pbltableview/pbl.h"
 
 
 const QString DialogTest::progName = "QTableDlg test db";
@@ -136,7 +137,7 @@ DialogTest::DialogTest(QString langId,
 
 DialogTest::~DialogTest()
 {
-    if(mdl->isDirtyRow != -1)
+    if(mdl->isDirtyRow != pbl::ROW_UNDEFINED)
         mdl->submitAll();
 
     delete ui;

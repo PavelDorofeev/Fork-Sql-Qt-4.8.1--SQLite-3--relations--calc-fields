@@ -81,6 +81,8 @@ public:
 
     static int  margin_hor;
 
+    void close();
+
     QByteArray stt;
 
     PblSqlRelationalTableModel *mdl;
@@ -133,6 +135,8 @@ public:
 
     virtual bool vrt_doubleClicked(const QModelIndex & index , bool &needsSubmitAfter);
 
+
+    virtual void currentChanged(const QModelIndex &current, const QModelIndex &previous);
 
     void setSelectAndClose();
 
@@ -204,9 +208,12 @@ public:
     void set_Edit_Triggers(bool on);
 
 
+    virtual bool eventFilter(QObject *obj, QEvent *event);
 
 protected:
 
+
+    virtual void closeEvent(QCloseEvent *);
 
 signals:
 
@@ -222,6 +229,8 @@ signals:
 
 
 public Q_SLOTS:
+
+    //void close();
 
     void slot_CustomMenuRequested(const QPoint &pos);
 
