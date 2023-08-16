@@ -51,13 +51,15 @@
 // for View : setModel to private too ( now use only prepare_view )
 //12.2.0.0
 
-// when dialog with table was closed then this data is not saves yet with OnRowChange (for example)
+// when dialog with table was closed then this data is not saveв with OnRowChange (for example)
 // add PblTableView::currentChanged for OnRowChange
 // Calc field and sub accounting on field set non editable
-//12.3.0.0
-
-// не сохранялось последнее измененное значение в таблице при закрытии окна
 //12.4.0.0
+
+// in table maybe exists some relations to single external table
+// ext_fld_name  ( QString("%1_%2_%3")
+// 12.4.1.0
+
 
 #define PROG_VERSION    "12.4.0.0"
 #define VER1    12

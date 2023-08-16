@@ -2936,7 +2936,7 @@ bool PblTableView::edit(const QModelIndex &index, EditTrigger trigger, QEvent *e
 
 bool PblTableView::eventFilter( QObject *obj, QEvent *event)
 {
-    qDebug() << "PblTableView::eventFilter " << pbl::toStr_Event_Type(event->type());
+    //qDebug() << "PblTableView::eventFilter " << pbl::toStr_Event_Type(event->type());
 
     QEvent::Type tt = event->type();
 

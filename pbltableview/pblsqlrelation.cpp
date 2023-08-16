@@ -54,7 +54,10 @@ PblSqlRelation::PblSqlRelation( const QString & IdField1,
       extTblName    ( Table),
       idField2Name  ( IdField2),
       dstFldName    ( DestField),
-      ext_fld_name  ( QString("%1_%2").arg(extTblName).arg(idField2Name) )
+      ext_fld_name  ( QString("%1_%2_%3") // in table maybe exixts some relations to single external table
+                      .arg(extTblName)
+                      .arg(idField1Name)
+                      .arg(idField2Name) )
 
 {
     joinMode = Join_mode;

@@ -260,11 +260,9 @@ public:
 
     bool isRelationExtIdColumn(int col) const;
 
-
-    int getRelIdColumn(int col) const; // for calls from with QModelIndex parameters
-
     bool isSpecialColumn(int col) const;
 
+    int getRelIdColumn(int col) const; // for calls from with QModelIndex parameters
 
     int getRelIdColumn3(const QString & fldName) const;
 
