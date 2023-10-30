@@ -86,10 +86,10 @@ bool logging_System::init(QString dirName_,
                 qCritical()  << "can't create folder  (for log file) :  " << dirName;
 
                 QMessageBox::critical( 0,
-                          QObject::tr("Ошибка"),
-                          QObject::tr("Не удалось создать каталог для логирования программы :\n\n %1").
+                          QString::fromUtf8("Ошибка"),
+                          QString::fromUtf8("Не удалось создать каталог для логирования программы :\n\n %1").
                           arg(dirName),
-                          QObject::tr("Возможно не хватает прав администратора.")
+                          QString::fromUtf8("Возможно не хватает прав администратора.")
                           );
 
                 return false;
@@ -105,10 +105,10 @@ bool logging_System::init(QString dirName_,
                 qCritical()  << "can't create folder  (for log file) :  " << dirName+"\\"+LOGS_HYSTORY_DIR;
 
                 QMessageBox::critical( 0,
-                          QObject::tr("Ошибка"),
-                          QObject::tr("Не удалось создать каталог для хранения логов работы программы :\n\n %1").
+                          QString::fromUtf8("Ошибка"),
+                          QString::fromUtf8("Не удалось создать каталог для хранения логов работы программы :\n\n %1").
                           arg(dirName),
-                          QObject::tr("Возможно не хватает прав администратора.")
+                          QString::fromUtf8("Возможно не хватает прав администратора.")
                           );
 
                 return false;
@@ -129,8 +129,8 @@ bool logging_System::init(QString dirName_,
         if( ! logFile->open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Unbuffered))
         {
             QMessageBox::critical(0,
-                     QObject::tr("Сбой запуска программы"),
-                     QObject::tr("К сожалению не удается открыть лог файл  : \n%1").
+                     QString::fromUtf8("Сбой запуска программы"),
+                     QString::fromUtf8("К сожалению не удается открыть лог файл  : \n%1").
                      arg(logFilePath));
 
             qCritical()  << "can't open log file :  " << logFilePath;

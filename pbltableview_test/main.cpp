@@ -509,21 +509,22 @@ bool createTables()
 
     tableName = "sub_accounting";
 
+    //QString model()->relations2[subAccnt->fld1].get_ext_fld_name();
 
     if( ! createTbl( tableName, "CREATE TABLE "+tableName+" "\
                      "(id INTEGER UNIQUE,"\
-                     "goods_id NOT NULL,"\
+                     "goods_productName_id NOT NULL,"\
                      "val varchar,"\
                      "PRIMARY KEY(id AUTOINCREMENT)"\
                      ")"))
         return false;
 
-    firstInsertInto(tableName , "goods_id,val" , "1, 'XXL'");
-    firstInsertInto(tableName , "goods_id,val" , "1, 'XL'");
-    firstInsertInto(tableName , "goods_id,val" , "1, 'L'");
-    firstInsertInto(tableName , "goods_id,val" , "2, 'M'");
-    firstInsertInto(tableName , "goods_id,val" , "2, 'L'");
-    firstInsertInto(tableName , "goods_id,val" , "2, 'XX'");
+    firstInsertInto(tableName , "goods_productName_id,val" , "1, 'XXL'");
+    firstInsertInto(tableName , "goods_productName_id,val" , "1, 'XL'");
+    firstInsertInto(tableName , "goods_productName_id,val" , "1, 'L'");
+    firstInsertInto(tableName , "goods_productName_id,val" , "2, 'M'");
+    firstInsertInto(tableName , "goods_productName_id,val" , "2, 'L'");
+    firstInsertInto(tableName , "goods_productName_id,val" , "2, 'XX'");
 
 
     return true;

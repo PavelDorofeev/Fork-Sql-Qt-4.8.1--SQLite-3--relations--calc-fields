@@ -68,6 +68,8 @@ private slots:
     void on_btn_clear_seached_text_clicked();
 
 
+    //void on_chk_showRelExColumns_clicked();
+
 private:
 
 

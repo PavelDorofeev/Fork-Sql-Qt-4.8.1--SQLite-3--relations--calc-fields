@@ -37,12 +37,12 @@
 #include <QSqlDatabase>
 #include <QIcon>
 #include <QDoubleSpinBox>
-#include "doubledelegate.h"
+#include "delegates/doubledelegate.h"
+#include "delegates/combobox_delegate.h"
 #include "my_sql.h"
 
 class PblSqlRelationalTableModel;
 class Btn_ToolBox;
-class ComboBoxDelegate;
 class PblTableDlg;
 class Horizontal_Header;
 

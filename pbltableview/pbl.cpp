@@ -2,10 +2,29 @@
 
 #include <QEvent>
 #include <QMessageBox>
+#include <QDebug>
+
+#include "my_gui/msg2.h"
 
 pbl::pbl()
 {
 }
+
+//Msg2* pbl::getMsg2(QWidget *parent)
+//{
+//    static Msg2 *pMsg2 = NULL;
+
+//    if(pMsg2 == NULL)
+//    {
+//        qDebug()<< "pbl::getMsg2 == NULL";
+
+//        pMsg2 = new Msg2( parent ); // ! Msg2 created only one time !
+//    }
+//    else
+//        qDebug()<< "pbl::getMsg2 " << pMsg2 << pMsg2->getTxt();
+
+//    return pMsg2;
+//}
 
 
 QString pbl::toStr_ItemFlag(int ItemFlag)
@@ -210,6 +229,22 @@ QString pbl::toStr_Event_Type(int event)
     case QEvent::MaxUser :return "MaxUser";
 
     default:  return "unknown event";
+    }
+}
+
+const QString pbl::toStr_InputMethodQuery(Qt::InputMethodQuery mtd)
+{
+    switch(mtd)
+    {
+    case Qt::ImMicroFocus       :  return "ImMicroFocus";
+    case Qt::ImFont             :  return "ImFont";
+    case Qt::ImCursorPosition   :  return "ImCursorPosition";
+    case Qt::ImSurroundingText  :  return "ImSurroundingText";
+    case Qt::ImCurrentSelection :  return "ImCurrentSelection";
+    case Qt::ImMaximumTextLength:  return "ImMaximumTextLength";
+    case Qt::ImAnchorPosition   :  return "ImAnchorPosition";
+
+    default:  return "? unknown ?  InputMethodQuery";
     }
 }
 

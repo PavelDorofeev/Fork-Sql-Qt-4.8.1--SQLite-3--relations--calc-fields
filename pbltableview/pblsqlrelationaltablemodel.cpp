@@ -94,13 +94,17 @@ PblSqlRelationalTableModel::PblSqlRelationalTableModel(
       lastDirtyCol( pbl::COL_UNDEFINED ),
       lastDirtyRowId( pbl::ROW_UNDEFINED ),
       isSelectedLine( pbl::ROW_UNDEFINED ),
-      db_(Db),
+      db_( Db ),
       isDefaultSearchingColumn( pbl::COL_UNDEFINED ),
       editable(false),
       priColName(QString()),
       callback_setting_mdl_func( pToSettingFunc ),
       origTblColumnCount(0)
 {
+
+    Q_ASSERT (Db.isValid() == true);
+
+    Q_ASSERT (Db.isOpenError() == false);
 
     qDebug() << "ctor PblSqlRelationalTableModel editStrategy " << editStrategy();
 
@@ -241,7 +245,7 @@ QVariant PblSqlRelationalTableModel::data(const QModelIndex &idx, int role) cons
 
         if( vv.type() >= QVariant::Int && vv.type() <= QVariant::Double &&  vv.toDouble() == 0)
 
-        //if( vv.isNull()) // !!!!
+            //if( vv.isNull()) // !!!!
 
             return "";
     }
@@ -757,10 +761,10 @@ void PblSqlRelationalTableModel::setDirtyRow(int dirtyRow , int dirtyCol)
 
     isSelectedLine  = dirtyRow;
 
-    qDebug() << "        lastDirtyRowId " <<lastDirtyRowId ;
-    qDebug() << "        lastDirtyCol   " <<lastDirtyCol ;
-    qDebug() << "        isDirtyRow     " <<isDirtyRow ;
-    qDebug() << "        isSelectedLine " <<isSelectedLine ;
+    //    qDebug() << "        lastDirtyRowId " <<lastDirtyRowId ;
+    //    qDebug() << "        lastDirtyCol   " <<lastDirtyCol ;
+    //    qDebug() << "        isDirtyRow     " <<isDirtyRow ;
+    //    qDebug() << "        isSelectedLine " <<isSelectedLine ;
 
 }
 
@@ -1058,7 +1062,7 @@ void PblSqlRelationalTableModel::setTable(const QString &tableName)
 
 }
 
-bool PblSqlRelationalTableModel::prepare_mdl(const QString &tableName,
+bool PblSqlRelationalTableModel::prepare_mdl( const QString &tableName,
                                              const QList<QString> &fldList,
                                              const QHash<QString,QVariant> &SubCountingFilter)
 {
@@ -1429,6 +1433,174 @@ bool PblSqlRelationalTableModel::translateFieldNames(
 
 }
 
+bool PblSqlRelationalTableModel::prepareInsertRow( int row,
+                                                   QSqlRecord &rec)
+{
+
+    int count = baseRec.count();
+
+    int isGeneratedCount = 0;
+
+
+    for( int col=0; col < rec.count(); col++)
+    {
+        QString fldName = rec.fieldName( col );
+
+        if ( isRelationColumn( fldName ) )
+        {
+
+            bool isGenereted_col = rec.field( col ).isGenerated();
+
+            int extCol = getRelIdColumn( col );
+
+            //------------------------------------------------------------------------
+            //  we must forever set generated OFF for ext columns
+            //------------------------------------------------------------------------
+
+            bool isGenereted_extCol = rec.field( extCol ).isGenerated();
+
+            if( isGenereted_extCol )  // extCol is never writes to db, extCol is a virtual column
+            {
+                rec.setGenerated(extCol , false );
+            }
+
+            QVariant txt = rec.value(col);
+
+            if ( editStrategy() == QSqlTableModel::OnFieldChange) // will be submit /select
+            {
+                //------------------------------------------------------------------------
+                //                          Attention!
+                //
+                //  if edit strategy is OnFieldChange
+                //  if you used setRecord this temporary changes editStrategy to OnRowChange
+                //------------------------------------------------------------------------
+
+                // it occures when click insertRow and click to update relational field
+                // or if copyRow run
+
+                if( rec.isGenerated( extCol )) // is copyRow
+
+                    qDebug() << "is copyRow"; // nothing to do
+
+                else
+
+                    txt = rec.value(extCol).toInt(); // replace text from id !
+
+
+            }
+
+            else if ( editStrategy() == QSqlTableModel::OnRowChange) // will be submit /select
+
+            {
+                //------------------------------------------------------------------------
+                //                          Attention!
+                //
+                //  if edit strategy is OnFieldChange
+                //  if you used setRecord this temporary changes editStrategy to OnRowChange
+                //------------------------------------------------------------------------
+
+
+                // it occures when click insertRow and click to update relational field
+                // or if copyRow run
+
+                //if( isCopyRowMode( extCol , rec) ) // is copyRow
+
+                txt = rec.value(extCol).toInt(); // replace text from id !
+
+                //                else
+
+                //                    txt = rec.value(extCol).toInt(); // replace text from id
+
+
+            }
+            else if ( editStrategy() == QSqlTableModel::OnManualSubmit)
+            {
+                // it occures only if submitAll was called
+
+                txt = rec.value(extCol).toInt(); // replace text from id
+
+                //isGeneratedCount++;
+            }
+
+            if( isGenereted_col || isGenereted_extCol)
+            {
+                //  -----------------------------------------------------
+                //          replace field
+                //  -----------------------------------------------------
+
+                QSqlField ff = rec.field( col );
+
+                QString name = baseRec.field( col ).name();  // replace record field name to original as in db exist, because of select query was changed it by AS operator
+
+                ff.setName( name );
+
+                ff.setValue( txt );
+
+                ff.setGenerated( true );
+
+                rec.replace( col , ff );
+
+                isGeneratedCount++;
+            }
+
+
+        }
+        else if( ! rec.isGenerated(col) )
+
+            continue;
+
+        else // generated On and not relational columns
+
+            isGeneratedCount++;
+
+    }
+
+    rec.remove( rec.indexOf(priColName) ); // !!
+
+
+    foreach ( QString extFld ,  calc_columns.keys())
+    {
+        Q_ASSERT (rec.contains( extFld )==true);
+
+        qDebug() << "remove " << extFld;
+
+        rec.remove( rec.indexOf( extFld ) );
+
+    }
+
+    foreach ( QString extFld ,  relations2.keys())
+    {
+        Q_ASSERT (rec.contains( extFld )==true);
+
+        qDebug() << "remove " << extFld << relations2[ extFld ].get_ext_fld_name();
+
+        rec.remove( rec.indexOf( relations2[ extFld ].get_ext_fld_name() ) );
+
+    }
+
+    foreach ( QString extFld ,  subAccnt.keys())
+    {
+        qDebug() << "remove " << extFld;
+
+        //Q_ASSERT (rec.contains( extFld )==true);
+
+        //rec.remove( rec.indexOf( extFld ) );
+
+    }
+
+    if( isGeneratedCount > 0 )
+    {
+        return true;
+    }
+    else
+    {
+        qDebug()<< "translateFieldNames : changes is not presents";
+
+        return false;
+    }
+
+}
+
 bool PblSqlRelationalTableModel::updateRowInTable(int row, const QSqlRecord &values)
 {
 
@@ -1541,9 +1713,13 @@ bool PblSqlRelationalTableModel::insertRowIntoTable(const QSqlRecord &values)
 {
     QSqlRecord rec = values;
 
+    qDebug() << "\n\n\nPblSqlRelationalTableModel::insertRowIntoTable values " << values << "\n\n";
+
     // it occures when insetRow: insertRow and copyRow too!
 
-    //foreach( QString subOnColumn, baseRec.specialFld.keys() )
+    // --------------------------------------------------------------------------
+    //          all special (extened) columns set generated no
+    // --------------------------------------------------------------------------
 
     for( int col=0; col< rec.count(); col++)
     {
@@ -1551,8 +1727,6 @@ bool PblSqlRelationalTableModel::insertRowIntoTable(const QSqlRecord &values)
         QString fldName = rec.fieldName( col );
 
         Q_ASSERT( baseRec.contains( fldName ) ) ;
-
-        qDebug() << baseRec.specialFld ;
 
         if ( baseRec.specialFld.contains( fldName ) )
         {
@@ -1568,6 +1742,10 @@ bool PblSqlRelationalTableModel::insertRowIntoTable(const QSqlRecord &values)
         }
     }
 
+    // --------------------------------------------------------------------------
+    //
+    // --------------------------------------------------------------------------
+
     foreach( QString fldName , subAccountingFilter.keys())
     {
         Q_ASSERT( rec.indexOf( fldName )>=0);
@@ -1581,12 +1759,13 @@ bool PblSqlRelationalTableModel::insertRowIntoTable(const QSqlRecord &values)
 
     }
 
-    //setSubAccountingFields_beforeInsertRow(rec);
 
-    qDebug() << "\n\n\nPblSqlRelationalTableModel::insertRowIntoTable before " << rec<< "\n\n";
 
-    translateFieldNames(0, rec, INSERT);
+    qDebug() << "\n\n\nPblSqlRelationalTableModel::insertRowIntoTable before " << rec << "\n\n";
 
+    prepareInsertRow(0, rec);
+
+    qDebug() << "\n\n\nPblSqlRelationalTableModel::insertRowIntoTable translateFieldNames " << rec<< "\n\n";
 
     bool res = QSqlTableModel::insertRowIntoTable(rec); // insert all fields (with generated=no too)
 
@@ -1604,31 +1783,39 @@ int PblSqlRelationalTableModel::getLastInsertId()
 {
 
     QSqlQuery qq(  db_ );
-    //QSqlQuery qq(database());
 
-    if( qq.exec("SELECT last_insert_rowid()") )
+    if( ! qq.exec("SELECT last_insert_rowid()") )
     {
+        QMessageBox::warning( 0,
+                              "error",
+                              qq.lastError().text()
+                              );
 
-        if(qq.next())
-        {
-            bool ok = false;
+        return pbl::ROW_UNDEFINED;
 
-            int lastIsertId = qq.value(0).toInt(&ok);
-
-            if(ok)
-            {
-                return lastIsertId;
-            }
-            else
-            {
-                return -1;
-
-            }
-
-            qDebug() << "lastInsertId " <<  lastIsertId;
-        }
     }
-    return -1;
+
+    if( qq.next() )
+    {
+        bool ok = false;
+
+        int lastIsertId = qq.value(0).toInt(&ok);
+
+        if(ok)
+        {
+            return lastIsertId;
+        }
+        else
+        {
+            return pbl::ROW_UNDEFINED;
+
+        }
+
+        qDebug() << "lastInsertId " <<  lastIsertId;
+    }
+
+
+    return pbl::ROW_UNDEFINED;
 }
 
 void PblSqlRelationalTableModel::sort(int col,
@@ -2330,6 +2517,69 @@ QString PblSqlRelationalTableModel::sqlite_qoutes_for_value(const QVariant & val
         return val.toString();
 }
 
+//bool PblSqlRelationalTableModel::insertRecord(int row, const QSqlRecord &record)
+//{
+//    qDebug() << "PblSqlRelationalTableModel::insertRecord(int row, const QSqlRecord &record)";
+
+//    return true;
+//}
+
+//bool PblSqlRelationalTableModel::insertRecord(int row, const PblSqlRecord &rec)
+//{
+
+//    qDebug() << "\n ----------------------------------------------------------- \n";
+//    qDebug() << "PblSqlRelationalTableModel::insertRecord(int row, const PblSqlRecord &record)";
+
+//    qDebug() << "\n ----------------------------------------------------------- \n";
+//    qDebug() << "PblSqlRecord &record : " << rec;
+
+//    QSqlRecord rec2 = rec;
+
+//    qDebug() << "\n ----------------------------------------------------------- \n";
+//    qDebug() << "PblSqlRecord &record : rec2 " << rec2;
+
+//    for( int col = 0; col < rec.count(); col++)
+//    {
+//        QString extRelFld = getRelIdColumn4( rec.fieldName( col ));
+
+//        if ( ! extRelFld.isEmpty() )
+//        {
+//            if( rec2.value( extRelFld ).toInt() == pbl::REL_EMPTY_ID)
+//            {
+//                rec2.setValue( col , QVariant());
+//            }
+//            else
+//            {
+//                rec2.setValue( col , rec.value( extRelFld ));
+//            }
+
+//            if( ! rec2.isGenerated( col))
+//                rec2.setGenerated( col , true );
+
+
+//        }
+//    }
+
+//    qDebug() << "\n ----------------------------------------------------------- \n";
+//    qDebug() << "PblSqlRecord &record : rec2 " << rec2;
+
+
+//    foreach ( QString fldExtName , rec.specialFld.keys() )
+//    {
+//        qDebug() << "remove 634586345 " << fldExtName ;
+
+//        rec2.remove( rec2.indexOf( fldExtName ) );
+//    }
+
+//    qDebug() << "\n ----------------------------------------------------------- \n";
+//    qDebug() << "PblSqlRecord &record : rec2 " << rec2;
+
+//    bool bbb = QSqlTableModel::insertRecord( row, rec2);
+
+//    bbb = select();
+
+//    return bbb ;
+//}
 
 
 QT_END_NAMESPACE

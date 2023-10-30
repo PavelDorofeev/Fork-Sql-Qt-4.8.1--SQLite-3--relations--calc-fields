@@ -44,17 +44,16 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include "pbltableview/my_sql.h"
-#include "pbltableview/combobox_delegate.h"
+#include "delegates/combobox_delegate.h"
 #include "config.h"
-//#include "pbltableview/pblrelcolumn.h"
-#include "pbltableview/checkbox_delegate.h"
-#include "pbltableview/defaultstyleditemdelegate.h"
+#include "delegates/checkbox_delegate.h"
+#include "delegates/defaultstyleditemdelegate.h"
 #include "pbltableview/pblsqlrelationaltablemodel.h"
 
 #include "pbltableview/pblheaderview.h"
 #include "pbltableview/pbl.h"
 #include "ui_btn_toolbox.h"
-#include "date_delegate.h"
+#include "delegates/date_delegate.h"
 #include "horizontal_header.h"
 #include "pblsubaccnt.h"
 #include "pbl.h"
@@ -152,7 +151,7 @@ PblTableView::PblTableView(
 
     tlbx->ui->btn_selectByValue->setVisible(false);
 
-    qDebug( ) << "width PblTableView tlbx" << this->width() << tlbx->width();
+    //qDebug( ) << "width PblTableView tlbx" << this->width() << tlbx->width();
 
     if( tlbx->width() > this->width())
     {
@@ -502,7 +501,7 @@ void PblTableView::set_editingEnabled(bool On,
                                       bool defVisibleWithOn,
                                       bool hideBtns ) // from external code
 {
-    qDebug() << " set_editingEnabled " << On << defVisibleWithOn << hideBtns;
+    //qDebug() << " set_editingEnabled " << On << defVisibleWithOn << hideBtns;
 
     //editable = On;
     defaultEditOn = defVisibleWithOn;
@@ -962,6 +961,15 @@ void PblTableView::slot_setVisibleExRelIdColumns(bool visible)
 
     if( model()->getPriColumn() >=0)
         setColumnHidden( model()->getPriColumn() , ! showRelExColumns);
+
+    if( model()->subAccountingFilter.count()>0 )
+    {
+        foreach( QString col, model()->subAccountingFilter.keys())
+        {
+            //qDebug() << "col "<< col <<  model()->baseRec.indexOf( col );
+            setColumnHidden( model()->baseRec.indexOf( col ) , ! visible );
+        }
+    }
 
     //resizeColumnsToContents();
 
@@ -2258,7 +2266,7 @@ bool PblTableView::prepare_view( PblSqlRelationalTableModel * mdl )
 
     if( p_cb_setting_view != 0 )
     {
-        qDebug() << "call externat function to configurate table view " << mdl->tableName();
+        qDebug() << "call external function to configurate table view " << mdl->tableName();
         p_cb_setting_view( this ); // !!!!
     }
 

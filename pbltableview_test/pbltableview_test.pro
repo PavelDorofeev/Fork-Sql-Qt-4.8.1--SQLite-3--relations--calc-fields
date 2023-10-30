@@ -66,7 +66,6 @@ else:CONFIG(debug,release|debug){
 
 
 
-
 SOURCES +=\
     main.cpp \
     config.cpp \

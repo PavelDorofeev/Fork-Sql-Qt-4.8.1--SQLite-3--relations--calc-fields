@@ -61,10 +61,13 @@
 // 12.4.1.0
 
 
-#define PROG_VERSION    "12.4.0.0"
+// breake sub accounting , ext_field_name new goods_productName_id (was goods_id)
+// 12.4.2.0
+
+#define PROG_VERSION    "12.4.2.0"
 #define VER1    12
 #define VER2    4
-#define VER3    0
+#define VER3    2
 #define VER4    0
 
 #endif // VERSION_H

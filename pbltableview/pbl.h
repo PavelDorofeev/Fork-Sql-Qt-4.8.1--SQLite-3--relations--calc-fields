@@ -5,6 +5,8 @@
 #include <QWidget>
 
 
+//class Msg2;
+
 class pbl
 {
 public:
@@ -26,9 +28,13 @@ public:
 
     pbl();
 
+    //static Msg2* getMsg2(QWidget *parent=0);
+
     static QString toStr_Event_Type(int event);
 
     static QString toStr_ItemFlag(int ItemFlag);
+
+    static const QString toStr_InputMethodQuery(Qt::InputMethodQuery mtd);
 
 
 #ifdef THIS_IS_STATIC

@@ -87,7 +87,7 @@ public:
     
 public:
     
-    explicit PblSqlRelationalTableModel(QSqlDatabase &db_ ,
+    explicit PblSqlRelationalTableModel(QSqlDatabase &Db ,
                                         cb_setting_mdl pMdl =0,
                                         QObject *parent = 0,
                                         const QList<QString> &FieldSet = QList<QString>()
@@ -282,6 +282,10 @@ public:
 
     int isDefaultSearchingColumn;
 
+    bool prepareInsertRow( int row,
+                           QSqlRecord &rec);
+
+
 
 signals:
 
@@ -314,8 +318,9 @@ private:
 
     void setTable(const QString &tableName); // now you have to use a prepare_mdl method ! Its incapsulates setTable.
 
-    int fieldIndex(const QString &fieldName) const; // // don't use anymore
+    int fieldIndex(const QString &fieldName) const; // don't call anymore from inherited classes
 
+    //bool insertRecord(int row, const QSqlRecord &record); // don't call anymore from inherited classes
 
     void clearDirtyRow();
     void setDirtyRow(int dirtyRow, int dirtyCol);

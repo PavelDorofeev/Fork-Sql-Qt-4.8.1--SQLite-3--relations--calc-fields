@@ -5,7 +5,7 @@
 #include "pbltableview/my_sql.h"
 #include "pbltableview/btn_toolbox.h"
 #include "pbltableview/some_tests.h"
-#include "pbltableview/defaultstyleditemdelegate.h"
+#include "delegates/defaultstyleditemdelegate.h"
 #include <QObject>
 #include <QSqlError>
 #include <QDebug>
@@ -266,7 +266,7 @@ bool config::setting_view(PblTableView *view)
     QString tableName = view->model()->tableName();
 
 
-    view->set_ExtColumnsVisible(false, false);
+    //view->set_ExtColumnsVisible(false, false);
 
     view->set_contextMenuEnabled(true); //
 
@@ -346,12 +346,13 @@ bool config::setting_view(PblTableView *view)
 
     }
 
-
-
-
-
     view->resizeColumnsToContents(); // Inreractive
 
+    if(tableName == "test")
+    {
+       view->set_editingEnabled( true);
+
+    }
 
     //view->resizeRowsToContents();
 

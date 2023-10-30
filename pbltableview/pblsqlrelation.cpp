@@ -54,10 +54,9 @@ PblSqlRelation::PblSqlRelation( const QString & IdField1,
       extTblName    ( Table),
       idField2Name  ( IdField2),
       dstFldName    ( DestField),
-      ext_fld_name  ( QString("%1_%2_%3") // in table maybe exixts some relations to single external table
-                      .arg(extTblName)
-                      .arg(idField1Name)
-                      .arg(idField2Name) )
+      // in table maybe exixts some relations to single external table
+      ext_fld_name  ( QString("%1_%2_%3").arg(extTblName).arg(idField1Name).arg(idField2Name).replace(".","_") )
+    // . (dot) may be appeare whan use ATTACH DATABASE
 
 {
     joinMode = Join_mode;
