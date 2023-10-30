@@ -5,8 +5,6 @@
 #include <QWidget>
 
 
-//class Msg2;
-
 class pbl
 {
 public:

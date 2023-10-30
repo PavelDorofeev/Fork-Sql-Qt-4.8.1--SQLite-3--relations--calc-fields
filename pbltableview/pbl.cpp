@@ -4,8 +4,6 @@
 #include <QMessageBox>
 #include <QDebug>
 
-#include "my_gui/msg2.h"
-
 pbl::pbl()
 {
 }
