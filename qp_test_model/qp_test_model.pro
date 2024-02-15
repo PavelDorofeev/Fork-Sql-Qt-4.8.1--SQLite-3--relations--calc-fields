@@ -6,7 +6,7 @@
 
 QT       += core gui sql network svg
 
-TARGET = pbltableview_test
+TARGET = QpSqlTableModel_test
 TEMPLATE = app
 
 CONFIG +=  console windows

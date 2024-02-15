@@ -8,6 +8,7 @@
 
 namespace qp
 {
+    static const QString error2 = QString::fromUtf8("59860980948695");
 
     namespace dbg
     {

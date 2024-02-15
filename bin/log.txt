@@ -1,0 +1,121 @@
+17:31:36 723 Debug: "D:/DEVELOPMENT/MyGitHub/Fork-Sql-Qt-4.8.1--SQLite-3---relations--calc-fields/bin/test.db" 
+17:31:36 724 Debug:  tables  ("test", "sqlite_sequence", "checks", "goods", "purchases", "sub_accounting") 
+17:31:36 Warning: sqlite.driverName()  "QSQLITE" 
+17:31:36 Warning: sqlite.databaseName()  "D:/DEVELOPMENT/MyGitHub/Fork-Sql-Qt-4.8.1--SQLite-3---relations--calc-fields/bin/test.db" 
+17:31:36 Warning: sqlite.isOpen()  true 
+17:31:36 Warning: sqlite.connectionName()  "qt_sql_default_connection" 
+17:31:36 725 Debug:    reestr->value(font) :  "Tahoma,14,-1,5,50,0,0,0,0,0" 
+17:31:36 725 Debug:        pointSize:  QVariant(int, 14) 
+17:31:36 725 Debug:        pointSize:  QVariant(, ) 
+17:31:36 731 Debug: "
+QpHorHeaderView:section{
+   background:#b2d1f8;
+}
+QpTableView{
+   outline: none;
+}QpTableView::item{
+   border: 1px solid #DDDDDD;
+}
+QpHorHeaderView:section{
+   background:#b2d1f8;
+}
+QpVertHeaderView:section{
+   background:#fca842;
+}
+
+QPushButton{
+   padding:14px;
+   margin:14px 5px;
+   background-color: white;
+   color: green;
+   border-radius: 14px;
+   background: rgb(225,231,252);
+   border-style: outset;
+   border-width: 2px;
+   border-color: rgb(200,200,200);
+   margin: 14px;
+}
+QPushButton:disabled {
+   background: rgb(210,210,210);
+   color: rgb(150,150,150);
+}
+QPushButton:!enabled{
+   background:gray; 
+   color:white; 
+}
+QToolTip{
+   font-size:56px;
+   padding:28px;
+   border-radius:14px;
+   border: 1px solid gray;
+}
+QTableView{
+   outline:none;
+}
+QTableView::item{
+   min-height:28px;
+}
+QHeaderView::section{
+}
+QHeaderView::section:horizontal{
+   padding-left:28px;
+   padding-right:28px;
+   padding-top:14px;
+   padding-bottom:14px;
+}
+QHeaderView::section:horizontal:checked{
+   border: 2px solid green;
+   border-radius:5px;
+   padding-left:14px;
+   padding-right:14px;
+}
+QHeaderView::section:vertical{
+   padding-top:14px;
+   padding-bottom:14px;
+   padding-left:14px;
+   padding-right:14px;
+   min-width:56px;
+   min-height:28px;
+}
+QHeaderView::section:vertical:checked{
+   border-radius:5px;
+   border: 2px solid gray;
+   padding-left:5px;
+   padding-right:5px;
+}
+QToolButton{
+   width: 28px;
+   height: 28px;
+}
+#LineEdit{
+   padding:11px;
+   border-radius:5px;
+   border: 1px solid #555;
+}
+QComboBox{
+   border-radius:5px;
+   border: 1px solid #555;
+   padding:11px;
+}
+QCheckBox{
+   font-size:28px;
+}
+QCheckBox::indicator {
+   width: 28px;
+   height: 28px;
+}
+QCheckBox::indicator:checked{
+   image:url(:view/img/checked.svg);
+}
+QCheckBox::indicator:!checked{
+   image:url(:view/img/unchecked.svg);
+}
+" 
+17:31:36 740 Debug: QpSqlTableModel::prepare_mdl table:  "purchases" 
+17:31:36 740 Debug: price   precision  2 
+17:31:36 740 Debug: PblSqlRelation counter  1 "goods" "productName" "id" "productName" 
+17:31:36 740 Debug: PblSqlRelation counter  2 "sub_accounting" "sub" "id" "val" 
+17:31:36 745 Debug:  QpTableViewWrapper::prepare setting_view for table  "purchases" 12 
+17:31:36 745 Debug: call external function to configurate table view  "purchases" 
+17:32:19 985 Debug: ~checkBox_Delegate
+17:32:19 985 Debug: ~PblSqlRecord()  0x3405238 

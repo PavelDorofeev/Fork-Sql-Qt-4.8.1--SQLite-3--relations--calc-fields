@@ -78,10 +78,14 @@
 // create namespace qp::dbg
 // 13.0.0.0
 
-#define PROG_VERSION    "13.0.0.0"
+// test doownload and building
+// static building too
+// 13.0.0.2
+
+#define PROG_VERSION    "13.0.0.2"
 #define VER1    13
 #define VER2    0
 #define VER3    0
-#define VER4    0
+#define VER4    2
 
 #endif // VERSION_H
