@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/view">
+        <file>img/countries/russian-100x100.png</file>
+        <file>img/countries/english-100x100.png</file>
+        <file>img/countries/china-100x100.png</file>
+        <file>img/mkt_50x50.png</file>
+        <file>img/btn-db/remove.svg</file>
+        <file>img/btn-db/search.svg</file>
+        <file>img/btn-db/view.svg</file>
+        <file>img/unchecked.svg</file>
+        <file>img/checked.svg</file>
+        <file>img/btn-db/choice.svg</file>
+        <file>img/btn-db/choice_off.svg</file>
+        <file>img/btn-db/sorting.svg</file>
+        <file>img/btn-db/sorting_off.svg</file>
+        <file>img/btn-db/insert-dis.svg</file>
+        <file>img/btn-db/copy-dis.svg</file>
+        <file>img/btn-db/search-settings.svg</file>
+        <file>img/btn-db/selection.svg</file>
+        <file>img/btn-db/copy.svg</file>
+        <file>img/btn-db/clear_field.svg</file>
+        <file>img/btn-db/edit.svg</file>
+        <file>img/btn-db/insert.svg</file>
+    </qresource>
+</RCC>

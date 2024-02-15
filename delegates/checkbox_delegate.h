@@ -6,8 +6,8 @@
 
 #include <QSvgRenderer>
 
-class PblSqlRelationalTableModel;
-class PblTableView;
+class QpSqlTableModel;
+class QpTableViewWrapper;
 
 class checkBox_Delegate : public QStyledItemDelegate
 {
@@ -32,8 +32,8 @@ signals:
 public slots:
 
 private:
-    PblSqlRelationalTableModel * mdl;
-    PblTableView * view;
+    QpSqlTableModel * mdl;
+    QpTableViewWrapper * view;
 
     QSvgRenderer *svg_renderer;
     QSvgRenderer *svg_renderer_inv;

@@ -86,11 +86,11 @@ bool logging_System::init(QString dirName_,
                 qCritical()  << "can't create folder  (for log file) :  " << dirName;
 
                 QMessageBox::critical( 0,
-                          QString::fromUtf8("Ошибка"),
-                          QString::fromUtf8("Не удалось создать каталог для логирования программы :\n\n %1").
-                          arg(dirName),
-                          QString::fromUtf8("Возможно не хватает прав администратора.")
-                          );
+                                       QString::fromUtf8("Ошибка"),
+                                       QString::fromUtf8("Не удалось создать каталог для логирования программы :\n\n %1").
+                                       arg(dirName)+
+                                       QString::fromUtf8("Возможно не хватает прав администратора.")
+                                       );
 
                 return false;
             }
@@ -105,11 +105,11 @@ bool logging_System::init(QString dirName_,
                 qCritical()  << "can't create folder  (for log file) :  " << dirName+"\\"+LOGS_HYSTORY_DIR;
 
                 QMessageBox::critical( 0,
-                          QString::fromUtf8("Ошибка"),
-                          QString::fromUtf8("Не удалось создать каталог для хранения логов работы программы :\n\n %1").
-                          arg(dirName),
-                          QString::fromUtf8("Возможно не хватает прав администратора.")
-                          );
+                                       QString::fromUtf8("Ошибка"),
+                                       QString::fromUtf8("Не удалось создать каталог для хранения логов работы программы :\n\n %1").
+                                       arg(dirName),
+                                       QString::fromUtf8("Возможно не хватает прав администратора.")
+                                       );
 
                 return false;
             }
@@ -129,9 +129,9 @@ bool logging_System::init(QString dirName_,
         if( ! logFile->open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Unbuffered))
         {
             QMessageBox::critical(0,
-                     QString::fromUtf8("Сбой запуска программы"),
-                     QString::fromUtf8("К сожалению не удается открыть лог файл  : \n%1").
-                     arg(logFilePath));
+                                  QString::fromUtf8("Сбой запуска программы"),
+                                  QString::fromUtf8("К сожалению не удается открыть лог файл  : \n%1").
+                                  arg(logFilePath));
 
             qCritical()  << "can't open log file :  " << logFilePath;
 
@@ -214,7 +214,7 @@ void logging_System::logCatcher(QtMsgType type, const char *msg)
 
     //if( logging_System::logg != NULL)
 
-        logging_System::mess(type , msg);
+    logging_System::mess(type , msg);
 
 }
 
@@ -229,6 +229,8 @@ void logging_System::mess ( QtMsgType type,const QString & msg)
     switch (type)
     {
     case QtDebugMsg:
+
+        //return;
 
         if( debug_Enabled )
         {
@@ -364,6 +366,11 @@ bool logging_System::testLargeFileAndSave(QString &logFilePath)
     {
         if( ! file.open(QFile::WriteOnly )) // QFile::Text |QFile::Text |QFile::Truncate))
         {
+            QMessageBox::critical( 0 ,
+                                   QObject::tr("Ошибка"),
+                                   QObject::tr("Не удается открыть файл:\n%1\nдля записи лога.\nВозможно отсутствуют права на запись.")
+                                   .arg(logFilePath)
+                                   );
             return false;
         }
 
@@ -396,7 +403,7 @@ bool logging_System::testLargeFileAndSave(QString &logFilePath)
 
 bool logging_System::openLoggingOnToOnNotepad()
 {
-/*    if(logg == NULL)
+    /*    if(logg == NULL)
         return false;*/
 
     if ( ! QDesktopServices::openUrl( QUrl::fromLocalFile(logFilePath)))

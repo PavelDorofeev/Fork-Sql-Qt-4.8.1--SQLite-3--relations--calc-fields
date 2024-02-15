@@ -2,7 +2,6 @@
 #define DOUBLEDELEGATE_H
 
 #include <QStyledItemDelegate>
-#include "pbltableview/pblsqlrelationaltablemodel.h"
 
 
 class Q_DECL_EXPORT DoubleDelegate : public QStyledItemDelegate
@@ -13,7 +12,7 @@ public:
     explicit DoubleDelegate( int Precision,
                              QObject *parent = 0);
 
-   virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+   virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 

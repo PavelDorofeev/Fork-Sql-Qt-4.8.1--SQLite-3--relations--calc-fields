@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>img/square-dashed.svg</file>
+    </qresource>
+</RCC>

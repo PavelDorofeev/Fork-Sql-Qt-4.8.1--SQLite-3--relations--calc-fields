@@ -1,5 +1,5 @@
 #include "icon_styleditemdelegate.h"
-#include "pbltableview/pbltableview.h"
+#include "qp/db/view/qp_tableview_wrapper.h"
 #include <QApplication>
 #include <QDebug>
 #include <QPainter>
@@ -60,9 +60,9 @@ void Icon_StyledItemDelegate::paint(QPainter *painter,
 
     Qt::Alignment alignment = Qt::AlignVCenter|Qt::AlignHCenter;
 
-    QRect rect1 (opt.rect.x() + PblTableView::margin_hor,
+    QRect rect1 (opt.rect.x() + QpTableViewWrapper::margin_hor,
                  opt.rect.y(),
-                 opt.rect.width() - (2 * PblTableView::margin_hor),
+                 opt.rect.width() - (2 * QpTableViewWrapper::margin_hor),
                  opt.rect.height());
 
 
@@ -101,8 +101,6 @@ void Icon_StyledItemDelegate::paint(QPainter *painter,
 
 
 
-    //QPixmap pxmap(":icon/img/renewal.svg");
-    //QPicture pct(":icon/img/renewal.svg");
     //painter->drawImage(rect1, image);
     //painter->drawPixmap(rect1, pxmap);
 

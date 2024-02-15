@@ -1,7 +1,7 @@
 #include "defaultstyleditemdelegate.h"
 
-#include "pbltableview/PblSqlRelationalTableModel.h"
-#include "pbltableview/pbltableview.h"
+#include "qp/db/model/qp_sqltablemodel.h"
+#include "qp/db/view/qp_tableview_wrapper.h"
 
 #include <QMouseEvent>
 #include <QApplication>
@@ -24,7 +24,7 @@ DefaultStyledItemDelegate::DefaultStyledItemDelegate( QObject *parent) :
 //    //2 * QStyle::PM_FocusFrameHMargin
 //    QSize sz = QStyledItemDelegate::sizeHint(option , index );
 
-//    //sz.setWidth( sz.width() + PblTableView::margin_hor*2 );
+//    //sz.setWidth( sz.width() + QpTableViewWrapper::margin_hor*2 );
 
 //    return sz;
 //}
@@ -69,9 +69,9 @@ void DefaultStyledItemDelegate::paint(QPainter *painter,
 
     //    painter->save();
 
-    //    QRect rect1 (opt.rect.x() + PblTableView::margin_hor,
+    //    QRect rect1 (opt.rect.x() + QpTableViewWrapper::margin_hor,
     //                        opt.rect.y(),
-    //                        opt.rect.width() - (2 * PblTableView::margin_hor),
+    //                        opt.rect.width() - (2 * QpTableViewWrapper::margin_hor),
     //                        opt.rect.height());
 
     //    if(mdl->isSelectedLine != -1 && row == mdl->isSelectedLine)

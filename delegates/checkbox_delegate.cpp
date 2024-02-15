@@ -5,9 +5,10 @@
 #include <QPainter>
 #include <QPalette>
 #include <QSvgRenderer>
+#include "qp/qp.h"
 
-#include "pbltableview/PblSqlRelationalTableModel.h"
-#include "pbltableview/pbltableview.h"
+#include "qp/db/model/qp_sqltablemodel.h"
+#include "qp/db/view/qp_tableview_wrapper.h"
 
 
 checkBox_Delegate::checkBox_Delegate( QWidget *parent)
@@ -15,9 +16,9 @@ checkBox_Delegate::checkBox_Delegate( QWidget *parent)
       QStyledItemDelegate(parent)
 {
 
-    svg_renderer = new QSvgRenderer( QString(":icon/img/checked.svg") , this);
+    svg_renderer = new QSvgRenderer( QString(":view/img/checked.svg") , this);
 
-    svg_renderer_inv = new QSvgRenderer( QString(":icon/img/unchecked.svg") , this);
+    svg_renderer_inv = new QSvgRenderer( QString(":view/img/unchecked.svg") , this);
 
 
 }
@@ -52,9 +53,9 @@ void checkBox_Delegate::paint(QPainter *painter,
 
     painter->save();
 
-    QRect rect1 (option.rect.x() + PblTableView::margin_hor,
+    QRect rect1 (option.rect.x() + QpTableViewWrapper::margin_hor,
                  option.rect.y(),
-                 option.rect.width() - (2 * PblTableView::margin_hor),
+                 option.rect.width() - (2 * QpTableViewWrapper::margin_hor),
                  option.rect.height());
 
     //qDebug() <<"painter " <<painter->paintEngine()
@@ -73,7 +74,7 @@ void checkBox_Delegate::paint(QPainter *painter,
     }
 
 
-    Q_ASSERT(index.isValid());
+    QP_ASSERT(index.isValid());
 
     QStyleOptionViewItemV4 opt1 = option;
 

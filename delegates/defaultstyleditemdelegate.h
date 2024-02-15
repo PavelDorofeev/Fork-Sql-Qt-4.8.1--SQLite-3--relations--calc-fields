@@ -3,7 +3,7 @@
 
 #include <QStyledItemDelegate>
 
-class PblSqlRelationalTableModel;
+class QpSqlTableModel;
 
 class DefaultStyledItemDelegate : public QStyledItemDelegate
 {

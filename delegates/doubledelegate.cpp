@@ -1,9 +1,8 @@
 #include "doubledelegate.h"
-#include <QAbstractItemView>
+//#include <QAbstractItemView>
 #include <QPainter>
 #include <QDebug>
 #include <QDoubleSpinBox>
-#include "pbltableview.h"
 
 
 DoubleDelegate::DoubleDelegate(int Precision,
@@ -19,9 +18,6 @@ void DoubleDelegate::paint(QPainter *painter,
                            const QStyleOptionViewItem &option,
                            const QModelIndex &index) const
 {
-
-    QAbstractItemView* item = qobject_cast<QAbstractItemView*>(this->parent());
-
 
 
     QStyledItemDelegate::paint(painter, option, index);

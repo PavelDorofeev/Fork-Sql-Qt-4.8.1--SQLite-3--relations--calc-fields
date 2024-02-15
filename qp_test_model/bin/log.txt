@@ -1,0 +1,230 @@
+13:36:58 328 Debug: "D:/DEVELOPMENT/QT4/_MY__/my_lib/pbltableview_test/bin/test.db" 
+13:36:58 438 Debug:  tables  ("test", "sqlite_sequence", "checks", "goods", "purchases", "sub_accounting") 
+13:36:58 Warning: sqlite.driverName()  "QSQLITE" 
+13:36:58 Warning: sqlite.databaseName()  "D:/DEVELOPMENT/QT4/_MY__/my_lib/pbltableview_test/bin/test.db" 
+13:36:58 Warning: sqlite.isOpen()  true 
+13:36:58 Warning: sqlite.connectionName()  "qt_sql_default_connection" 
+13:36:58 472 Debug:    reestr->value(font) :  "Tahoma,14,-1,5,50,0,0,0,0,0" 
+13:36:58 472 Debug:        pointSize:  QVariant(int, 14) 
+13:36:58 472 Debug:        pointSize:  QVariant(, ) 
+13:36:58 522 Debug: "
+QpHorHeaderView:section{
+   background:#b2d1f8;
+}QpTableView{
+   outline: none;
+}QpTableView::item{
+   border: 1px solid #DDDDDD;
+}QpHorHeaderView:section{
+   background:#b2d1f8;
+}QpVertHeaderView:section{
+   background:#fca842;
+}
+
+QPushButton{
+   padding:14px;
+   margin:14px 5px;
+   background-color: white;
+   color: green;
+   border-radius: 14px;
+   background: rgb(225,231,252);
+   border-style: outset;
+   border-width: 2px;
+   border-color: rgb(200,200,200);
+   margin: 14px;
+}
+QPushButton:disabled {
+   background: rgb(210,210,210);
+   color: rgb(150,150,150);
+}
+QPushButton:!enabled{
+   background:gray; 
+   color:white; 
+}
+QToolTip{
+   font-size:34px;
+   padding:17px;
+   border-radius:14px;
+   border: 1px solid gray;
+}
+QTableView{
+   outline:none;
+}
+QHeaderView::section{
+}
+QHeaderView::section:horizontal{
+   padding-left:17px;
+   padding-right:17px;
+   padding-top:14px;
+   padding-bottom:14px;
+}
+QHeaderView::section:horizontal:checked{
+   border: 2px solid green;
+   border-radius:5px;
+   padding-left:14px;
+   padding-right:14px;
+}
+QHeaderView::section:vertical{
+   padding-top:14px;
+   padding-bottom:14px;
+   padding-left:14px;
+   padding-right:14px;
+   min-width:34px;
+   min-height:34px;
+}
+QHeaderView::section:vertical:checked{
+   border-radius:5px;
+   border: 2px solid gray;
+   padding-left:5px;
+   padding-right:5px;
+}
+QToolButton{
+width: 17px;
+height: 17px;
+}
+#LineEdit{
+   padding:11px;
+   border-radius:5px;
+   border: 1px solid #555;
+}
+QComboBox{
+   border-radius:5px;
+   border: 1px solid #555;
+   padding:11px;
+}
+QCheckBox{
+   font-size:28px;
+}
+QCheckBox::indicator {
+   width: 28px;
+   height: 28px;
+}
+QCheckBox::indicator:checked{
+   image:url(:icon/img/checked.svg);
+}
+QCheckBox::indicator:!checked{
+   image:url(:icon/img/unchecked.svg);
+}
+" 
+13:36:58 830 Debug: QpSqlTableModel::prepare_mdl table:  "purchases" 
+13:36:58 830 Debug: price   precision  2 
+13:36:58 830 Debug: PblSqlRelation counter  1 "goods" "productName" "id" "productName" 
+13:36:58 830 Debug: PblSqlRelation counter  2 "sub_accounting" "sub" "id" "val" 
+13:36:58 833 Debug: testAttribute(Qt::WA_SetCursor)  false 
+13:36:58 833 Debug: QpTableView::setHorizontalHeader 
+13:36:58 834 Debug: QpVertHeaderViewPrivate::setDefaultValues() defaultSectionSize: 50 
+13:36:58 834 Debug: QpVertHeaderView::setModel 
+13:36:58 834 Debug: QpVertHeaderView::slot_sectionsTmplChanged() d->length: 0  rowH: -1  d->sectionCount: 0 
+13:36:58 834 Debug: QpVertHeaderView::initializeSections() d->sectionCount  0   length: 0 
+13:36:58 943 Debug: 
+
+QSqlTableModel::select() : 
+ "
+
+SELECT purchases.id,
+relTbl_1.productName AS productName,
+ relTbl_1.id AS goods_productName_id,
+ relTbl_1.sub_on AS goods_sub_on,
+relTbl_4.val AS sub,
+ relTbl_4.id AS sub_accounting_sub_id,
+purchases.price,
+purchases.qty,
+purchases.sum,
+purchases.combobox,
+purchases.chk,
+purchases.foo 
+FROM purchases 
+LEFT JOIN goods relTbl_1 ON purchases.productName=relTbl_1.id 
+LEFT JOIN sub_accounting relTbl_4 ON purchases.sub=relTbl_4.id" 
+ 
+13:36:58 944 Debug: QpTableView::setModel  
+13:36:58 944 Debug: QpAbstractItemView::reset() 
+13:36:58 944 Debug: QpVertHeaderView::slot_sectionsTmplChanged() d->length: 0  rowH: -1  d->sectionCount: 0 
+13:36:58 944 Debug: QpVertHeaderView::initializeSections() d->sectionCount  0   length: 0 
+13:36:58 945 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:58 945 Debug:   d->editorIndexHash.isEmpty() 
+13:36:58 945 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:58 945 Debug:   d->editorIndexHash.isEmpty() 
+13:36:58 945 Debug: QpVertHeaderView::setModel 
+13:36:58 946 Debug: "model is empty yet (use method setTable first)"  QpVertHeaderView::reset() section_Count  0  d->length 0 
+13:36:58 946 Debug: QpAbstractItemView::reset() 
+13:36:58 946 Debug: QpVertHeaderView::slot_sectionsTmplChanged() d->length: 0  rowH: -1  d->sectionCount: 0 
+13:36:58 946 Debug: QpVertHeaderView::initializeSections() d->sectionCount  0   length: 0 
+13:36:58 946 Debug:    newCount != oldCount   newCount: 3  oldCount: 0 
+13:36:58 946 Debug: CHANGED   d->sectionCount was:  0   new: 3  tblName() "model is empty yet (use method setTable first)"  QpVertHeaderView::initializeSections(..) 
+13:36:58 946 Debug: QpVertHeaderView::initializeSections(start: 0 , end: 2 ) CHANGED!  length was: 0  d->length: -3  d->hrzntl.row_height(): -1   start  0  end  2 
+13:36:58 946 Debug: "model is empty yet (use method setTable first)"  QpVertHeaderView::initializeSections() verticalScrollBar()->maximum() 0 d->sectionCount: 3  length -3 
+13:36:58 946 Debug: QpVertHeaderView::slot_sectionsTmplChanged() d->length: -3  rowH: -1  d->sectionCount: 3 
+13:36:58 946 Debug: QpVertHeaderView::initializeSections() d->sectionCount  3   length: -3 
+13:36:58 947 Debug: QpAbstractItemView::reset()  "purchases" 
+13:36:58 947 Debug: QpAbstractItemView::reset() 
+13:36:58 947 Debug: "purchases"  234 QpTableView::setRootIndex viewport()->update(); vpW: 98 
+13:36:58 947 Debug: "purchases"  234 QpTableView::setRootIndex viewport()->update(); vpW: 98 
+13:36:58 947 Debug:  QpTableViewWrapper::prepare setting_view for table  "purchases" 12 
+13:36:58 947 Debug: call external function to configurate table view  "purchases" 
+13:36:58 Warning: Cannot open file ':icon/img/checked.svg', because: Unknown error
+13:36:58 Warning: Cannot open file ':icon/img/unchecked.svg', because: Unknown error
+13:36:58 977 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:58 977 Debug:   d->editorIndexHash.isEmpty() 
+13:36:58 978 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:58 979 Debug:   d->editorIndexHash.isEmpty() 
+13:36:58 979 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:58 980 Debug:   d->editorIndexHash.isEmpty() 
+13:36:58 981 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:58 981 Debug:   d->editorIndexHash.isEmpty() 
+13:36:58 982 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:58 983 Debug:   d->editorIndexHash.isEmpty() 
+13:36:58 983 Debug: "   print_matrix : " 
+13:36:58 984 Debug:      "1,6,8" 
+13:36:58 984 Debug:      "4,7,8" 
+13:36:58 985 Debug: QpVertHeaderView::slot_sectionsTmplChanged() d->length: 360  rowH: 120  d->sectionCount: 3 
+13:36:58 986 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:58 986 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 012 Debug: QpVertHeaderView::slot_sectionsTmplChanged() d->length: 360  rowH: 120  d->sectionCount: 3 
+13:36:59 012 Debug: QpVertHeaderView::initializeSections() d->sectionCount  3   length: 360 
+13:36:59 024 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 025 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 025 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 026 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 030 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 031 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 032 Debug: QpVertHeaderView::slot_sectionsTmplChanged() d->length: 360  rowH: 120  d->sectionCount: 3 
+13:36:59 032 Debug: QpVertHeaderView::initializeSections() d->sectionCount  3   length: 360 
+13:36:59 033 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 034 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 Warning: Cannot open file ':icon/img/checked.svg', because: Unknown error
+13:36:59 Warning: Cannot open file ':icon/img/checked.svg', because: Unknown error
+13:36:59 Warning: Cannot open file ':icon/img/unchecked.svg', because: Unknown error
+13:36:59 Warning: Cannot open file ':icon/img/unchecked.svg', because: Unknown error
+13:36:59 293 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 294 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 295 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 295 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 298 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 298 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 299 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 300 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 304 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 305 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 306 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 306 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 310 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 311 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 311 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 312 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 316 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 317 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 320 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 321 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 321 Debug: delayed_Repaint2 reg_tv  QRegion(size=1), bounds = QRect(0,0 1558x357) 
+ -  0 QRect(0,0 1558x357) 
+ 
+13:36:59 322 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 322 Debug:   d->editorIndexHash.isEmpty() 
+13:36:59 513 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:36:59 513 Debug:   d->editorIndexHash.isEmpty() 
+13:37:01 304 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:37:01 304 Debug:   d->editorIndexHash.isEmpty() 
+13:37:01 307 Debug: QpAbstractItemView::updateEditorGeometries() 
+13:37:01 307 Debug:   d->editorIndexHash.isEmpty() 
+13:37:01 314 Debug: ~checkBox_Delegate
+13:37:01 315 Debug: ~PblSqlRecord()  0x2f6f308 

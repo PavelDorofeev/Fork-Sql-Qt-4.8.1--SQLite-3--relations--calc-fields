@@ -1,9 +1,0 @@
-20:06:48 757 Debug: "D:/DEVELOPMENT/QT4/_MY__/my_lib/pbltableview_test/bin/test.db" 
-20:06:48 759 Debug:  tables  ("checks", "sqlite_sequence", "goods", "purchases") 
-20:06:48 Warning: sqlite.driverName()  "QSQLITE" 
-20:06:48 Warning: sqlite.databaseName()  "D:/DEVELOPMENT/QT4/_MY__/my_lib/pbltableview_test/bin/test.db" 
-20:06:48 Warning: sqlite.isOpen()  true 
-20:06:48 Warning: sqlite.connectionName()  "qt_sql_default_connection" 
-20:06:50 903 Debug: ctor PblSqlRelationalTableModel editStrategy  1 
-20:06:51 563 Debug: subCountingFilter  QHash() 
-20:08:22 430 Debug: newRelIdCol  "id" 
