@@ -75,9 +75,9 @@ Demo video on youtube: https://youtu.be/vUrVNU1h_rY
 
 Setting relation is easy and just call one function:
 setRelation( QpSqlRelation( "productName",
-							"goods" ,
-							"id" ,
-							"productName") );
+				"goods" ,
+				"id" ,
+				"productName") );
 
 Binding tow relation columns for sub accounting needs call one function:
 
