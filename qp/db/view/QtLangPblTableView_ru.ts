@@ -92,12 +92,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="btn_toolbox.ui" line="55"/>
         <source>toggled edit mode [F2]</source>
-        <translation>переключить вежим редактирования [F2]</translation>
+        <translation>переключить в ежим редактирования [F2]</translation>
     </message>
     <message>
         <location filename="btn_toolbox.ui" line="83"/>
         <source>insert row [INS]</source>
-        <translation type="unfinished">вставить строку [INS]</translation>
+        <translation>вставить строку [INS]</translation>
     </message>
     <message>
         <location filename="btn_toolbox.ui" line="110"/>
@@ -132,7 +132,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="btn_toolbox.ui" line="437"/>
         <source>Edit strategy</source>
-        <translation type="unfinished"></translation>
+        <translation>Стратегия редактирования</translation>
     </message>
     <message>
         <location filename="btn_toolbox.ui" line="441"/>

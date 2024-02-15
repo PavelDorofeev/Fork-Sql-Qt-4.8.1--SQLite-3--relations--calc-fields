@@ -5,7 +5,7 @@
 #include <QSqlRelation>
 #include <QSqlError>
 #include "qp/db/view/some_tests.h"
-#include "qp/db/model/qp_sqltablemodel2.h"
+#include "qp_sqltablemodel2.h"
 #include "qp/db/qp_application.h"
 #include <QDebug>
 #include "qp/db/model/my_sql.h"

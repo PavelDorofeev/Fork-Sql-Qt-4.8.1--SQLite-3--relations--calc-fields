@@ -1,6 +1,6 @@
 #include "config2.h"
 
-#include "qp/db/model/qp_sqltablemodel2.h"
+#include "qp_sqltablemodel2.h"
 
 config2::config2()
 {

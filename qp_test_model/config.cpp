@@ -1,5 +1,5 @@
 #include "config.h"
-#include"qp/db/model/qp_sqltablemodel2.h"
+#include"qp_sqltablemodel2.h"
 #include"qp/db/view/qp_tableview_wrapper.h"
 #include "qp/db/view/btn_toolbox.h"
 #include "qp/db/view/some_tests.h"

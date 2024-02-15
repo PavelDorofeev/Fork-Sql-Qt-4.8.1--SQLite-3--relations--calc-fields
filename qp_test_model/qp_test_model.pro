@@ -19,7 +19,7 @@ RCC_DIR         = tmp\\rcc\\$$out_dir
 UI_DIR          = ui
 DESTDIR         = bin
 
-TRANSLATIONS +=  ../pbltableview/QtLangPblTableView_en.ts ../pbltableview/QtLangPblTableView_ru.ts ../pbltableview/QtLangPblTableView_zh.ts
+TRANSLATIONS +=  ../qp/db/view/QtLangPblTableView_en.ts ../qp/db/view/QtLangPblTableView_ru.ts ../qp/db/view/QtLangPblTableView_zh.ts
 
 CODECFORTR      = UTF-8
 CODECFORSRC     = UTF-8
@@ -77,7 +77,7 @@ else:CONFIG(debug,release|debug){
 SOURCES +=\
     main.cpp \
     config.cpp \
-    ../qp/db/model/qp_sqltablemodel2.cpp \
+    qp_sqltablemodel2.cpp \
     config2.cpp \
     dialog_test.cpp \
     db1.cpp \
@@ -86,7 +86,7 @@ SOURCES +=\
 HEADERS  += \
     config.h \
     version_app.h \
-    ../qp/db/model/qp_sqltablemodel2.h \
+    qp_sqltablemodel2.h \
     config2.h \
     dialog_test.h \
     db1.h \
@@ -96,8 +96,7 @@ FORMS    += dialog.ui
 
 
 OTHER_FILES += \
-    rc2.rc \
-    ../common/common-for-pbltableview.pri
+    rc2.rc
 
 win32 {
   RC_FILE     += rc2.rc

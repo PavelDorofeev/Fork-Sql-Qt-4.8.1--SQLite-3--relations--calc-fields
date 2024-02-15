@@ -16,11 +16,8 @@
 
 //void myMessageOutput(QtMsgType type, const char *msg);
 
-//DLL_MY_LIB_EXPORT void logCatcher(QtMsgType type, const char *msg);
-
-class logging_System// : public QObject
+class logging_System
 {
-    //Q_OBJECT
 
 public:
 
