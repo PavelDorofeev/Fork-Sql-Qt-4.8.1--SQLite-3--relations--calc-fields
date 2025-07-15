@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="42"
+   height="42"
+   viewBox="0 0 42 42"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="checked.svg"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   style="fill:none">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1680"
+     inkscape:window-height="1021"
+     id="namedview6"
+     showgrid="false"
+     inkscape:zoom="9.8333333"
+     inkscape:cx="12"
+     inkscape:cy="12"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Interface / Checkbox_Check" />
+  <g
+     id="Interface / Checkbox_Check"
+     transform="matrix(2.3299737,0,0,2.3840021,-6.9596837,-7.4554815)"
+     style="stroke-width:0.4242982">
+    <path
+       id="Vector"
+       d="m 8,12 3,3 5,-6 M 4,16.8002 v -9.6 C 4,6.08009 4,5.51962 4.21799,5.0918 4.40973,4.71547 4.71547,4.40973 5.0918,4.21799 5.51962,4 6.08009,4 7.2002,4 h 9.6 c 1.1201,0 1.6794,0 2.1072,0.21799 0.3763,0.19174 0.6831,0.49748 0.8748,0.87381 C 20,5.5192 20,6.07899 20,7.19691 v 9.60669 c 0,1.1179 0,1.6769 -0.2178,2.1043 -0.1917,0.3763 -0.4985,0.6826 -0.8748,0.8743 C 18.48,20 17.921,20 16.8031,20 H 7.19691 C 6.07899,20 5.5192,20 5.0918,19.7822 4.71547,19.5905 4.40973,19.2842 4.21799,18.9079 4,18.4801 4,17.9203 4,16.8002 Z"
+       inkscape:connector-curvature="0"
+       style="stroke:#000000;stroke-width:1.35775419;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none" />
+  </g>
+</svg>

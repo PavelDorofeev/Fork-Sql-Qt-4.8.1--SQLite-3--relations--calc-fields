@@ -1,0 +1,269 @@
+11:53:12 022 Debug: "D:/DEVELOPMENT/QT4/_MY__/qp/qp_test_temp_table_model/bin/test.db" 
+11:53:12 023 Debug:  tables  ("test", "sqlite_sequence", "checks", "goods", "purchases", "sub_accounting") 
+11:53:12 Warning: sqlite.driverName()  "QSQLITE" 
+11:53:12 Warning: sqlite.databaseName()  "D:/DEVELOPMENT/QT4/_MY__/qp/qp_test_temp_table_model/bin/test.db" 
+11:53:12 Warning: sqlite.isOpen()  true 
+11:53:12 Warning: sqlite.connectionName()  "qt_sql_default_connection" 
+11:53:12 023 Debug: ------------------ systemEnvironment ------------------------- 
+11:53:12 023 Debug: "FPS_BROWSER_APP_PROFILE_STRING=Internet Explorer" 
+11:53:12 023 Debug: "COMSPEC=C:\WINDOWS\system32\cmd.exe" 
+11:53:12 023 Debug: "PROGRAMFILES=C:\Program Files (x86)" 
+11:53:12 023 Debug: "LIBPATH=C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319;C:\WINDOWS\Microsoft.NET\Framework\v3.5;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\LIB;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\ATLMFC\LIB;" 
+11:53:12 023 Debug: "USERPROFILE=C:\Users\p" 
+11:53:12 023 Debug: "UHD_PKG_PATH=C:\Program Files\PothosSDR" 
+11:53:12 023 Debug: "GR_PREFIX=C:\Program Files\PothosSDR" 
+11:53:12 023 Debug: "CSINSTALL=C:\Program Files (x86)\INPAS\DualConnector\" 
+11:53:12 023 Debug: "AMLOGLOCATION=C:\Users\p\AppData\Roaming\AMLogs" 
+11:53:12 023 Debug: "USERNAME=p" 
+11:53:12 023 Debug: "VSINSTALLDIR=C:\Program Files (x86)\Microsoft Visual Studio 10.0\" 
+11:53:12 023 Debug: "PROCESSOR_LEVEL=6" 
+11:53:12 023 Debug: "TEMP=C:\Users\p\AppData\Local\Temp" 
+11:53:12 023 Debug: "HOMEPATH=\Users\p" 
+11:53:12 023 Debug: "VS140COMNTOOLS=C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\" 
+11:53:12 023 Debug: "LIB=C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\LIB;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\ATLMFC\LIB;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\lib;" 
+11:53:12 023 Debug: "OS=Windows_NT" 
+11:53:12 023 Debug: "VOLK_PREFIX=C:\Program Files\PothosSDR" 
+11:53:12 023 Debug: "WINDOWSSDKDIR=C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\" 
+11:53:12 023 Debug: "MOZ_PLUGIN_PATH=C:\Program Files (x86)\Foxit Software\Foxit PDF Reader\plugins\" 
+11:53:12 023 Debug: "FPS_BROWSER_USER_PROFILE_STRING=Default" 
+11:53:12 023 Debug: "DRIVERDATA=C:\Windows\System32\Drivers\DriverData" 
+11:53:12 024 Debug: "SYSTEMDRIVE=C:" 
+11:53:12 024 Debug: "PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 94 Stepping 3, GenuineIntel" 
+11:53:12 024 Debug: "PUBLIC=C:\Users\Public" 
+11:53:12 024 Debug: "QTDIR=D:\QtSDK1.2.1\QtSources\4.8.1" 
+11:53:12 024 Debug: "PROGRAMDATA=C:\ProgramData" 
+11:53:12 024 Debug: "PROMPT=$P$G" 
+11:53:12 024 Debug: "GRC_BLOCKS_PATH=C:\Program Files\PothosSDR\share\gnuradio\grc\blocks" 
+11:53:12 024 Debug: "USERDOMAIN=BIT-DEVELOPMENT" 
+11:53:12 024 Debug: "VS100COMNTOOLS=C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\Tools\" 
+11:53:12 024 Debug: "PROGRAMFILES(X86)=C:\Program Files (x86)" 
+11:53:12 024 Debug: "COMMONPROGRAMFILES=C:\Program Files (x86)\Common Files" 
+11:53:12 024 Debug: "PROCESSOR_ARCHITECTURE=x86" 
+11:53:12 024 Debug: "FRAMEWORKDIR32=C:\WINDOWS\Microsoft.NET\Framework\" 
+11:53:12 024 Debug: "PROCESSOR_REVISION=5e03" 
+11:53:12 024 Debug: "DEVENVDIR=C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\" 
+11:53:12 024 Debug: "WINDIR=C:\WINDOWS" 
+11:53:12 024 Debug: "PROGRAMW6432=C:\Program Files" 
+11:53:12 024 Debug: "INCLUDE=C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\INCLUDE;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\ATLMFC\INCLUDE;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include;" 
+11:53:12 024 Debug: "ONEDRIVE=C:\Users\p\OneDrive" 
+11:53:12 024 Debug: "SESSIONNAME=Console" 
+11:53:12 024 Debug: "CHOCOLATEYLASTPATHUPDATE=132239245971519955" 
+11:53:12 024 Debug: "LOGONSERVER=\\BIT-DEVELOPMENT" 
+11:53:12 024 Debug: "USERDOMAIN_ROAMINGPROFILE=BIT-DEVELOPMENT" 
+11:53:12 024 Debug: "FRAMEWORKVERSION32=v4.0.30319" 
+11:53:12 024 Debug: "APPDATA=C:\Users\p\AppData\Roaming" 
+11:53:12 024 Debug: "HOMEDRIVE=C:" 
+11:53:12 024 Debug: "COMPUTERNAME=BIT-DEVELOPMENT" 
+11:53:12 024 Debug: "SYSTEMROOT=C:\WINDOWS" 
+11:53:12 024 Debug: "NUMBER_OF_PROCESSORS=4" 
+11:53:12 024 Debug: "LOCALAPPDATA=C:\Users\p\AppData\Local" 
+11:53:12 024 Debug: "IEPATH=C:\Program Files (x86)\Internet Explorer\iexplore.exe" 
+11:53:12 024 Debug: "FRAMEWORKDIR=C:\WINDOWS\Microsoft.NET\Framework\" 
+11:53:12 024 Debug: "FRAMEWORKVERSION=v4.0.30319" 
+11:53:12 024 Debug: "PSMODULEPATH=C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules" 
+11:53:12 024 Debug: "ALLUSERSPROFILE=C:\ProgramData" 
+11:53:12 024 Debug: "COMMONPROGRAMFILES(X86)=C:\Program Files (x86)\Common Files" 
+11:53:12 024 Debug: "IDF_TOOLS_PATH=D:\DEVELOPMENT\esp-idf\.espressif" 
+11:53:12 024 Debug: "PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC" 
+11:53:12 024 Debug: "VS110COMNTOOLS=C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\Tools\" 
+11:53:12 024 Debug: "PROCESSOR_ARCHITEW6432=AMD64" 
+11:53:12 024 Debug: "COMMONPROGRAMW6432=C:\Program Files\Common Files" 
+11:53:12 024 Debug: "TMP=C:\Users\p\AppData\Local\Temp" 
+11:53:12 024 Debug: "PATH=D:\QtSDK1.2.1\QtSources\4.8.1\plugins\imageformats;D:\DEVELOPMENT\QT4\_MY__\qp\config\..\sql\release;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VSTSDB\Deploy;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\BIN;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\Tools;C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319;C:\WINDOWS\Microsoft.NET\Framework\v3.5;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\VCPackages;C:\Program Files (x86)\HTML Help Workshop;C:\Program Files (x86)\HTML Help Workshop;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Performance Tools;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin;D:\QtSDK1.2.1\QtSources\4.8.1\lib;D:\QtSDK1.2.1\QtSources\4.8.1\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Users\p\AppData\Roaming\ActiveState\bin;C:\Python27\;C:\Python27\Scripts;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\ProgramData\chocolatey\bin;D:\PROG\Strawberry\c\bin;D:\PROG\Strawberry\perl\site\bin;D:\PROG\Strawberry\perl\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\Common Files\Acronis\SnapAPI\;C:\Program Files\PuTTY\;C:\Program Files (x86)\Microsoft SQL Server\100\Tools\Binn\;C:\Program Files\Microsoft SQL Server\100\Tools\Binn\;C:\Program Files\Microsoft SQL Server\100\DTS\Binn\;C:\Program Files (x86)\INPAS\DualConnector\;D:\MinGW\bin;D:\MinGW\msys\1.0\bin;C:\Program Files\Git\cmd;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files\CMake\bin;C:\Program Files (x86)\GNU Tools Arm Embedded\9 2019-q4-major\bin;C:\Users\p\AppData\Local\Microsoft\WindowsApps;C:\Users\p\AppData\Local\GitHubDesktop\bin;C:\Users\p\AppData\Local\Microsoft\WindowsApps;C:\xampp\php;C:\VSCode\bin;C:\Program Files (x86)\CMake\bin;G:\QT\VScode\cppcheck-main\build\bin\Debug;" 
+11:53:12 024 Debug: "VCINSTALLDIR=C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\" 
+11:53:12 024 Debug: "FRAMEWORK35VERSION=v3.5" 
+11:53:12 025 Debug:    reestr->value(font) :  "Tahoma,14,-1,5,50,0,0,0,0,0" 
+11:53:12 025 Debug:        pointSize:  QVariant(int, 14) 
+11:53:12 025 Debug:        pointSize:  QVariant(, ) 
+11:53:12 034 Debug: "
+QpTableView{
+   outline: none;
+}QpTableView::item{
+   border: 1px solid #DDDDDD;
+}
+QHeaderView:section:horizontal{
+   background:#b2d1f8;
+}
+QHeaderView:section:vertical{
+   background:#fca842;
+}
+QTableView{
+   outline:none;
+}
+QTableView::item{
+   min-height:56px;
+}
+QHeaderView:section:horizontal{
+   padding-left:28px;
+   padding-right:28px;
+   padding-top:14px;
+   padding-bottom:14px;
+}
+QHeaderView::section:horizontal:checked{
+   border: 2px solid green;
+   border-radius:5px;
+   padding-left:14px;
+   padding-right:14px;
+}
+QHeaderView::section:vertical{
+   padding-top:14px;
+   padding-bottom:14px;
+   padding-left:14px;
+   padding-right:14px;
+   min-width:56px;
+   min-height:56px;
+}
+QHeaderView::section:vertical:checked{
+   border-radius:5px;
+   border: 2px solid gray;
+   padding-left:5px;
+   padding-right:5px;
+}
+
+QPushButton{
+   padding:14px;
+   margin:14px 5px;
+   background-color: white;
+   color: green;
+   border-radius: 14px;
+   background: rgb(225,231,252);
+   border-style: outset;
+   border-width: 2px;
+   border-color: rgb(200,200,200);
+   margin: 14px;
+}
+QPushButton:disabled {
+   background: rgb(210,210,210);
+   color: rgb(150,150,150);
+}
+QPushButton:!enabled{
+   background:gray; 
+   color:white; 
+}
+QToolTip{
+   font-size:56px;
+   padding:28px;
+   border-radius:14px;
+   border: 1px solid gray;
+}
+QToolButton{
+   width: 28px;
+   height: 28px;
+}
+#LineEdit{
+   padding:11px;
+   border-radius:5px;
+   border: 1px solid #555;
+}
+QComboBox{
+   border-radius:5px;
+   border: 1px solid #555;
+   padding:11px;
+}
+QCheckBox{
+   font-size:28px;
+}
+QCheckBox::indicator {
+   width: 28px;
+   height: 28px;
+}
+QCheckBox::indicator:checked{
+   image:url(:view/img/checked.svg);
+}
+QCheckBox::indicator:!checked{
+   image:url(:view/img/unchecked.svg);
+}
+" 
+11:53:12 043 Debug: price   precision  2 
+11:53:12 043 Debug: 324213423 baseRec QSqlRecord( 12 ) 
+ " 0:" QSqlField("id", int, required: no, generated: yes) "0" 
+ " 1:" QSqlField("productName", QString, required: no, generated: yes) "" 
+ " 2:" QSqlField("goods_productName_id", int, required: no, generated: yes) "0" 
+ " 3:" QSqlField("goods_sub_on", int, generated: yes) "0" 
+ " 4:" QSqlField("sub", int, required: no, generated: yes, auto-value: "QVariant(QString, "NULL") " ) "0" 
+ " 5:" QSqlField("sub_accounting_sub_id", int, required: no, generated: yes) "0" 
+ " 6:" QSqlField("price", double, required: no, generated: yes, auto-value: "QVariant(QString, "NULL") " ) "0" 
+ " 7:" QSqlField("qty", double, required: no, generated: yes, auto-value: "QVariant(QString, "NULL") " ) "0" 
+ " 8:" QSqlField("sum", double, required: no, generated: yes, auto-value: "QVariant(QString, "NULL") " ) "0" 
+ " 9:" QSqlField("combobox", int, required: no, generated: yes, auto-value: "QVariant(QString, "-1") " ) "0" 
+ "10:" QSqlField("chk", int, required: no, generated: yes, auto-value: "QVariant(QString, "NULL") " ) "0" 
+ "11:" QSqlField("foo", int, required: no, generated: yes, auto-value: "QVariant(QString, "NULL") " ) "0" 
+11:53:12 052 Debug:  QpTableViewWrapper::prepare setting_view for table  "purchases" 12 
+11:53:12 052 Debug: call external function to configurate table view  "purchases" 
+11:53:12 053 Debug: query "
+
+SELECT purchases.id,
+relTbl_1.productName AS productName,
+ relTbl_1.id AS goods_productName_id,
+ relTbl_1.sub_on AS goods_sub_on,
+relTbl_4.val AS sub,
+ relTbl_4.id AS sub_accounting_sub_id,
+purchases.price,
+purchases.qty,
+purchases.sum,
+purchases.combobox,
+purchases.chk,
+purchases.foo 
+FROM purchases 
+LEFT JOIN goods relTbl_1 ON purchases.productName=relTbl_1.id 
+LEFT JOIN sub_accounting relTbl_4 ON purchases.sub=relTbl_4.id" 
+11:53:12 058 Debug: setDefaultDelegate 0 
+11:53:12 058 Debug: setDefaultDelegate 1 
+11:53:12 058 Debug: setDefaultDelegate 2 
+11:53:12 058 Debug: setDefaultDelegate 3 
+11:53:12 058 Debug: setDefaultDelegate 4 
+11:53:12 058 Debug: setDefaultDelegate 5 
+11:53:12 058 Debug: setDefaultDelegate 6 
+11:53:12 058 Debug: setDefaultDelegate 7 
+11:53:12 058 Debug: setDefaultDelegate 8 
+11:53:12 058 Debug: query "
+
+SELECT purchases.id,
+relTbl_1.productName AS productName,
+ relTbl_1.id AS goods_productName_id,
+ relTbl_1.sub_on AS goods_sub_on,
+relTbl_4.val AS sub,
+ relTbl_4.id AS sub_accounting_sub_id,
+purchases.price,
+purchases.qty,
+purchases.sum,
+purchases.combobox,
+purchases.chk,
+purchases.foo 
+FROM purchases 
+LEFT JOIN goods relTbl_1 ON purchases.productName=relTbl_1.id 
+LEFT JOIN sub_accounting relTbl_4 ON purchases.sub=relTbl_4.id" 
+11:53:29 678 Debug: QpTableViewWrapper::slot_insertRowBtnClick() 
+11:53:29 679 Debug: QpTableViewWrapper::slot_insertRowBtnClick() old editStrategy()  2 
+11:53:29 Warning: QpTableViewWrapper2::vrt_insertRow(  0  ) 
+11:53:29 679 Debug: QpTableViewWrapper::vrt_insertRow( 0 ) 
+11:53:29 679 Debug: QpTempSqlTableModel::insertRows rowCount 4 
+11:53:29 679 Debug: QpTempSqlTableModel::insertRows ii 0 
+11:53:29 679 Debug: QpTempSqlTableModel::insertRows rowCount 5 
+11:53:29 679 Debug: QpSqlTableModel::prepare_mdl table:  "goods" 
+11:53:29 683 Debug:  QpTableViewWrapper::prepare setting_view for table  "goods" 6 
+11:53:29 683 Debug: call external function to configurate table view  "goods" 
+11:53:29 683 Debug: setDefaultDelegate 0 
+11:53:29 683 Debug: setDefaultDelegate 1 
+11:53:29 683 Debug: setDefaultDelegate 2 
+11:53:29 683 Debug: setDefaultDelegate 4 
+11:53:29 683 Debug: setDefaultDelegate 5 
+11:53:29 686 Debug: view->verticalHeader->isVisible  false 
+11:53:31 170 Debug: ~QpTableViewWrapper() "" 
+11:53:41 207 Debug: QpTableViewWrapper::slot_insertRowBtnClick() 
+11:53:41 207 Debug: QpTableViewWrapper::slot_insertRowBtnClick() old editStrategy()  2 
+11:53:41 Warning: QpTableViewWrapper2::vrt_insertRow(  4  ) 
+11:53:41 207 Debug: QpTableViewWrapper::vrt_insertRow( 4 ) 
+11:53:41 207 Debug: QpTempSqlTableModel::insertRows rowCount 5 
+11:53:41 207 Debug: QpTempSqlTableModel::insertRows ii 0 
+11:53:41 207 Debug: QpTempSqlTableModel::insertRows rowCount 6 
+11:53:41 207 Debug: QpSqlTableModel::prepare_mdl table:  "goods" 
+11:53:41 209 Debug:  QpTableViewWrapper::prepare setting_view for table  "goods" 6 
+11:53:41 209 Debug: call external function to configurate table view  "goods" 
+11:53:41 210 Debug: setDefaultDelegate 0 
+11:53:41 210 Debug: setDefaultDelegate 1 
+11:53:41 210 Debug: setDefaultDelegate 2 
+11:53:41 210 Debug: setDefaultDelegate 4 
+11:53:41 210 Debug: setDefaultDelegate 5 
+11:53:41 211 Debug: view->verticalHeader->isVisible  false 
+11:53:52 029 Debug: ~QpTableViewWrapper() "" 

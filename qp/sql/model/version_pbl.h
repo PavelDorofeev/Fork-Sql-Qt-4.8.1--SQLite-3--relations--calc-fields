@@ -1,0 +1,5 @@
+#ifndef QP_VERSION_MODEL_H
+#define QP_VERSION_MODEL_H
+
+#endif // QP_TEMP_TABLEMODEL_H
+

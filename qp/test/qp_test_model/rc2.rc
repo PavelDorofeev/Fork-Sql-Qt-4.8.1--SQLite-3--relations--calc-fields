@@ -1,0 +1,47 @@
+#include <winuser.h>
+#include <winnt.h>
+#include "../db/version_model.h"
+
+#define stringify(v1) #v1
+#define quote(v1)  stringify(v1)
+
+LANGUAGE 25,1
+
+STRINGTABLE LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+BEGIN
+        1 "Application for testing fork of QSqlTableModel Qt 4.8.1.\0"
+END
+IDI_ICON1       ICON    DISCARDABLE     "img/mkt.ico"
+IDR_APP_ICON    ICON                    "img/mkt.ico"
+
+1 VERSIONINFO
+        FILEVERSION    VER1,VER2,VER3,VER4
+        PRODUCTVERSION 1,2,4,1
+        FILEOS         0x00040004 //VOS_NT_WINDOWS32
+        FILETYPE       0x00000001 // VFT_APP
+BEGIN
+        BLOCK "StringFileInfo"
+        BEGIN
+          BLOCK "040904e4"
+          BEGIN
+          VALUE "Comments",           "Test application for fork QSqlTableModel Qt 4.8.1."
+          VALUE "CompanyName",        "BIT Ltd Company"
+          VALUE "FileDescription",    "Test application"
+          VALUE "FileVersion",        quote(FILEVERSION)
+          VALUE "InternalName",       "QpTableView.exe test application"
+          VALUE "LegalCopyright",     "BIT Ltd Company VTN 7826152874"
+          VALUE "OriginalFilename",   "QpTableView.exe"
+          VALUE "ProductName",        "test features application of the QpSqlTableModel"
+          VALUE "ProductVersion",     "1.2.4.1"
+          VALUE "PrivateBuild",       "3.0"
+          VALUE "SpecialBuild",       ""
+          VALUE "Builder",            "Dorofeev Pavel, p@kkmspb.ru"
+          END
+        END
+        BLOCK "VarFileInfo"
+        BEGIN
+            VALUE "Translation",        0x0409 0x04B0
+        END
+END
+
+//26=Russian,0x0419
